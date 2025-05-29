@@ -1,5 +1,14 @@
 #pragma once
 
+/// \file
+/// \brief This file declares a fully‐constexpr "constant wrapper" type that
+/// can carry an arbitrary compile‐time value.
+
+//
+//
+//
+//
+//
 #include "Arietta/Arietta.hpp"
 
 namespace arietta {
