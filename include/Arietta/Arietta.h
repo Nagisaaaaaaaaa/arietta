@@ -1,5 +1,15 @@
 #pragma once
 
+/// \file
+/// \warning "Higher beings, these words are for you alone.
+/// Beyond this point you enter the land of Arietta.
+/// Step across this threshold and obey our laws."
+
+//
+//
+//
+//
+//
 #include <cstddef>
 #include <cstdint>
 
