@@ -1,4 +1,4 @@
-#include "Arietta/Arietta.h"
+#include "Arietta/Arietta.hpp"
 
 #include <boost/ut.hpp>
 
