@@ -1,0 +1,58 @@
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  clang-diagnostic-*,
+  llvm-*,
+  modernize-*,
+  performance-*,
+  readability-identifier-naming,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-macro-parentheses,
+  -bugprone-reserved-identifier,
+  -bugprone-unchecked-optional-access,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-avoid-do-while,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-special-member-functions,
+  -llvm-header-guard,
+  -misc-include-cleaner,
+  -misc-non-private-member-variables-in-classes,
+  -modernize-avoid-c-arrays,
+  -modernize-use-trailing-return-type,
+  -readability-braces-around-statements,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-redundant-access-specifiers,
+WarningsAsErrors: ""
+HeaderFileExtensions:
+  - h
+  - hpp
+  - cuh
+  - in
+ImplementationFileExtensions:
+  - c
+  - cpp
+  - cu
+HeaderFilterRegex: ""
+FormatStyle: file
+CheckOptions:
+  readability-identifier-naming.NamespaceCase: aNy_CasE
+  readability-identifier-naming.ClassCase: aNy_CasE
+  readability-identifier-naming.StructCase: aNy_CasE
+  readability-identifier-naming.EnumCase: aNy_CasE
+  readability-identifier-naming.FunctionCase: aNy_CasE
+  readability-identifier-naming.VariableCase: aNy_CasE
+  readability-identifier-naming.ClassMemberCase: aNy_CasE
+  readability-identifier-naming.ConstexprVariableCase: aNy_CasE
+  readability-identifier-naming.EnumConstantCase: aNy_CasE
+  readability-identifier-naming.GlobalConstantCase: aNy_CasE
+  readability-identifier-naming.MemberConstantCase: aNy_CasE
+  readability-identifier-naming.StaticConstantCase: aNy_CasE
+  readability-function-cognitive-complexity.IgnoreMacros: true
+SystemHeaders: false
