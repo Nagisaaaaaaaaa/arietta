@@ -1,0 +1,22 @@
+BasedOnStyle: LLVM
+
+AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveMacros: Consecutive
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+BinPackParameters: false
+BreakTemplateDeclarations: Yes
+ColumnLimit: 120
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+IndentPPDirectives: BeforeHash
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+LambdaBodyIndentation: OuterScope
+MaxEmptyLinesToKeep: 1
+PPIndentWidth: 2
+QualifierAlignment: Right
+RemoveBracesLLVM: true
+SeparateDefinitionBlocks: Always
+UseTab: Never
