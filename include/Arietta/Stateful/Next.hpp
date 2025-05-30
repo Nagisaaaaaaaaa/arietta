@@ -8,12 +8,12 @@ namespace next::detail {
 
 template <typename T, usize i>
 struct Reader {
-  friend auto flag(Reader<T, i>);
+  friend consteval auto flag(Reader<T, i>);
 };
 
 template <typename T, usize i>
 struct Setter {
-  friend auto flag(Reader<T, i>) {}
+  friend consteval auto flag(Reader<T, i>) {}
 
   static constexpr usize value = i;
 };

@@ -8,7 +8,7 @@ namespace map::detail {
 
 template <typename T, typename Key>
 struct Reader {
-  friend auto flag(Reader<T, Key>);
+  friend consteval auto flag(Reader<T, Key>);
 };
 
 template <typename Value>
@@ -21,7 +21,7 @@ struct Dummy {};
 
 template <typename T, typename Key, typename Value>
 struct Setter {
-  friend auto flag(Reader<T, Key>) { return Wrapper<Value>{}; }
+  friend consteval auto flag(Reader<T, Key>) { return Wrapper<Value>{}; }
 
   static constexpr auto value = Dummy<Value>{};
 };
