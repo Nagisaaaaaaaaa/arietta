@@ -23,6 +23,9 @@ struct Setter {
 
 struct Default {};
 
+template <auto v>
+struct C {};
+
 } // namespace map::detail
 
 template <typename T = map::detail::Default>
@@ -30,6 +33,11 @@ struct Map {
   template <typename Key, typename Value>
   static consteval void Insert() {
     [[maybe_unused]] map::detail::Setter<T, Key, Value> s;
+  }
+
+  template <auto key, typename Value>
+  static consteval void Insert() {
+    Insert<map::detail::C<key>, Value>();
   }
 
   template <typename Key>
