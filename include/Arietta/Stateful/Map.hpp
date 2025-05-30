@@ -28,6 +28,10 @@ struct C {};
 
 } // namespace map::detail
 
+// TODO: Currently, template parameters in C++ classes can only be either `typename` or `auto`.
+//       In other words, they do not truly support overloading in the same way functions do.
+//       As a result, the template parameters of `class Map` and `Find`
+//       currently support only `typename`, not `auto`.
 template <typename T = map::detail::Default>
 struct Map {
   template <typename Key, typename Value>
