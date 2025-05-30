@@ -17,9 +17,9 @@ struct C {};
 template <typename T = vector::detail::Default>
 struct Vector {
   template <typename Value, auto tag = []() {}>
-  static consteval void PushBack() {
+  static consteval auto PushBack() {
     constexpr usize i = Next<T, tag>();
-    Map<T>::template Insert<vector::detail::C<i>, Value>();
+    return Map<T>::template Insert<vector::detail::C<i>, Value>();
   }
 
   template <usize i>

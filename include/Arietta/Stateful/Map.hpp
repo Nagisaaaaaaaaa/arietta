@@ -16,9 +16,14 @@ struct Wrapper {
   using type = Value;
 };
 
+template <typename Value>
+struct Dummy {};
+
 template <typename T, typename Key, typename Value>
 struct Setter {
   friend auto flag(Reader<T, Key>) { return Wrapper<Value>{}; }
+
+  static constexpr auto value = Dummy<Value>{};
 };
 
 struct Default {};
@@ -35,13 +40,14 @@ struct C {};
 template <typename T = map::detail::Default>
 struct Map {
   template <typename Key, typename Value>
-  static consteval void Insert() {
-    [[maybe_unused]] map::detail::Setter<T, Key, Value> s;
+  static consteval auto Insert() {
+    map::detail::Setter<T, Key, Value> s;
+    return s.value;
   }
 
   template <auto key, typename Value>
-  static consteval void Insert() {
-    Insert<map::detail::C<key>, Value>();
+  static consteval auto Insert() {
+    return Insert<map::detail::C<key>, Value>();
   }
 
   template <typename Key>
