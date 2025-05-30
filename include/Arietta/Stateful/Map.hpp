@@ -30,7 +30,7 @@ struct C {};
 
 // TODO: Currently, template parameters in C++ classes can only be either `typename` or `auto`.
 //       In other words, they do not truly support overloading in the same way functions do.
-//       As a result, the template parameters of `class Map` and `Find`
+//       As a result, the template parameters of `class Map` and `At`
 //       currently support only `typename`, not `auto`.
 template <typename T = map::detail::Default>
 struct Map {
@@ -45,7 +45,7 @@ struct Map {
   }
 
   template <typename Key>
-  using Find = typename decltype(flag(map::detail::Reader<T, Key>{}))::type;
+  using At = typename decltype(flag(map::detail::Reader<T, Key>{}))::type;
 };
 
 } // namespace arietta::stateful
