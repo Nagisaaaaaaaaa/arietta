@@ -35,14 +35,14 @@ struct C {};
 
 } // namespace next::detail
 
-template <typename T = next::detail::Default, auto tag = []() {}, auto res = next::detail::NextImpl<T, tag>()>
+template <typename T = next::detail::Default, auto tag = []() {}>
 consteval auto Next() {
-  return res;
+  return next::detail::NextImpl<T, tag>();
 };
 
-template <auto v, auto tag = []() {}, auto res = next::detail::NextImpl<next::detail::C<v>, tag>()>
+template <auto v, auto tag = []() {}>
 consteval auto Next() {
-  return res;
+  return Next<next::detail::C<v>, tag>();
 };
 
 } // namespace arietta::stateful
