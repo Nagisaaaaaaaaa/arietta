@@ -27,6 +27,7 @@
 #include "Arietta/Arietta.hpp"
 
 namespace arietta::stateful {
+namespace {
 
 namespace map::detail {
 
@@ -52,12 +53,18 @@ struct Setter {
 
 struct Default {};
 
-template <auto v>
+template <typename>
+struct Anon {};
+
+template <auto>
 struct C {};
 
 } // namespace map::detail
 
-template <typename T = map::detail::Default>
+//
+//
+//
+template <typename _ = map::detail::Default, typename T = map::detail::Anon<_>>
 struct Map {
   template <typename Key, typename Value>
   static consteval auto Insert() {
@@ -74,4 +81,5 @@ struct Map {
   using At = typename decltype(flag(map::detail::Reader<T, Key>{}))::type;
 };
 
+} // namespace
 } // namespace arietta::stateful

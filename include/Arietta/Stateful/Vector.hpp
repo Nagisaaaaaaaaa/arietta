@@ -30,19 +30,23 @@
 #include "Arietta/Stateful/Map.hpp"
 
 namespace arietta::stateful {
+namespace {
 
 namespace vector::detail {
 
 struct Default {};
 
-template <typename T>
+template <typename>
 struct Anon {};
 
-template <auto v>
+template <auto>
 struct C {};
 
 } // namespace vector::detail
 
+//
+//
+//
 template <typename _ = vector::detail::Default, typename T = vector::detail::Anon<_>>
 struct Vector {
   template <typename Value, auto tag = []() {}>
@@ -60,4 +64,5 @@ struct Vector {
   }
 };
 
+} // namespace
 } // namespace arietta::stateful

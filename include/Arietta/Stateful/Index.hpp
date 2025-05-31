@@ -31,6 +31,7 @@
 #include "Arietta/Arietta.hpp"
 
 namespace arietta::stateful {
+namespace {
 
 namespace index::detail {
 
@@ -66,16 +67,22 @@ template <typename T, auto tag, usize i = 0>
 
 struct Default {};
 
-template <auto v>
+template <typename>
+struct Anon {};
+
+template <auto>
 struct C {};
 
 } // namespace index::detail
 
+//
+//
+//
 // TODO: Currently, template parameters in C++ classes can only be either `typename` or `auto`.
 //       In other words, they do not truly support overloading in the same way functions do.
 //       As a result, the template parameters of `Index`, `Map`, etc. and their members
 //       currently support only `typename`, not `auto`.
-template <typename T = index::detail::Default>
+template <typename _ = index::detail::Default, typename T = index::detail::Anon<_>>
 struct Index {
   template <auto tag = []() {}>
   [[nodiscard]] static consteval auto Load() {
@@ -88,4 +95,5 @@ struct Index {
   };
 };
 
+} // namespace
 } // namespace arietta::stateful
