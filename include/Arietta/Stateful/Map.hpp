@@ -1,5 +1,29 @@
 #pragma once
 
+/// \file
+/// \brief This file implements a compile-time type map, `Map`.
+///
+/// \warning This implementation relies on stateful template metaprogramming,
+/// which may lead to unexpected behavior if misused or
+/// relied upon across translation units.
+///
+/// \code
+/// Map<>::Insert<i32, f32>();
+/// Map<>::Insert<i64, f64>();
+/// static_assert(std::is_same_v<Map<>::At<i32>, f32>);
+/// static_assert(std::is_same_v<Map<>::At<i64>, f64>);
+///
+/// Map<u32>::Insert<i32, f64>();
+/// Map<u32>::Insert<i64, f32>();
+/// static_assert(std::is_same_v<Map<u32>::At<i32>, f64>);
+/// static_assert(std::is_same_v<Map<u32>::At<i64>, f32>);
+/// \endcode
+
+//
+//
+//
+//
+//
 #include "Arietta/Arietta.hpp"
 
 namespace arietta::stateful {
