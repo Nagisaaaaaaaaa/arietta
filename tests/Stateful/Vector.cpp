@@ -9,7 +9,7 @@ using namespace boost::ut;
 namespace {
 
 suite<"Vector"> _ = [] {
-  "Vector"_test = [] {
+  "Explicit"_test = [] {
     Vector<>::PushBack<int>();
     Vector<int>::PushBack<unsigned>();
     static_assert(std::is_same_v<Vector<>::At<0>, int>);
