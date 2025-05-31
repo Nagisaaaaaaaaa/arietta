@@ -9,7 +9,7 @@ using namespace boost::ut;
 namespace {
 
 suite<"Index"> _ = [] {
-  "Index"_test = [] {
+  "Explicit"_test = [] {
     static_assert(Index<>::Load() == 0);
     static_assert(Index<>::Load() == 0);
     static_assert(Index<int>::Load() == 0);

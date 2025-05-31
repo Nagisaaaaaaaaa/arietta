@@ -9,7 +9,7 @@ using namespace boost::ut;
 namespace {
 
 suite<"Map"> _ = [] {
-  "Map"_test = [] {
+  "Explicit"_test = [] {
     Map<>::Insert<i8, u8>();
     Map<int>::Insert<u8, i8>();
     Map<float>::Insert<i8, u16>();
