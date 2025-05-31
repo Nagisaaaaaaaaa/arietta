@@ -19,6 +19,14 @@ struct Setter {
 };
 
 template <typename T, auto tag, usize i = 0>
+[[nodiscard]] consteval auto LoadImpl() {
+  if constexpr (requires(Reader<T, i> r) { flag(r); })
+    return LoadImpl<T, tag, i + 1>();
+  else
+    return i;
+}
+
+template <typename T, auto tag, usize i = 0>
 [[nodiscard]] consteval auto NextImpl() {
   if constexpr (requires(Reader<T, i> r) { flag(r); }) {
     return NextImpl<T, tag, i + 1>();
@@ -34,6 +42,16 @@ template <auto v>
 struct C {};
 
 } // namespace next::detail
+
+template <typename T = next::detail::Default, auto tag = []() {}>
+consteval auto Load() {
+  return next::detail::LoadImpl<T, tag>();
+};
+
+template <auto v, auto tag = []() {}>
+consteval auto Load() {
+  return Load<next::detail::C<v>, tag>();
+};
 
 template <typename T = next::detail::Default, auto tag = []() {}>
 consteval auto Next() {

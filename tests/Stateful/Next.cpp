@@ -10,11 +10,33 @@ namespace {
 
 suite<"Next"> _ = [] {
   "Next"_test = [] {
+    static_assert(Load() == 0);
+    static_assert(Load() == 0);
+    static_assert(Load<int>() == 0);
+    static_assert(Load<int>() == 0);
+    static_assert(Load<float>() == 0);
+    static_assert(Load<float>() == 0);
+    static_assert(Load<0>() == 0);
+    static_assert(Load<0>() == 0);
+    static_assert(Load<3.14F>() == 0);
+    static_assert(Load<3.14F>() == 0);
+
     static_assert(Next() == 0);
     static_assert(Next<int>() == 0);
     static_assert(Next<float>() == 0);
     static_assert(Next<0>() == 0);
     static_assert(Next<3.14F>() == 0);
+
+    static_assert(Load() == 1);
+    static_assert(Load() == 1);
+    static_assert(Load<int>() == 1);
+    static_assert(Load<int>() == 1);
+    static_assert(Load<float>() == 1);
+    static_assert(Load<float>() == 1);
+    static_assert(Load<0>() == 1);
+    static_assert(Load<0>() == 1);
+    static_assert(Load<3.14F>() == 1);
+    static_assert(Load<3.14F>() == 1);
 
     static_assert(Next() == 1);
     static_assert(Next<int>() == 1);
@@ -26,11 +48,33 @@ suite<"Next"> _ = [] {
     static_assert(Next<0>() == 2);
     static_assert(Next<3.14F>() == 1);
 
+    static_assert(Load() == 2);
+    static_assert(Load() == 2);
+    static_assert(Load<int>() == 3);
+    static_assert(Load<int>() == 3);
+    static_assert(Load<float>() == 4);
+    static_assert(Load<float>() == 4);
+    static_assert(Load<0>() == 3);
+    static_assert(Load<0>() == 3);
+    static_assert(Load<3.14F>() == 2);
+    static_assert(Load<3.14F>() == 2);
+
     static_assert(Next() == 2);
     static_assert(Next<int>() == 3);
     static_assert(Next<float>() == 4);
     static_assert(Next<0>() == 3);
     static_assert(Next<3.14F>() == 2);
+
+    static_assert(Load() == 3);
+    static_assert(Load() == 3);
+    static_assert(Load<int>() == 4);
+    static_assert(Load<int>() == 4);
+    static_assert(Load<float>() == 5);
+    static_assert(Load<float>() == 5);
+    static_assert(Load<0>() == 4);
+    static_assert(Load<0>() == 4);
+    static_assert(Load<3.14F>() == 3);
+    static_assert(Load<3.14F>() == 3);
   };
 };
 
