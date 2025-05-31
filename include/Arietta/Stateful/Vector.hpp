@@ -45,12 +45,17 @@ template <typename _ = vector::detail::Default, typename T = vector::detail::Ano
 struct Vector {
   template <typename Value, auto tag = []() {}>
   static consteval auto PushBack() {
-    constexpr usize i = Index<T>::template FetchAdd<>();
+    constexpr usize i = Index<T>::FetchAdd();
     return Map<T>::template Insert<vector::detail::C<i>, Value>();
   }
 
   template <usize i>
   using At = typename Map<T>::template At<vector::detail::C<i>>;
+
+  template <auto tag = []() {}>
+  static consteval auto Size() {
+    return Index<T>::Load();
+  }
 };
 
 } // namespace arietta::stateful
