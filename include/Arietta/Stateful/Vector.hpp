@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Arietta/Stateful/Index.hpp"
 #include "Arietta/Stateful/Map.hpp"
-#include "Arietta/Stateful/Next.hpp"
 
 namespace arietta::stateful {
 
@@ -18,7 +18,7 @@ template <typename T = vector::detail::Default>
 struct Vector {
   template <typename Value, auto tag = []() {}>
   static consteval auto PushBack() {
-    constexpr usize i = Next<T, tag>();
+    constexpr usize i = FetchAdd<T, tag>();
     return Map<T>::template Insert<vector::detail::C<i>, Value>();
   }
 

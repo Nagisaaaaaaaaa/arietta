@@ -4,7 +4,7 @@
 
 namespace arietta::stateful {
 
-namespace next::detail {
+namespace index::detail {
 
 template <typename T, usize i>
 struct Reader {
@@ -27,9 +27,9 @@ template <typename T, auto tag, usize i = 0>
 }
 
 template <typename T, auto tag, usize i = 0>
-[[nodiscard]] consteval auto NextImpl() {
+[[nodiscard]] consteval auto FetchAddImpl() {
   if constexpr (requires(Reader<T, i> r) { flag(r); }) {
-    return NextImpl<T, tag, i + 1>();
+    return FetchAddImpl<T, tag, i + 1>();
   } else {
     Setter<T, i> s;
     return s.value;
@@ -41,26 +41,26 @@ struct Default {};
 template <auto v>
 struct C {};
 
-} // namespace next::detail
+} // namespace index::detail
 
-template <typename T = next::detail::Default, auto tag = []() {}>
+template <typename T = index::detail::Default, auto tag = []() {}>
 consteval auto Load() {
-  return next::detail::LoadImpl<T, tag>();
+  return index::detail::LoadImpl<T, tag>();
 };
 
 template <auto v, auto tag = []() {}>
 consteval auto Load() {
-  return Load<next::detail::C<v>, tag>();
+  return Load<index::detail::C<v>, tag>();
 };
 
-template <typename T = next::detail::Default, auto tag = []() {}>
-consteval auto Next() {
-  return next::detail::NextImpl<T, tag>();
+template <typename T = index::detail::Default, auto tag = []() {}>
+consteval auto FetchAdd() {
+  return index::detail::FetchAddImpl<T, tag>();
 };
 
 template <auto v, auto tag = []() {}>
-consteval auto Next() {
-  return Next<next::detail::C<v>, tag>();
+consteval auto FetchAdd() {
+  return FetchAdd<index::detail::C<v>, tag>();
 };
 
 } // namespace arietta::stateful
