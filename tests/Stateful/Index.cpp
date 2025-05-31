@@ -8,6 +8,43 @@ using namespace boost::ut;
 
 namespace {
 
+template <typename T>
+void ImplicitInstantiationByFunction() {
+  static_assert(Index<T>::Load() == 0);
+  static_assert(Index<T>::Load() == 0);
+  static_assert(Index<T>::FetchAdd() == 0);
+  static_assert(Index<T>::Load() == 1);
+  static_assert(Index<T>::Load() == 1);
+  static_assert(Index<T>::FetchAdd() == 1);
+  static_assert(Index<T>::FetchAdd() == 2);
+  static_assert(Index<T>::Load() == 3);
+  static_assert(Index<T>::Load() == 3);
+  static_assert(Index<T>::FetchAdd() == 3);
+  static_assert(Index<T>::Load() == 4);
+  static_assert(Index<T>::Load() == 4);
+};
+
+template <typename T>
+class ImplicitInstantiationByClass {
+  static_assert(Index<T>::Load() == 0);
+  static_assert(Index<T>::Load() == 0);
+  static_assert(Index<T>::FetchAdd() == 0);
+  static_assert(Index<T>::Load() == 1);
+  static_assert(Index<T>::Load() == 1);
+  static_assert(Index<T>::FetchAdd() == 1);
+  static_assert(Index<T>::FetchAdd() == 2);
+  static_assert(Index<T>::Load() == 3);
+  static_assert(Index<T>::Load() == 3);
+  static_assert(Index<T>::FetchAdd() == 3);
+  static_assert(Index<T>::Load() == 4);
+  static_assert(Index<T>::Load() == 4);
+};
+
+//
+//
+//
+//
+//
 suite<"Index"> _ = [] {
   "Explicit"_test = [] {
     static_assert(Index<>::Load() == 0);
@@ -89,6 +126,30 @@ suite<"Index"> _ = [] {
     static_assert(Index<3.14F>::Load() == 3);
     static_assert(Index<3.14F>::Load() == 3);
 #endif
+  };
+
+  //
+  //
+  //
+  "Implicit"_test = [] {
+    auto implicitInstantiationByLambda = []<typename T> {
+      static_assert(Index<T>::Load() == 0);
+      static_assert(Index<T>::Load() == 0);
+      static_assert(Index<T>::FetchAdd() == 0);
+      static_assert(Index<T>::Load() == 1);
+      static_assert(Index<T>::Load() == 1);
+      static_assert(Index<T>::FetchAdd() == 1);
+      static_assert(Index<T>::FetchAdd() == 2);
+      static_assert(Index<T>::Load() == 3);
+      static_assert(Index<T>::Load() == 3);
+      static_assert(Index<T>::FetchAdd() == 3);
+      static_assert(Index<T>::Load() == 4);
+      static_assert(Index<T>::Load() == 4);
+    };
+
+    ImplicitInstantiationByFunction<u8>();
+    ImplicitInstantiationByClass<u16>();
+    implicitInstantiationByLambda.operator()<u32>();
   };
 };
 
