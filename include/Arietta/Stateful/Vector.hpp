@@ -12,11 +12,13 @@
 /// Vector<>::PushBack<i64>();
 /// static_assert(std::is_same_v<Vector<>::At<0>, i32>);
 /// static_assert(std::is_same_v<Vector<>::At<1>, i64>);
+/// static_assert(Vector<>::Size() == 2);
 ///
 /// Vector<u32>::PushBack<f32>();
 /// Vector<u32>::PushBack<f64>();
 /// static_assert(std::is_same_v<Vector<u32>::At<0>, f32>);
 /// static_assert(std::is_same_v<Vector<u32>::At<1>, f64>);
+/// static_assert(Vector<u32>::Size() == 2);
 /// \endcode
 
 //
@@ -45,12 +47,17 @@ template <typename _ = vector::detail::Default, typename T = vector::detail::Ano
 struct Vector {
   template <typename Value, auto tag = []() {}>
   static consteval auto PushBack() {
-    constexpr usize i = Index<T>::template FetchAdd<>();
+    constexpr usize i = Index<T>::FetchAdd();
     return Map<T>::template Insert<vector::detail::C<i>, Value>();
   }
 
   template <usize i>
   using At = typename Map<T>::template At<vector::detail::C<i>>;
+
+  template <auto tag = []() {}>
+  [[nodiscard]] static consteval auto Size() {
+    return Index<T>::Load();
+  }
 };
 
 } // namespace arietta::stateful
