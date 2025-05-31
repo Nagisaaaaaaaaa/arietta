@@ -52,12 +52,18 @@ struct Setter {
 
 struct Default {};
 
+template <typename T>
+struct Anon {};
+
 template <auto v>
 struct C {};
 
 } // namespace map::detail
 
-template <typename T = map::detail::Default>
+//
+//
+//
+template <typename _ = map::detail::Default, typename T = map::detail::Anon<_>>
 struct Map {
   template <typename Key, typename Value>
   static consteval auto Insert() {
