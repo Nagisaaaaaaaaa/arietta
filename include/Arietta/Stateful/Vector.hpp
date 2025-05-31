@@ -9,12 +9,15 @@ namespace vector::detail {
 
 struct Default {};
 
+template <typename T>
+struct Anon {};
+
 template <auto v>
 struct C {};
 
 } // namespace vector::detail
 
-template <typename T = vector::detail::Default>
+template <typename _ = vector::detail::Default, typename T = vector::detail::Anon<_>>
 struct Vector {
   template <typename Value, auto tag = []() {}>
   static consteval auto PushBack() {
