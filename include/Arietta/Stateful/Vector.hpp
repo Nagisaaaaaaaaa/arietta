@@ -55,7 +55,7 @@ struct Vector {
   using At = typename Map<T>::template At<vector::detail::C<i>>;
 
   template <auto tag = []() {}>
-  static consteval auto Size() {
+  [[nodiscard]] static consteval auto Size() {
     return Index<T>::Load();
   }
 };

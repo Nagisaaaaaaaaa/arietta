@@ -78,7 +78,7 @@ struct C {};
 template <typename T = index::detail::Default>
 struct Index {
   template <auto tag = []() {}>
-  static consteval auto Load() {
+  [[nodiscard]] static consteval auto Load() {
     return index::detail::LoadImpl<T, tag>();
   };
 
