@@ -31,6 +31,7 @@
 #include "Arietta/Arietta.hpp"
 
 namespace arietta::stateful {
+namespace {
 
 namespace index::detail {
 
@@ -94,4 +95,5 @@ struct Index {
   };
 };
 
+} // namespace
 } // namespace arietta::stateful

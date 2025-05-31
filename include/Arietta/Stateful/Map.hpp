@@ -27,6 +27,7 @@
 #include "Arietta/Arietta.hpp"
 
 namespace arietta::stateful {
+namespace {
 
 namespace map::detail {
 
@@ -80,4 +81,5 @@ struct Map {
   using At = typename decltype(flag(map::detail::Reader<T, Key>{}))::type;
 };
 
+} // namespace
 } // namespace arietta::stateful

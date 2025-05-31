@@ -30,6 +30,7 @@
 #include "Arietta/Stateful/Map.hpp"
 
 namespace arietta::stateful {
+namespace {
 
 namespace vector::detail {
 
@@ -63,4 +64,5 @@ struct Vector {
   }
 };
 
+} // namespace
 } // namespace arietta::stateful
