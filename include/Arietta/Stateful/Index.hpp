@@ -1,5 +1,33 @@
 #pragma once
 
+/// \file
+/// \brief This file implements a compile-time counter, `Index`.
+///
+/// \warning This implementation relies on stateful template metaprogramming,
+/// which may lead to unexpected behavior if misused or
+/// relied upon across translation units.
+///
+/// \code
+/// static_assert(Index<>::Load() == 0);
+/// static_assert(Index<>::FetchAdd() == 0);
+/// static_assert(Index<>::Load() == 1);
+/// static_assert(Index<>::FetchAdd() == 1);
+/// static_assert(Index<>::FetchAdd() == 2);
+/// static_assert(Index<>::Load() == 3);
+///
+/// static_assert(Index<u32>::Load() == 0);
+/// static_assert(Index<u32>::FetchAdd() == 0);
+/// static_assert(Index<u32>::Load() == 1);
+/// static_assert(Index<u32>::FetchAdd() == 1);
+/// static_assert(Index<u32>::FetchAdd() == 2);
+/// static_assert(Index<u32>::Load() == 3);
+/// \endcode
+
+//
+//
+//
+//
+//
 #include "Arietta/Arietta.hpp"
 
 namespace arietta::stateful {
