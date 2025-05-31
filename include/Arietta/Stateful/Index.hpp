@@ -43,24 +43,21 @@ struct C {};
 
 } // namespace index::detail
 
-template <typename T = index::detail::Default, auto tag = []() {}>
-consteval auto Load() {
-  return index::detail::LoadImpl<T, tag>();
-};
+// TODO: Currently, template parameters in C++ classes can only be either `typename` or `auto`.
+//       In other words, they do not truly support overloading in the same way functions do.
+//       As a result, the template parameters of `Index`, `Map`, etc. and their members
+//       currently support only `typename`, not `auto`.
+template <typename T = index::detail::Default>
+struct Index {
+  template <auto tag = []() {}>
+  static consteval auto Load() {
+    return index::detail::LoadImpl<T, tag>();
+  };
 
-template <auto v, auto tag = []() {}>
-consteval auto Load() {
-  return Load<index::detail::C<v>, tag>();
-};
-
-template <typename T = index::detail::Default, auto tag = []() {}>
-consteval auto FetchAdd() {
-  return index::detail::FetchAddImpl<T, tag>();
-};
-
-template <auto v, auto tag = []() {}>
-consteval auto FetchAdd() {
-  return FetchAdd<index::detail::C<v>, tag>();
+  template <auto tag = []() {}>
+  static consteval auto FetchAdd() {
+    return index::detail::FetchAddImpl<T, tag>();
+  };
 };
 
 } // namespace arietta::stateful
