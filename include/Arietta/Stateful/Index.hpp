@@ -66,10 +66,10 @@ template <typename T, auto tag, usize i = 0>
 
 struct Default {};
 
-template <typename T>
+template <typename>
 struct Anon {};
 
-template <auto v>
+template <auto>
 struct C {};
 
 } // namespace index::detail

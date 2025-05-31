@@ -52,10 +52,10 @@ struct Setter {
 
 struct Default {};
 
-template <typename T>
+template <typename>
 struct Anon {};
 
-template <auto v>
+template <auto>
 struct C {};
 
 } // namespace map::detail
