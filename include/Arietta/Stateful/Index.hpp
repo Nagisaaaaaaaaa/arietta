@@ -15,12 +15,12 @@
 /// static_assert(Index<>::FetchAdd() == 2);
 /// static_assert(Index<>::Load() == 3);
 ///
-/// static_assert(Index<u32>::Load() == 0);
-/// static_assert(Index<u32>::FetchAdd() == 0);
-/// static_assert(Index<u32>::Load() == 1);
-/// static_assert(Index<u32>::FetchAdd() == 1);
-/// static_assert(Index<u32>::FetchAdd() == 2);
-/// static_assert(Index<u32>::Load() == 3);
+/// static_assert(Index<T>::Load() == 0);
+/// static_assert(Index<T>::FetchAdd() == 0);
+/// static_assert(Index<T>::Load() == 1);
+/// static_assert(Index<T>::FetchAdd() == 1);
+/// static_assert(Index<T>::FetchAdd() == 2);
+/// static_assert(Index<T>::Load() == 3);
 /// \endcode
 
 //

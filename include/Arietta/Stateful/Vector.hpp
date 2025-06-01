@@ -8,17 +8,17 @@
 /// relied upon across translation units.
 ///
 /// \code
-/// Vector<>::PushBack<i32>();
-/// Vector<>::PushBack<i64>();
+/// static_assert(Vector<>::PushBack<i32>());
+/// static_assert(Vector<>::PushBack<i64>());
 /// static_assert(std::is_same_v<Vector<>::At<0>, i32>);
 /// static_assert(std::is_same_v<Vector<>::At<1>, i64>);
 /// static_assert(Vector<>::Size() == 2);
 ///
-/// Vector<u32>::PushBack<f32>();
-/// Vector<u32>::PushBack<f64>();
-/// static_assert(std::is_same_v<Vector<u32>::At<0>, f32>);
-/// static_assert(std::is_same_v<Vector<u32>::At<1>, f64>);
-/// static_assert(Vector<u32>::Size() == 2);
+/// static_assert(Vector<T>::PushBack<f32>());
+/// static_assert(Vector<T>::PushBack<f64>());
+/// static_assert(std::is_same_v<Vector<T>::At<0>, f32>);
+/// static_assert(std::is_same_v<Vector<T>::At<1>, f64>);
+/// static_assert(Vector<T>::Size() == 2);
 /// \endcode
 
 //
