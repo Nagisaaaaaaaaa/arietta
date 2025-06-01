@@ -148,8 +148,14 @@ suite<"Index"> _ = [] {
     };
 
     ImplicitInstantiationByFunction<u8>();
-    ImplicitInstantiationByClass<u16>();
+    ImplicitInstantiationByFunction<u8 const>();
+    ImplicitInstantiationByFunction<u8 volatile>();
+    ImplicitInstantiationByClass<u16>{};
+    ImplicitInstantiationByClass<u16 const>{};
+    ImplicitInstantiationByClass<u16 volatile>{};
     implicitInstantiationByLambda.operator()<u32>();
+    implicitInstantiationByLambda.operator()<u32 const>();
+    implicitInstantiationByLambda.operator()<u32 volatile>();
   };
 };
 
