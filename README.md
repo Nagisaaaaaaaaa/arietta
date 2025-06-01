@@ -20,3 +20,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
   Arietta
 )
 ```
+
+## Warning
+
+Some of this library’s functionality is implemented using [stateful template metaprogramming](https://mc-deltat.github.io/articles/stateful-metaprogramming-cpp20). You can find all related features under [this directory](https://github.com/Nagisaaaaaaaaa/arietta/tree/main/include/Arietta/Stateful). Please use them with care.
