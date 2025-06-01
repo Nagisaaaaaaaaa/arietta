@@ -52,7 +52,7 @@ template <typename T, typename Key, typename Value>
 struct Setter {
   friend consteval auto flag(Reader<T, Key>) { return Wrapper<Value>{}; }
 
-  static constexpr Return<Value> value;
+  static constexpr Return<Value> value{};
 };
 
 struct Default {};
