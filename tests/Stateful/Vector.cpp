@@ -8,6 +8,67 @@ using namespace boost::ut;
 
 namespace {
 
+template <typename T>
+void ImplicitInstantiationByFunction() {
+  static_assert(Vector<T>::Size() == 0);
+  static_assert(Vector<T>::Size() == 0);
+  static_assert(Vector<T>::template PushBack<int>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(Vector<T>::Size() == 1);
+  static_assert(Vector<T>::Size() == 1);
+  static_assert(Vector<T>::template PushBack<float>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+  static_assert(Vector<T>::Size() == 2);
+  static_assert(Vector<T>::Size() == 2);
+  static_assert(Vector<T>::template PushBack<float>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<2>, float>);
+  static_assert(Vector<T>::Size() == 3);
+  static_assert(Vector<T>::Size() == 3);
+  static_assert(Vector<T>::template PushBack<int>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<2>, float>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<3>, int>);
+  static_assert(Vector<T>::Size() == 4);
+  static_assert(Vector<T>::Size() == 4);
+}
+
+template <typename T>
+class ImplicitInstantiationByClass {
+  static_assert(Vector<T>::Size() == 0);
+  static_assert(Vector<T>::Size() == 0);
+  static_assert(Vector<T>::template PushBack<int>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(Vector<T>::Size() == 1);
+  static_assert(Vector<T>::Size() == 1);
+  static_assert(Vector<T>::template PushBack<float>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+  static_assert(Vector<T>::Size() == 2);
+  static_assert(Vector<T>::Size() == 2);
+  static_assert(Vector<T>::template PushBack<float>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<2>, float>);
+  static_assert(Vector<T>::Size() == 3);
+  static_assert(Vector<T>::Size() == 3);
+  static_assert(Vector<T>::template PushBack<int>());
+  static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<2>, float>);
+  static_assert(std::is_same_v<typename Vector<T>::template At<3>, int>);
+  static_assert(Vector<T>::Size() == 4);
+  static_assert(Vector<T>::Size() == 4);
+};
+
+//
+//
+//
+//
+//
 suite<"Vector"> _ = [] {
   "Explicit"_test = [] {
     static_assert(Vector<>::Size() == 0);
@@ -167,6 +228,48 @@ suite<"Vector"> _ = [] {
     static_assert(Vector<>::Size() == 9);
     static_assert(Vector<int>::Size() == 9);
     static_assert(Vector<int>::Size() == 9);
+  };
+
+  //
+  //
+  //
+  "Implicit"_test = [] {
+    auto implicitInstantiationByLambda = []<typename T> {
+      static_assert(Vector<T>::Size() == 0);
+      static_assert(Vector<T>::Size() == 0);
+      static_assert(Vector<T>::template PushBack<int>());
+      static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+      static_assert(Vector<T>::Size() == 1);
+      static_assert(Vector<T>::Size() == 1);
+      static_assert(Vector<T>::template PushBack<float>());
+      static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+      static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+      static_assert(Vector<T>::Size() == 2);
+      static_assert(Vector<T>::Size() == 2);
+      static_assert(Vector<T>::template PushBack<float>());
+      static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+      static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+      static_assert(std::is_same_v<typename Vector<T>::template At<2>, float>);
+      static_assert(Vector<T>::Size() == 3);
+      static_assert(Vector<T>::Size() == 3);
+      static_assert(Vector<T>::template PushBack<int>());
+      static_assert(std::is_same_v<typename Vector<T>::template At<0>, int>);
+      static_assert(std::is_same_v<typename Vector<T>::template At<1>, float>);
+      static_assert(std::is_same_v<typename Vector<T>::template At<2>, float>);
+      static_assert(std::is_same_v<typename Vector<T>::template At<3>, int>);
+      static_assert(Vector<T>::Size() == 4);
+      static_assert(Vector<T>::Size() == 4);
+    };
+
+    ImplicitInstantiationByFunction<u8>();
+    ImplicitInstantiationByFunction<u8 const>();
+    ImplicitInstantiationByFunction<u8 volatile>();
+    ImplicitInstantiationByClass<u16>{};
+    ImplicitInstantiationByClass<u16 const>{};
+    ImplicitInstantiationByClass<u16 volatile>{};
+    implicitInstantiationByLambda.operator()<u32>();
+    implicitInstantiationByLambda.operator()<u32 const>();
+    implicitInstantiationByLambda.operator()<u32 volatile>();
   };
 };
 
