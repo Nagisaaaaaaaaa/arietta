@@ -41,14 +41,18 @@ struct Wrapper {
   using type = Value;
 };
 
+struct Invalid {};
+
 template <typename Value>
-struct Dummy {};
+struct Return {
+  [[nodiscard]] consteval operator bool() const { return !std::is_same_v<Value, Invalid>; }
+};
 
 template <typename T, typename Key, typename Value>
 struct Setter {
   friend consteval auto flag(Reader<T, Key>) { return Wrapper<Value>{}; }
 
-  static constexpr auto value = Dummy<Value>{};
+  static constexpr Return<Value> value{};
 };
 
 struct Default {};

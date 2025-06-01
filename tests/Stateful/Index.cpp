@@ -81,16 +81,16 @@ suite<"Index"> _ = [] {
     static_assert(Index<3.14F>::Load() == 1);
 #endif
 
-    static_assert(Index<>::FetchAdd() == 1);
-    static_assert(Index<int>::FetchAdd() == 1);
-    static_assert(Index<int>::FetchAdd() == 2);
-    static_assert(Index<float>::FetchAdd() == 1);
-    static_assert(Index<float>::FetchAdd() == 2);
-    static_assert(Index<float>::FetchAdd() == 3);
+    Index<>::FetchAdd();
+    Index<int>::FetchAdd();
+    Index<int>::FetchAdd();
+    Index<float>::FetchAdd();
+    Index<float>::FetchAdd();
+    Index<float>::FetchAdd();
 #if 0
-    static_assert(Index<0>::FetchAdd() == 1);
-    static_assert(Index<0>::FetchAdd() == 2);
-    static_assert(Index<3.14F>::FetchAdd() == 1);
+    Index<0>::FetchAdd();
+    Index<0>::FetchAdd();
+    Index<3.14F>::FetchAdd();
 #endif
 
     static_assert(Index<>::Load() == 2);

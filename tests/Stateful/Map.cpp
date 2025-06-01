@@ -8,6 +8,37 @@ using namespace boost::ut;
 
 namespace {
 
+template <typename T>
+void ImplicitInstantiationByFunction() {
+  static_assert(Map<T>::template Insert<i8, u8>());
+  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(Map<T>::template Insert<i16, u16>());
+  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(std::is_same_v<typename Map<T>::template At<i16>, u16>);
+  static_assert(Map<T>::template Insert<i32, u32>());
+  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(std::is_same_v<typename Map<T>::template At<i16>, u16>);
+  static_assert(std::is_same_v<typename Map<T>::template At<i32>, u32>);
+}
+
+template <typename T>
+class ImplicitInstantiationByClass {
+  static_assert(Map<T>::template Insert<i8, u8>());
+  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(Map<T>::template Insert<i16, u16>());
+  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(std::is_same_v<typename Map<T>::template At<i16>, u16>);
+  static_assert(Map<T>::template Insert<i32, u32>());
+  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(std::is_same_v<typename Map<T>::template At<i16>, u16>);
+  static_assert(std::is_same_v<typename Map<T>::template At<i32>, u32>);
+};
+
+//
+//
+//
+//
+//
 suite<"Map"> _ = [] {
   "Explicit"_test = [] {
     Map<>::Insert<i8, u8>();
@@ -39,6 +70,33 @@ suite<"Map"> _ = [] {
     static_assert(std::is_same_v<Map<float>::At<i8>, u16>);
     static_assert(std::is_same_v<Map<float>::At<i16>, u32>);
     static_assert(std::is_same_v<Map<float>::At<i32>, u64>);
+  };
+
+  //
+  //
+  //
+  "Implicit"_test = [] {
+    auto implicitInstantiationByLambda = []<typename T> {
+      static_assert(Map<T>::template Insert<i8, u8>());
+      static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+      static_assert(Map<T>::template Insert<i16, u16>());
+      static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+      static_assert(std::is_same_v<typename Map<T>::template At<i16>, u16>);
+      static_assert(Map<T>::template Insert<i32, u32>());
+      static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+      static_assert(std::is_same_v<typename Map<T>::template At<i16>, u16>);
+      static_assert(std::is_same_v<typename Map<T>::template At<i32>, u32>);
+    };
+
+    ImplicitInstantiationByFunction<u8>();
+    ImplicitInstantiationByFunction<u8 const>();
+    ImplicitInstantiationByFunction<u8 volatile>();
+    ImplicitInstantiationByClass<u16>{};
+    ImplicitInstantiationByClass<u16 const>{};
+    ImplicitInstantiationByClass<u16 volatile>{};
+    implicitInstantiationByLambda.operator()<u32>();
+    implicitInstantiationByLambda.operator()<u32 const>();
+    implicitInstantiationByLambda.operator()<u32 volatile>();
   };
 };
 
