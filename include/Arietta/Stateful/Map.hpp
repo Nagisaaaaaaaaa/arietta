@@ -8,15 +8,15 @@
 /// relied upon across translation units.
 ///
 /// \code
-/// Map<>::Insert<i32, f32>();
-/// Map<>::Insert<i64, f64>();
+/// static_assert(Map<>::Insert<i32, f32>());
+/// static_assert(Map<>::Insert<i64, f64>());
 /// static_assert(std::is_same_v<Map<>::At<i32>, f32>);
 /// static_assert(std::is_same_v<Map<>::At<i64>, f64>);
 ///
-/// Map<u32>::Insert<i32, f64>();
-/// Map<u32>::Insert<i64, f32>();
-/// static_assert(std::is_same_v<Map<u32>::At<i32>, f64>);
-/// static_assert(std::is_same_v<Map<u32>::At<i64>, f32>);
+/// static_assert(Map<T>::Insert<i32, f64>());
+/// static_assert(Map<T>::Insert<i64, f32>());
+/// static_assert(std::is_same_v<Map<T>::At<i32>, f64>);
+/// static_assert(std::is_same_v<Map<T>::At<i64>, f32>);
 /// \endcode
 
 //
