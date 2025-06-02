@@ -33,7 +33,7 @@
 namespace arietta::stateful {
 namespace {
 
-namespace index::detail {
+namespace detail::index {
 
 template <typename T, usize i>
 struct Reader {
@@ -73,7 +73,7 @@ struct Anon {};
 template <auto>
 struct C {};
 
-} // namespace index::detail
+} // namespace detail::index
 
 //
 //
@@ -82,16 +82,16 @@ struct C {};
 //       In other words, they do not truly support overloading in the same way functions do.
 //       As a result, the template parameters of `Index`, `Map`, etc. and their members
 //       currently support only `typename`, not `auto`.
-template <typename _ = index::detail::Default, typename T = index::detail::Anon<_>>
+template <typename _ = detail::index::Default, typename T = detail::index::Anon<_>>
 struct Index {
   template <auto tag = []() {}>
   [[nodiscard]] static consteval auto Load() {
-    return index::detail::LoadImpl<T, tag>();
+    return detail::index::LoadImpl<T, tag>();
   };
 
   template <auto tag = []() {}>
   static consteval auto FetchAdd() {
-    return index::detail::FetchAddImpl<T, tag>();
+    return detail::index::FetchAddImpl<T, tag>();
   };
 };
 

@@ -32,7 +32,7 @@
 namespace arietta::stateful {
 namespace {
 
-namespace vector::detail {
+namespace detail::vector {
 
 struct Default {};
 
@@ -42,21 +42,21 @@ struct Anon {};
 template <auto>
 struct C {};
 
-} // namespace vector::detail
+} // namespace detail::vector
 
 //
 //
 //
-template <typename _ = vector::detail::Default, typename T = vector::detail::Anon<_>>
+template <typename _ = detail::vector::Default, typename T = detail::vector::Anon<_>>
 struct Vector {
   template <typename Value, auto tag = []() {}>
   static consteval auto PushBack() {
     constexpr usize i = Index<T>::FetchAdd();
-    return Map<T>::template Insert<vector::detail::C<i>, Value>();
+    return Map<T>::template Insert<detail::vector::C<i>, Value>();
   }
 
   template <usize i>
-  using At = typename Map<T>::template At<vector::detail::C<i>>;
+  using At = typename Map<T>::template At<detail::vector::C<i>>;
 
   template <auto tag = []() {}>
   [[nodiscard]] static consteval auto Size() {
