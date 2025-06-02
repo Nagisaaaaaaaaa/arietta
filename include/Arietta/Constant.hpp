@@ -138,25 +138,25 @@ template <typename U, auto t>
 }
 
 template <auto t, typename U>
-  requires(!t)
+  requires(!static_cast<bool>(t))
 [[nodiscard]] ART_SPECIFIER consteval auto operator&&(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t && static_cast<U>(true), false);
 }
 
 template <typename U, auto t>
-  requires(!t)
+  requires(!static_cast<bool>(t))
 [[nodiscard]] ART_SPECIFIER consteval auto operator&&(U, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<U>(true) && t, false);
 }
 
 template <auto t, typename U>
-  requires(t)
+  requires(static_cast<bool>(t))
 [[nodiscard]] ART_SPECIFIER consteval auto operator||(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t || static_cast<U>(false), true);
 }
 
 template <typename U, auto t>
-  requires(t)
+  requires(static_cast<bool>(t))
 [[nodiscard]] ART_SPECIFIER consteval auto operator||(U, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<U>(false) || t, true);
 }
