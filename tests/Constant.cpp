@@ -49,6 +49,51 @@ suite<"Constant"> _ = [] {
   //
   //
   //
+  "Implicit Casts By Operators"_test = [] {
+    static_assert(std::is_same_v<decltype(-3 + C<-3>{}), int>);
+    static_assert(std::is_same_v<decltype(0 + C<-3>{}), int>);
+    static_assert(std::is_same_v<decltype(3 + C<-3>{}), int>);
+    static_assert(std::is_same_v<decltype(-3 + C<0>{}), int>);
+    static_assert(std::is_same_v<decltype(0 + C<0>{}), int>);
+    static_assert(std::is_same_v<decltype(3 + C<0>{}), int>);
+    static_assert(std::is_same_v<decltype(-3 + C<3>{}), int>);
+    static_assert(std::is_same_v<decltype(0 + C<3>{}), int>);
+    static_assert(std::is_same_v<decltype(3 + C<3>{}), int>);
+
+    static_assert(std::is_same_v<decltype(C<-3>{} + -3), int>);
+    static_assert(std::is_same_v<decltype(C<0>{} + -3), int>);
+    static_assert(std::is_same_v<decltype(C<3>{} + -3), int>);
+    static_assert(std::is_same_v<decltype(C<-3>{} + 0), int>);
+    static_assert(std::is_same_v<decltype(C<0>{} + 0), int>);
+    static_assert(std::is_same_v<decltype(C<3>{} + 0), int>);
+    static_assert(std::is_same_v<decltype(C<-3>{} + 3), int>);
+    static_assert(std::is_same_v<decltype(C<0>{} + 3), int>);
+    static_assert(std::is_same_v<decltype(C<3>{} + 3), int>);
+
+    expect(-3 + C<-3>{} == -6);
+    expect(0 + C<-3>{} == -3);
+    expect(3 + C<-3>{} == 0);
+    expect(-3 + C<0>{} == -3);
+    expect(0 + C<0>{} == 0);
+    expect(3 + C<0>{} == 3);
+    expect(-3 + C<3>{} == 0);
+    expect(0 + C<3>{} == 3);
+    expect(3 + C<3>{} == 6);
+
+    expect(C<-3>{} + -3 == -6);
+    expect(C<0>{} + -3 == -3);
+    expect(C<3>{} + -3 == 0);
+    expect(C<-3>{} + 0 == -3);
+    expect(C<0>{} + 0 == 0);
+    expect(C<3>{} + 0 == 3);
+    expect(C<-3>{} + 3 == 0);
+    expect(C<0>{} + 3 == 3);
+    expect(C<3>{} + 3 == 6);
+  };
+
+  //
+  //
+  //
   "Operator Common Cases"_test = [] {
     static_assert(std::is_same_v<decltype(+C<-3>{}), C<-3>>);
     static_assert(std::is_same_v<decltype(+C<0>{}), C<0>>);
