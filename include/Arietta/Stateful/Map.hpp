@@ -29,7 +29,7 @@
 namespace arietta::stateful {
 namespace {
 
-namespace map::detail {
+namespace detail::map {
 
 template <typename T, typename Key>
 struct Reader {
@@ -63,26 +63,26 @@ struct Anon {};
 template <auto>
 struct C {};
 
-} // namespace map::detail
+} // namespace detail::map
 
 //
 //
 //
-template <typename _ = map::detail::Default, typename T = map::detail::Anon<_>>
+template <typename _ = detail::map::Default, typename T = detail::map::Anon<_>>
 struct Map {
   template <typename Key, typename Value>
   static consteval auto Insert() {
-    map::detail::Setter<T, Key, Value> s;
+    detail::map::Setter<T, Key, Value> s;
     return s.value;
   }
 
   template <auto key, typename Value>
   static consteval auto Insert() {
-    return Insert<map::detail::C<key>, Value>();
+    return Insert<detail::map::C<key>, Value>();
   }
 
   template <typename Key>
-  using At = typename decltype(flag(map::detail::Reader<T, Key>{}))::type;
+  using At = typename decltype(flag(detail::map::Reader<T, Key>{}))::type;
 };
 
 } // namespace
