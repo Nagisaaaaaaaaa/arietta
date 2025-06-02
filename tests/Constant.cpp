@@ -45,6 +45,63 @@ suite<"Constant"> _ = [] {
       static_assert(v == -3.0);
     }
   };
+
+  //
+  //
+  //
+  "Operator Common Cases"_test = [] {
+    static_assert(std::is_same_v<decltype(+C<-3>{}), C<-3>>);
+    static_assert(std::is_same_v<decltype(+C<0>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(+C<3>{}), C<3>>);
+
+    static_assert(std::is_same_v<decltype(-C<-3>{}), C<3>>);
+    static_assert(std::is_same_v<decltype(-C<0>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(-C<3>{}), C<-3>>);
+
+    static_assert(C<-3>{});
+    static_assert(!C<0>{});
+    static_assert(C<3>{});
+    static_assert(std::is_same_v<decltype(!C<-3>{}), C<false>>);
+    static_assert(std::is_same_v<decltype(!C<0>{}), C<true>>);
+    static_assert(std::is_same_v<decltype(!C<3>{}), C<false>>);
+
+    static_assert(std::is_same_v<decltype(C<-3>{} + C<-3>{}), C<-6>>);
+    static_assert(std::is_same_v<decltype(C<0>{} + C<-3>{}), C<-3>>);
+    static_assert(std::is_same_v<decltype(C<3>{} + C<-3>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<-3>{} + C<0>{}), C<-3>>);
+    static_assert(std::is_same_v<decltype(C<0>{} + C<0>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<3>{} + C<0>{}), C<3>>);
+    static_assert(std::is_same_v<decltype(C<-3>{} + C<3>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<0>{} + C<3>{}), C<3>>);
+    static_assert(std::is_same_v<decltype(C<3>{} + C<3>{}), C<6>>);
+
+    static_assert(std::is_same_v<decltype(C<-3>{} - C<-3>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<0>{} - C<-3>{}), C<3>>);
+    static_assert(std::is_same_v<decltype(C<3>{} - C<-3>{}), C<6>>);
+    static_assert(std::is_same_v<decltype(C<-3>{} - C<0>{}), C<-3>>);
+    static_assert(std::is_same_v<decltype(C<0>{} - C<0>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<3>{} - C<0>{}), C<3>>);
+    static_assert(std::is_same_v<decltype(C<-3>{} - C<3>{}), C<-6>>);
+    static_assert(std::is_same_v<decltype(C<0>{} - C<3>{}), C<-3>>);
+    static_assert(std::is_same_v<decltype(C<3>{} - C<3>{}), C<0>>);
+
+    static_assert(std::is_same_v<decltype(C<-3>{} * C<-3>{}), C<9>>);
+    static_assert(std::is_same_v<decltype(C<0>{} * C<-3>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<3>{} * C<-3>{}), C<-9>>);
+    static_assert(std::is_same_v<decltype(C<-3>{} * C<0>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<0>{} * C<0>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<3>{} * C<0>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<-3>{} * C<3>{}), C<-9>>);
+    static_assert(std::is_same_v<decltype(C<0>{} * C<3>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<3>{} * C<3>{}), C<9>>);
+
+    static_assert(std::is_same_v<decltype(C<-3>{} / C<-3>{}), C<1>>);
+    static_assert(std::is_same_v<decltype(C<0>{} / C<-3>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<3>{} / C<-3>{}), C<-1>>);
+    static_assert(std::is_same_v<decltype(C<-3>{} / C<3>{}), C<-1>>);
+    static_assert(std::is_same_v<decltype(C<0>{} / C<3>{}), C<0>>);
+    static_assert(std::is_same_v<decltype(C<3>{} / C<3>{}), C<1>>);
+  };
 };
 
 } // namespace
