@@ -20,7 +20,7 @@ struct C {
 
   static constexpr auto value = v;
 
-  [[nodiscard]] ART_SPECIFIER consteval operator value_type() const noexcept { return value; }
+  [[nodiscard]] consteval operator value_type() const noexcept { return value; }
 };
 
 //
@@ -34,17 +34,17 @@ static_assert(false, "Some macros conflict with Arietta");
 
 #define ART_CONSTANT_LEFT_UNARY_OP(OP)                                                                                 \
   template <auto t>                                                                                                    \
-  [[nodiscard]] ART_SPECIFIER consteval C<(OP t)> operator OP(C<t>) {                                                  \
+  [[nodiscard]] consteval C<(OP t)> operator OP(C<t>) {                                                                \
     return {};                                                                                                         \
   }
 #define ART_CONSTANT_RIGHT_UNARY_OP(OP)                                                                                \
   template <auto t>                                                                                                    \
-  [[nodiscard]] ART_SPECIFIER consteval C<(t OP)> operator OP(C<t>) {                                                  \
+  [[nodiscard]] consteval C<(t OP)> operator OP(C<t>) {                                                                \
     return {};                                                                                                         \
   }
 #define ART_CONSTANT_BINARY_OP(OP)                                                                                     \
   template <auto t, auto u>                                                                                            \
-  [[nodiscard]] ART_SPECIFIER consteval C<(t OP u)> operator OP(C<t>, C<u>) {                                          \
+  [[nodiscard]] consteval C<(t OP u)> operator OP(C<t>, C<u>) {                                                        \
     return {};                                                                                                         \
   }
 
@@ -97,67 +97,67 @@ static_assert(false, "Some macros conflict with Arietta");
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] ART_SPECIFIER consteval auto operator*(C<t>, U) {
+[[nodiscard]] consteval auto operator*(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t * static_cast<U>(1), 0);
 }
 
 template <typename U, auto t>
   requires(t == 0)
-[[nodiscard]] ART_SPECIFIER consteval auto operator*(U, C<t>) {
+[[nodiscard]] consteval auto operator*(U, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<U>(1) * t, 0);
 }
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] ART_SPECIFIER consteval auto operator/(C<t>, U) {
+[[nodiscard]] consteval auto operator/(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t / static_cast<U>(1), 0);
 }
 
 template <typename U, auto t>
   requires(t == 1 || t == -1)
-[[nodiscard]] ART_SPECIFIER consteval auto operator%(U, C<t>) {
+[[nodiscard]] consteval auto operator%(U, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<U>(1) % t, 0);
 }
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] ART_SPECIFIER consteval auto operator%(C<t>, U) {
+[[nodiscard]] consteval auto operator%(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t % static_cast<U>(1), 0);
 }
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] ART_SPECIFIER consteval auto operator&(C<t>, U) {
+[[nodiscard]] consteval auto operator&(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t & static_cast<U>(1), 0);
 }
 
 template <typename U, auto t>
   requires(t == 0)
-[[nodiscard]] ART_SPECIFIER consteval auto operator&(U, C<t>) {
+[[nodiscard]] consteval auto operator&(U, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<U>(1) & t, 0);
 }
 
 template <auto t, typename U>
   requires(!static_cast<bool>(t))
-[[nodiscard]] ART_SPECIFIER consteval auto operator&&(C<t>, U) {
+[[nodiscard]] consteval auto operator&&(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t && static_cast<U>(true), false);
 }
 
 template <typename U, auto t>
   requires(!static_cast<bool>(t))
-[[nodiscard]] ART_SPECIFIER consteval auto operator&&(U, C<t>) {
+[[nodiscard]] consteval auto operator&&(U, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<U>(true) && t, false);
 }
 
 template <auto t, typename U>
   requires(static_cast<bool>(t))
-[[nodiscard]] ART_SPECIFIER consteval auto operator||(C<t>, U) {
+[[nodiscard]] consteval auto operator||(C<t>, U) {
   ART_CONSTANT_OP_RETURN(t || static_cast<U>(false), true);
 }
 
 template <typename U, auto t>
   requires(static_cast<bool>(t))
-[[nodiscard]] ART_SPECIFIER consteval auto operator||(U, C<t>) {
+[[nodiscard]] consteval auto operator||(U, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<U>(false) || t, true);
 }
 
