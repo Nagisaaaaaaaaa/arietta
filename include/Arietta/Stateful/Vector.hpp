@@ -10,15 +10,17 @@
 /// \code
 /// static_assert(Vector<>::PushBack<i32>());
 /// static_assert(Vector<>::PushBack<i64>());
+/// static_assert(Vector<>::Size() == 2);
 /// static_assert(std::is_same_v<Vector<>::At<0>, i32>);
 /// static_assert(std::is_same_v<Vector<>::At<1>, i64>);
-/// static_assert(Vector<>::Size() == 2);
+/// static_assert(std::is_same_v<Vector<>::Back<>, i64>);
 ///
 /// static_assert(Vector<T>::PushBack<f32>());
 /// static_assert(Vector<T>::PushBack<f64>());
+/// static_assert(Vector<T>::Size() == 2);
 /// static_assert(std::is_same_v<Vector<T>::At<0>, f32>);
 /// static_assert(std::is_same_v<Vector<T>::At<1>, f64>);
-/// static_assert(Vector<T>::Size() == 2);
+/// static_assert(std::is_same_v<Vector<T>::Back<>, f64>);
 /// \endcode
 
 //
@@ -33,6 +35,18 @@ namespace arietta::stateful {
 namespace {
 
 namespace detail::vector {
+
+struct Invalid {};
+
+template <typename Vector, usize size, auto tag>
+struct BackImpl {
+  using type = typename Vector::template At<size - 1>;
+};
+
+template <typename Vector, auto tag>
+struct BackImpl<Vector, 0, tag> {
+  using type = Invalid;
+};
 
 struct Default {};
 
@@ -62,6 +76,10 @@ struct Vector {
 
   template <usize i>
   using At = typename Map<T>::template At<detail::vector::C<i>>;
+
+  template <auto tag = []() {}>
+    requires(Size() > 0)
+  using Back = typename detail::vector::BackImpl<Vector, Size(), tag>::type;
 };
 
 } // namespace
