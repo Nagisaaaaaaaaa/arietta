@@ -49,6 +49,11 @@ struct C {};
 //
 template <typename _ = detail::vector::Default, typename T = detail::vector::Anon<_>>
 struct Vector {
+  template <auto tag = []() {}>
+  [[nodiscard]] static consteval auto Size() {
+    return Index<T>::Load();
+  }
+
   template <typename Value, auto tag = []() {}>
   static consteval auto PushBack() {
     constexpr usize i = Index<T>::FetchAdd();
@@ -57,11 +62,6 @@ struct Vector {
 
   template <usize i>
   using At = typename Map<T>::template At<detail::vector::C<i>>;
-
-  template <auto tag = []() {}>
-  [[nodiscard]] static consteval auto Size() {
-    return Index<T>::Load();
-  }
 };
 
 } // namespace
