@@ -77,9 +77,10 @@ struct Vector {
   template <usize i>
   using At = typename Map<T>::template At<detail::vector::C<i>>;
 
+  // TODO: `Size<tag>()` is used in place of `Size()` to avoid compiler issues with GCC and Clang.
   template <auto tag = []() {}>
-    requires(Size() > 0)
-  using Back = typename detail::vector::BackImpl<Vector, Size(), tag>::type;
+    requires(Size<tag>() > 0)
+  using Back = typename detail::vector::BackImpl<Vector, Size<tag>(), tag>::type;
 };
 
 } // namespace
