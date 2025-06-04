@@ -36,18 +36,6 @@ namespace {
 
 namespace detail::vector {
 
-struct Invalid {};
-
-template <typename Vector, usize size, auto tag>
-struct BackImpl {
-  using type = typename Vector::template At<size - 1>;
-};
-
-template <typename Vector, auto tag>
-struct BackImpl<Vector, 0, tag> {
-  using type = Invalid;
-};
-
 struct Default {};
 
 template <typename>
@@ -77,10 +65,9 @@ struct Vector {
   template <usize i>
   using At = typename Map<T>::template At<detail::vector::C<i>>;
 
-  // TODO: `Size<tag>()` is used in place of `Size()` to avoid compiler issues with GCC and Clang.
   template <auto tag = []() {}>
     requires(Size<tag>() > 0)
-  using Back = typename detail::vector::BackImpl<Vector, Size<tag>(), tag>::type;
+  using Back = At<Size<tag>() - 1>;
 };
 
 } // namespace
