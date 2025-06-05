@@ -8,13 +8,13 @@
 /// relied upon across translation units.
 ///
 /// \code
-/// static_assert(Map<>::Insert<i32, f32>());
-/// static_assert(Map<>::Insert<i64, f64>());
+/// SRT_EXPR(Map<>::Insert<i32, f32>());
+/// SRT_EXPR(Map<>::Insert<i64, f64>());
 /// static_assert(std::is_same_v<Map<>::At<i32>, f32>);
 /// static_assert(std::is_same_v<Map<>::At<i64>, f64>);
 ///
-/// static_assert(Map<T>::Insert<i32, f64>());
-/// static_assert(Map<T>::Insert<i64, f32>());
+/// SRT_EXPR(Map<T>::Insert<i32, f64>());
+/// SRT_EXPR(Map<T>::Insert<i64, f32>());
 /// static_assert(std::is_same_v<Map<T>::At<i32>, f64>);
 /// static_assert(std::is_same_v<Map<T>::At<i64>, f32>);
 /// \endcode
@@ -24,7 +24,7 @@
 //
 //
 //
-#include "Arietta/Arietta.hpp"
+#include "Arietta/Stateful/Stateful.hpp"
 
 namespace arietta::stateful {
 namespace {

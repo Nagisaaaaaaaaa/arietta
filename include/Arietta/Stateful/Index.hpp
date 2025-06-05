@@ -28,7 +28,7 @@
 //
 //
 //
-#include "Arietta/Arietta.hpp"
+#include "Arietta/Stateful/Stateful.hpp"
 
 namespace arietta::stateful {
 namespace {
