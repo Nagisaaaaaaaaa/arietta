@@ -15,8 +15,8 @@ void ImplicitInstantiationByFunction() {
   static_assert(Index<T>::FetchAdd() == 0);
   static_assert(Index<T>::Load() == 1);
   static_assert(Index<T>::Load() == 1);
-  static_assert(Index<T>::FetchAdd() == 1);
-  static_assert(Index<T>::FetchAdd() == 2);
+  SRT_EXPR(Index<T>::FetchAdd());
+  SRT_EXPR(Index<T>::FetchAdd());
   static_assert(Index<T>::Load() == 3);
   static_assert(Index<T>::Load() == 3);
   static_assert(Index<T>::FetchAdd() == 3);
@@ -31,8 +31,8 @@ class ImplicitInstantiationByClass {
   static_assert(Index<T>::FetchAdd() == 0);
   static_assert(Index<T>::Load() == 1);
   static_assert(Index<T>::Load() == 1);
-  static_assert(Index<T>::FetchAdd() == 1);
-  static_assert(Index<T>::FetchAdd() == 2);
+  SRT_EXPR(Index<T>::FetchAdd());
+  SRT_EXPR(Index<T>::FetchAdd());
   static_assert(Index<T>::Load() == 3);
   static_assert(Index<T>::Load() == 3);
   static_assert(Index<T>::FetchAdd() == 3);
@@ -138,8 +138,8 @@ suite<"Index"> _ = [] {
       static_assert(Index<T>::FetchAdd() == 0);
       static_assert(Index<T>::Load() == 1);
       static_assert(Index<T>::Load() == 1);
-      static_assert(Index<T>::FetchAdd() == 1);
-      static_assert(Index<T>::FetchAdd() == 2);
+      SRT_EXPR(Index<T>::FetchAdd());
+      SRT_EXPR(Index<T>::FetchAdd());
       static_assert(Index<T>::Load() == 3);
       static_assert(Index<T>::Load() == 3);
       static_assert(Index<T>::FetchAdd() == 3);

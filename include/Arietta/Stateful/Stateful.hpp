@@ -32,7 +32,7 @@ static_assert(false, "Some macros conflict with Arietta");
 /// \brief This macro forces any `consteval` expression
 /// with a return type of `auto` to be truly executed at compile time.
 #define SRT_EXPR(...)                                                                                                  \
-  static_assert(!::std::is_same_v<decltype(__VA_ARGS__), ::arietta::stateful::detail::stateful::Invalid>);
+  static_assert(!::std::is_same_v<decltype(__VA_ARGS__), ::arietta::stateful::detail::stateful::Invalid>)
 
 } // namespace
 } // namespace arietta::stateful
