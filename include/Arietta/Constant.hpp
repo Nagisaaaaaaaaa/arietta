@@ -97,68 +97,68 @@ static_assert(false, "Some macros conflict with Arietta");
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] consteval auto operator*(C<t>, U) {
-  ART_CONSTANT_OP_RETURN(t * static_cast<U>(1), 0);
+[[nodiscard]] consteval auto operator*(C<t>, U &&) {
+  ART_CONSTANT_OP_RETURN(t * static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <typename U, auto t>
   requires(t == 0)
-[[nodiscard]] consteval auto operator*(U, C<t>) {
-  ART_CONSTANT_OP_RETURN(static_cast<U>(1) * t, 0);
+[[nodiscard]] consteval auto operator*(U &&, C<t>) {
+  ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(1) * t, 0);
 }
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] consteval auto operator/(C<t>, U) {
-  ART_CONSTANT_OP_RETURN(t / static_cast<U>(1), 0);
+[[nodiscard]] consteval auto operator/(C<t>, U &&) {
+  ART_CONSTANT_OP_RETURN(t / static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <typename U, auto t>
   requires(t == 1 || t == -1)
-[[nodiscard]] consteval auto operator%(U, C<t>) {
-  ART_CONSTANT_OP_RETURN(static_cast<U>(1) % t, 0);
+[[nodiscard]] consteval auto operator%(U &&, C<t>) {
+  ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(1) % t, 0);
 }
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] consteval auto operator%(C<t>, U) {
-  ART_CONSTANT_OP_RETURN(t % static_cast<U>(1), 0);
+[[nodiscard]] consteval auto operator%(C<t>, U &&) {
+  ART_CONSTANT_OP_RETURN(t % static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <auto t, typename U>
   requires(t == 0)
-[[nodiscard]] consteval auto operator&(C<t>, U) {
-  ART_CONSTANT_OP_RETURN(t & static_cast<U>(1), 0);
+[[nodiscard]] consteval auto operator&(C<t>, U &&) {
+  ART_CONSTANT_OP_RETURN(t & static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <typename U, auto t>
   requires(t == 0)
-[[nodiscard]] consteval auto operator&(U, C<t>) {
-  ART_CONSTANT_OP_RETURN(static_cast<U>(1) & t, 0);
+[[nodiscard]] consteval auto operator&(U &&, C<t>) {
+  ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(1) & t, 0);
 }
 
 template <auto t, typename U>
   requires(!static_cast<bool>(t))
-[[nodiscard]] consteval auto operator&&(C<t>, U) {
-  ART_CONSTANT_OP_RETURN(t && static_cast<U>(true), false);
+[[nodiscard]] consteval auto operator&&(C<t>, U &&) {
+  ART_CONSTANT_OP_RETURN(t && static_cast<std::decay_t<U>>(true), false);
 }
 
 template <typename U, auto t>
   requires(!static_cast<bool>(t))
-[[nodiscard]] consteval auto operator&&(U, C<t>) {
-  ART_CONSTANT_OP_RETURN(static_cast<U>(true) && t, false);
+[[nodiscard]] consteval auto operator&&(U &&, C<t>) {
+  ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(true) && t, false);
 }
 
 template <auto t, typename U>
   requires(static_cast<bool>(t))
-[[nodiscard]] consteval auto operator||(C<t>, U) {
-  ART_CONSTANT_OP_RETURN(t || static_cast<U>(false), true);
+[[nodiscard]] consteval auto operator||(C<t>, U &&) {
+  ART_CONSTANT_OP_RETURN(t || static_cast<std::decay_t<U>>(false), true);
 }
 
 template <typename U, auto t>
   requires(static_cast<bool>(t))
-[[nodiscard]] consteval auto operator||(U, C<t>) {
-  ART_CONSTANT_OP_RETURN(static_cast<U>(false) || t, true);
+[[nodiscard]] consteval auto operator||(U &&, C<t>) {
+  ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(false) || t, true);
 }
 
 #undef ART_CONSTANT_OP_RETURN
