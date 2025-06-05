@@ -87,12 +87,12 @@ struct Index {
   template <auto tag = []() {}>
   [[nodiscard]] static consteval auto Load() {
     return detail::index::LoadImpl<T, tag>();
-  };
+  }
 
   template <auto tag = []() {}>
   static consteval auto FetchAdd() {
     return detail::index::FetchAddImpl<T, tag>();
-  };
+  }
 };
 
 } // namespace
