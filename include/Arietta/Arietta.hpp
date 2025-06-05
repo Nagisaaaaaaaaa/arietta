@@ -10,8 +10,7 @@
 //
 //
 //
-#include <cstddef>
-#include <cstdint>
+#include <concepts>
 
 namespace arietta {
 
