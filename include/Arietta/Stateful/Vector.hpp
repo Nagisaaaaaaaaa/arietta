@@ -8,15 +8,15 @@
 /// relied upon across translation units.
 ///
 /// \code
-/// static_assert(Vector<>::PushBack<i32>());
-/// static_assert(Vector<>::PushBack<i64>());
+/// SRT_EXPR(Vector<>::PushBack<i32>());
+/// SRT_EXPR(Vector<>::PushBack<i64>());
 /// static_assert(Vector<>::Size() == 2);
 /// static_assert(std::is_same_v<Vector<>::At<0>, i32>);
 /// static_assert(std::is_same_v<Vector<>::At<1>, i64>);
 /// static_assert(std::is_same_v<Vector<>::Back<>, i64>);
 ///
-/// static_assert(Vector<T>::PushBack<f32>());
-/// static_assert(Vector<T>::PushBack<f64>());
+/// SRT_EXPR(Vector<T>::PushBack<f32>());
+/// SRT_EXPR(Vector<T>::PushBack<f64>());
 /// static_assert(Vector<T>::Size() == 2);
 /// static_assert(std::is_same_v<Vector<T>::At<0>, f32>);
 /// static_assert(std::is_same_v<Vector<T>::At<1>, f64>);
