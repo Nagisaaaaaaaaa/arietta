@@ -11,6 +11,8 @@
 //
 //
 #include <concepts>
+#include <cstddef>
+#include <cstdint>
 
 namespace arietta {
 
