@@ -43,6 +43,13 @@ concept C = detail::constant::IsC<T>::value;
 
 } // namespace is
 
+namespace isnot {
+
+template <typename T>
+concept C = !is::C<T>;
+
+} // namespace isnot
+
 //
 //
 //
