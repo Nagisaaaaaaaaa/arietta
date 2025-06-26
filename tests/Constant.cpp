@@ -94,6 +94,21 @@ suite<"Constant"> _ = [] {
   //
   //
   //
+  "Is"_test = [] {
+    static_assert(is::C<C<0>>);
+    static_assert(is::C<C<1U>>);
+    static_assert(is::C<C<2.0F>>);
+    static_assert(is::C<C<-3.0>>);
+
+    static_assert(!is::C<int>);
+    static_assert(!is::C<unsigned>);
+    static_assert(!is::C<float>);
+    static_assert(!is::C<double>);
+  };
+
+  //
+  //
+  //
   "Operator Common Cases"_test = [] {
     static_assert(std::is_same_v<decltype(+C<-3>{}), C<-3>>);
     static_assert(std::is_same_v<decltype(+C<0>{}), C<0>>);

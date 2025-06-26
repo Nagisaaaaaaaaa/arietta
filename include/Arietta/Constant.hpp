@@ -26,6 +26,28 @@ struct C {
 //
 //
 //
+namespace is {
+
+namespace detail::constant {
+
+template <typename>
+struct IsC : std::false_type {};
+
+template <auto v>
+struct IsC<C<v>> : std::true_type {};
+
+} // namespace detail::constant
+
+template <typename T>
+concept C = detail::constant::IsC<T>::value;
+
+} // namespace is
+
+//
+//
+//
+//
+//
 // Operators for `(op C)`, `(C op)`, and `(C op C)`.
 
 #if defined(ART_CONSTANT_LEFT_UNARY_OP) || defined(ART_CONSTANT_RIGHT_UNARY_OP) || defined(ART_CONSTANT_BINARY_OP)
