@@ -94,7 +94,7 @@ suite<"Constant"> _ = [] {
   //
   //
   //
-  "Is"_test = [] {
+  "Is And Is Not"_test = [] {
     static_assert(is::C<C<0>>);
     static_assert(is::C<C<1U>>);
     static_assert(is::C<C<2.0F>>);
@@ -104,6 +104,16 @@ suite<"Constant"> _ = [] {
     static_assert(!is::C<unsigned>);
     static_assert(!is::C<float>);
     static_assert(!is::C<double>);
+
+    static_assert(!isnot::C<C<0>>);
+    static_assert(!isnot::C<C<1U>>);
+    static_assert(!isnot::C<C<2.0F>>);
+    static_assert(!isnot::C<C<-3.0>>);
+
+    static_assert(isnot::C<int>);
+    static_assert(isnot::C<unsigned>);
+    static_assert(isnot::C<float>);
+    static_assert(isnot::C<double>);
   };
 
   //
