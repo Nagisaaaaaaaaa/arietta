@@ -1,0 +1,289 @@
+#include "Arietta/Types.hpp"
+
+#include <boost/ut.hpp>
+
+using namespace arietta;
+using namespace boost::ut;
+
+namespace {
+
+using Tss = Types<void, Types<void>, Types<void, Types<void>>>;
+
+using Ts0 = Types<>;
+using Ts1 = Types<i8>;
+using Ts2 = Types<i8, i16>;
+using Ts3 = Types<i8, i16, Tss>;
+using Ts4 = Types<i8, i16, Tss, i16>;
+using Ts5 = Types<i8, i16, Tss, i16, Tss>;
+using Ts6 = Types<i8, i16, Tss, i16, Tss, Tss>;
+
+//
+//
+//
+//
+//
+suite<"Types"> _ = [] {
+  "Size"_test = [] {
+    static_assert(Ts0::Size() == 0);
+    static_assert(Ts1::Size() == 1);
+    static_assert(Ts2::Size() == 2);
+    static_assert(Ts3::Size() == 3);
+    static_assert(Ts4::Size() == 4);
+    static_assert(Ts5::Size() == 5);
+    static_assert(Ts6::Size() == 6);
+  };
+
+  //
+  //
+  //
+  "At"_test = [] {
+    // using U0 = Ts0::At<0>; //! Should not compile.
+    static_assert(std::is_same_v<Ts1::At<0>, i8>);
+    // using U1 = Ts1::At<1>; //! Should not compile.
+    static_assert(std::is_same_v<Ts2::At<0>, i8>);
+    static_assert(std::is_same_v<Ts2::At<1>, i16>);
+    // using U2 = Ts2::At<2>; //! Should not compile.
+    static_assert(std::is_same_v<Ts3::At<0>, i8>);
+    static_assert(std::is_same_v<Ts3::At<1>, i16>);
+    static_assert(std::is_same_v<Ts3::At<2>, Tss>);
+    // using U3 = Ts3::At<3>; //! Should not compile.
+    static_assert(std::is_same_v<Ts4::At<0>, i8>);
+    static_assert(std::is_same_v<Ts4::At<1>, i16>);
+    static_assert(std::is_same_v<Ts4::At<2>, Tss>);
+    static_assert(std::is_same_v<Ts4::At<3>, i16>);
+    // using U4 = Ts4::At<4>; //! Should not compile.
+    static_assert(std::is_same_v<Ts5::At<0>, i8>);
+    static_assert(std::is_same_v<Ts5::At<1>, i16>);
+    static_assert(std::is_same_v<Ts5::At<2>, Tss>);
+    static_assert(std::is_same_v<Ts5::At<3>, i16>);
+    static_assert(std::is_same_v<Ts5::At<4>, Tss>);
+    // using U5 = Ts5::At<5>; //! Should not compile.
+    static_assert(std::is_same_v<Ts6::At<0>, i8>);
+    static_assert(std::is_same_v<Ts6::At<1>, i16>);
+    static_assert(std::is_same_v<Ts6::At<2>, Tss>);
+    static_assert(std::is_same_v<Ts6::At<3>, i16>);
+    static_assert(std::is_same_v<Ts6::At<4>, Tss>);
+    static_assert(std::is_same_v<Ts6::At<5>, Tss>);
+    // using U6 = Ts6::At<6>; //! Should not compile.
+  };
+
+  //
+  //
+  //
+  "Front"_test = [] {
+    // using U0 = Ts0::Front<>; //! Should not compile.
+    static_assert(std::is_same_v<Ts1::Front<>, i8>);
+    static_assert(std::is_same_v<Ts2::Front<>, i8>);
+    static_assert(std::is_same_v<Ts3::Front<>, i8>);
+    static_assert(std::is_same_v<Ts4::Front<>, i8>);
+    static_assert(std::is_same_v<Ts5::Front<>, i8>);
+    static_assert(std::is_same_v<Ts6::Front<>, i8>);
+  };
+
+  //
+  //
+  //
+  "Back"_test = [] {
+    // using U0 = Ts0::Back<>; //! Should not compile.
+    static_assert(std::is_same_v<Ts1::Back<>, i8>);
+    static_assert(std::is_same_v<Ts2::Back<>, i16>);
+    static_assert(std::is_same_v<Ts3::Back<>, Tss>);
+    static_assert(std::is_same_v<Ts4::Back<>, i16>);
+    static_assert(std::is_same_v<Ts5::Back<>, Tss>);
+    static_assert(std::is_same_v<Ts6::Back<>, Tss>);
+  };
+
+  //
+  //
+  //
+  "Push Front"_test = [] {
+    static_assert(std::is_same_v<Ts0::PushFront<void>, Types<void>>);
+    static_assert(std::is_same_v<Ts1::PushFront<void>, Types<void, i8>>);
+    static_assert(std::is_same_v<Ts2::PushFront<void>, Types<void, i8, i16>>);
+    static_assert(std::is_same_v<Ts3::PushFront<void>, Types<void, i8, i16, Tss>>);
+    static_assert(std::is_same_v<Ts4::PushFront<void>, Types<void, i8, i16, Tss, i16>>);
+    static_assert(std::is_same_v<Ts5::PushFront<void>, Types<void, i8, i16, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts6::PushFront<void>, Types<void, i8, i16, Tss, i16, Tss, Tss>>);
+  };
+
+  //
+  //
+  //
+  "Push Back"_test = [] {
+    static_assert(std::is_same_v<Ts0::PushBack<void>, Types<void>>);
+    static_assert(std::is_same_v<Ts1::PushBack<void>, Types<i8, void>>);
+    static_assert(std::is_same_v<Ts2::PushBack<void>, Types<i8, i16, void>>);
+    static_assert(std::is_same_v<Ts3::PushBack<void>, Types<i8, i16, Tss, void>>);
+    static_assert(std::is_same_v<Ts4::PushBack<void>, Types<i8, i16, Tss, i16, void>>);
+    static_assert(std::is_same_v<Ts5::PushBack<void>, Types<i8, i16, Tss, i16, Tss, void>>);
+    static_assert(std::is_same_v<Ts6::PushBack<void>, Types<i8, i16, Tss, i16, Tss, Tss, void>>);
+  };
+
+  //
+  //
+  //
+  "Pop Front"_test = [] {
+    // using Us0 = Ts0::PopFront<>; //! Should not compile.
+    static_assert(std::is_same_v<Ts1::PopFront<>, Types<>>);
+    static_assert(std::is_same_v<Ts2::PopFront<>, Types<i16>>);
+    static_assert(std::is_same_v<Ts3::PopFront<>, Types<i16, Tss>>);
+    static_assert(std::is_same_v<Ts4::PopFront<>, Types<i16, Tss, i16>>);
+    static_assert(std::is_same_v<Ts5::PopFront<>, Types<i16, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts6::PopFront<>, Types<i16, Tss, i16, Tss, Tss>>);
+  };
+
+  //
+  //
+  //
+  "Pop Back"_test = [] {
+    // using Us0 = Ts0::PopBack<>; //! Should not compile.
+    static_assert(std::is_same_v<Ts1::PopBack<>, Types<>>);
+    static_assert(std::is_same_v<Ts2::PopBack<>, Types<i8>>);
+    static_assert(std::is_same_v<Ts3::PopBack<>, Types<i8, i16>>);
+    static_assert(std::is_same_v<Ts4::PopBack<>, Types<i8, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::PopBack<>, Types<i8, i16, Tss, i16>>);
+    static_assert(std::is_same_v<Ts6::PopBack<>, Types<i8, i16, Tss, i16, Tss>>);
+  };
+
+  //
+  //
+  //
+  "Insert"_test = [] {
+    static_assert(std::is_same_v<Ts0::Insert<0, void>, Types<void>>);
+    // using Us0 = Ts0::Insert<1, void>; //! Should not compile.
+    static_assert(std::is_same_v<Ts1::Insert<0, void>, Types<void, i8>>);
+    static_assert(std::is_same_v<Ts1::Insert<1, void>, Types<i8, void>>);
+    // using Us1 = Ts1::Insert<2, void>; //! Should not compile.
+    static_assert(std::is_same_v<Ts2::Insert<0, void>, Types<void, i8, i16>>);
+    static_assert(std::is_same_v<Ts2::Insert<1, void>, Types<i8, void, i16>>);
+    static_assert(std::is_same_v<Ts2::Insert<2, void>, Types<i8, i16, void>>);
+    // using Us2 = Ts2::Insert<3, void>; //! Should not compile.
+    static_assert(std::is_same_v<Ts3::Insert<0, void>, Types<void, i8, i16, Tss>>);
+    static_assert(std::is_same_v<Ts3::Insert<1, void>, Types<i8, void, i16, Tss>>);
+    static_assert(std::is_same_v<Ts3::Insert<2, void>, Types<i8, i16, void, Tss>>);
+    static_assert(std::is_same_v<Ts3::Insert<3, void>, Types<i8, i16, Tss, void>>);
+    // using Us3 = Ts3::Insert<4, void>; //! Should not compile.
+    static_assert(std::is_same_v<Ts4::Insert<0, void>, Types<void, i8, i16, Tss, i16>>);
+    static_assert(std::is_same_v<Ts4::Insert<1, void>, Types<i8, void, i16, Tss, i16>>);
+    static_assert(std::is_same_v<Ts4::Insert<2, void>, Types<i8, i16, void, Tss, i16>>);
+    static_assert(std::is_same_v<Ts4::Insert<3, void>, Types<i8, i16, Tss, void, i16>>);
+    static_assert(std::is_same_v<Ts4::Insert<4, void>, Types<i8, i16, Tss, i16, void>>);
+    // using Us4 = Ts4::Insert<5, void>; //! Should not compile.
+    static_assert(std::is_same_v<Ts5::Insert<0, void>, Types<void, i8, i16, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Insert<1, void>, Types<i8, void, i16, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Insert<2, void>, Types<i8, i16, void, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Insert<3, void>, Types<i8, i16, Tss, void, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Insert<4, void>, Types<i8, i16, Tss, i16, void, Tss>>);
+    static_assert(std::is_same_v<Ts5::Insert<5, void>, Types<i8, i16, Tss, i16, Tss, void>>);
+    // using Us5 = Ts5::Insert<6, void>; //! Should not compile.
+    static_assert(std::is_same_v<Ts6::Insert<0, void>, Types<void, i8, i16, Tss, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Insert<1, void>, Types<i8, void, i16, Tss, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Insert<2, void>, Types<i8, i16, void, Tss, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Insert<3, void>, Types<i8, i16, Tss, void, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Insert<4, void>, Types<i8, i16, Tss, i16, void, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Insert<5, void>, Types<i8, i16, Tss, i16, Tss, void, Tss>>);
+    static_assert(std::is_same_v<Ts6::Insert<6, void>, Types<i8, i16, Tss, i16, Tss, Tss, void>>);
+    // using Us6 = Ts6::Insert<7, void>; //! Should not compile.
+  };
+
+  //
+  //
+  //
+  "Erase"_test = [] {
+    // using Us0 = Ts0::Erase<0>; //! Should not compile.
+    static_assert(std::is_same_v<Ts1::Erase<0>, Types<>>);
+    // using Us1 = Ts1::Erase<1>; //! Should not compile.
+    static_assert(std::is_same_v<Ts2::Erase<0>, Types<i16>>);
+    static_assert(std::is_same_v<Ts2::Erase<1>, Types<i8>>);
+    // using Us2 = Ts2::Erase<2>; //! Should not compile.
+    static_assert(std::is_same_v<Ts3::Erase<0>, Types<i16, Tss>>);
+    static_assert(std::is_same_v<Ts3::Erase<1>, Types<i8, Tss>>);
+    static_assert(std::is_same_v<Ts3::Erase<2>, Types<i8, i16>>);
+    // using Us3 = Ts3::Erase<3>; //! Should not compile.
+    static_assert(std::is_same_v<Ts4::Erase<0>, Types<i16, Tss, i16>>);
+    static_assert(std::is_same_v<Ts4::Erase<1>, Types<i8, Tss, i16>>);
+    static_assert(std::is_same_v<Ts4::Erase<2>, Types<i8, i16, i16>>);
+    static_assert(std::is_same_v<Ts4::Erase<3>, Types<i8, i16, Tss>>);
+    // using Us4 = Ts4::Erase<4>; //! Should not compile.
+    static_assert(std::is_same_v<Ts5::Erase<0>, Types<i16, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Erase<1>, Types<i8, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Erase<2>, Types<i8, i16, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Erase<3>, Types<i8, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts5::Erase<4>, Types<i8, i16, Tss, i16>>);
+    // using Us5 = Ts5::Erase<5>; //! Should not compile.
+    static_assert(std::is_same_v<Ts6::Erase<0>, Types<i16, Tss, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Erase<1>, Types<i8, Tss, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Erase<2>, Types<i8, i16, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Erase<3>, Types<i8, i16, Tss, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Erase<4>, Types<i8, i16, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts6::Erase<5>, Types<i8, i16, Tss, i16, Tss>>);
+    // using Us6 = Ts6::Erase<6>; //! Should not compile.
+  };
+
+  //
+  //
+  //
+  "Remove"_test = [] {
+    static_assert(std::is_same_v<Ts0::Remove<void>, Ts0>);
+    static_assert(std::is_same_v<Ts0::Remove<i8>, Ts0>);
+    static_assert(std::is_same_v<Ts0::Remove<i16>, Ts0>);
+    static_assert(std::is_same_v<Ts0::Remove<Tss>, Ts0>);
+    static_assert(std::is_same_v<Ts1::Remove<void>, Ts1>);
+    static_assert(std::is_same_v<Ts1::Remove<i8>, Types<>>);
+    static_assert(std::is_same_v<Ts1::Remove<i16>, Types<i8>>);
+    static_assert(std::is_same_v<Ts1::Remove<Tss>, Types<i8>>);
+    static_assert(std::is_same_v<Ts2::Remove<void>, Ts2>);
+    static_assert(std::is_same_v<Ts2::Remove<i8>, Types<i16>>);
+    static_assert(std::is_same_v<Ts2::Remove<i16>, Types<i8>>);
+    static_assert(std::is_same_v<Ts2::Remove<Tss>, Types<i8, i16>>);
+    static_assert(std::is_same_v<Ts3::Remove<void>, Ts3>);
+    static_assert(std::is_same_v<Ts3::Remove<i8>, Types<i16, Tss>>);
+    static_assert(std::is_same_v<Ts3::Remove<i16>, Types<i8, Tss>>);
+    static_assert(std::is_same_v<Ts3::Remove<Tss>, Types<i8, i16>>);
+    static_assert(std::is_same_v<Ts4::Remove<void>, Ts4>);
+    static_assert(std::is_same_v<Ts4::Remove<i8>, Types<i16, Tss, i16>>);
+    static_assert(std::is_same_v<Ts4::Remove<i16>, Types<i8, Tss>>);
+    static_assert(std::is_same_v<Ts4::Remove<Tss>, Types<i8, i16, i16>>);
+    static_assert(std::is_same_v<Ts5::Remove<void>, Ts5>);
+    static_assert(std::is_same_v<Ts5::Remove<i8>, Types<i16, Tss, i16, Tss>>);
+    static_assert(std::is_same_v<Ts5::Remove<i16>, Types<i8, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts5::Remove<Tss>, Types<i8, i16, i16>>);
+    static_assert(std::is_same_v<Ts6::Remove<void>, Ts6>);
+    static_assert(std::is_same_v<Ts6::Remove<i8>, Types<i16, Tss, i16, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Remove<i16>, Types<i8, Tss, Tss, Tss>>);
+    static_assert(std::is_same_v<Ts6::Remove<Tss>, Types<i8, i16, i16>>);
+  };
+
+  //
+  //
+  //
+  "Is And Is Not"_test = [] {
+    static_assert(is::Types<Ts0>);
+    static_assert(is::Types<Ts1>);
+    static_assert(is::Types<Ts2>);
+    static_assert(is::Types<Ts3>);
+    static_assert(is::Types<Ts4>);
+    static_assert(is::Types<Ts5>);
+    static_assert(is::Types<Ts6>);
+
+    static_assert(!is::Types<void>);
+    static_assert(!is::Types<std::tuple<>>);
+    static_assert(!is::Types<std::tuple<void>>);
+    static_assert(!is::Types<std::tuple<Ts0>>);
+
+    static_assert(!isnot::Types<Ts0>);
+    static_assert(!isnot::Types<Ts1>);
+    static_assert(!isnot::Types<Ts2>);
+    static_assert(!isnot::Types<Ts3>);
+    static_assert(!isnot::Types<Ts4>);
+    static_assert(!isnot::Types<Ts5>);
+    static_assert(!isnot::Types<Ts6>);
+
+    static_assert(isnot::Types<void>);
+    static_assert(isnot::Types<std::tuple<>>);
+    static_assert(isnot::Types<std::tuple<void>>);
+    static_assert(isnot::Types<std::tuple<Ts0>>);
+  };
+};
+
+} // namespace

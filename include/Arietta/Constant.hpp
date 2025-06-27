@@ -1,7 +1,7 @@
 #pragma once
 
 /// \file
-/// \brief This file declares a fully‐constexpr "constant wrapper" type that
+/// \brief This file defines a fully‐constexpr "constant wrapper" type that
 /// can carry an arbitrary compile‐time value.
 
 //
