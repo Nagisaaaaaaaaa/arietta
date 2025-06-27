@@ -18,6 +18,20 @@ struct Types;
 
 namespace detail::types {
 
+template <auto>
+struct C {};
+
+template <typename T>
+struct Wrapper {
+  using type = T;
+};
+
+struct Invalid {};
+
+//
+//
+//
+#if 0 //! This implementation has O(n) compile-time complexity.
 template <usize i, typename... Ts>
 struct AtImpl;
 
@@ -31,6 +45,26 @@ template <usize i, typename T, typename... Ts>
 struct AtImpl<i, T, Ts...> {
   using type = typename AtImpl<i - 1, Ts...>::type;
 };
+#else //! This implementation has O(1) compile-time complexity.
+template <usize i, typename... Ts>
+struct AtImpl;
+
+template <usize i>
+struct AtImpl<i> {
+  template <usize j>
+  static consteval auto Type(C<j>) {
+    static_assert(j != j, "Index is out of bounds for `Types::At`");
+    return Wrapper<Invalid>{};
+  }
+};
+
+template <usize i, typename T, typename... Ts>
+struct AtImpl<i, T, Ts...> : AtImpl<i + 1, Ts...> {
+  using AtImpl<i + 1, Ts...>::Type;
+
+  static consteval Wrapper<T> Type(C<i>) { return {}; }
+};
+#endif
 
 //
 //
@@ -150,8 +184,13 @@ template <typename... Ts>
 struct Types {
   [[nodiscard]] static consteval usize Size() { return sizeof...(Ts); }
 
+#if 0
   template <usize i>
   using At = typename detail::types::AtImpl<i, Ts...>::type;
+#else
+  template <usize i>
+  using At = typename decltype(detail::types::AtImpl<0, Ts...>::Type(detail::types::C<i>{}))::type;
+#endif
 
   template <auto tag = 0>
   using Front = typename detail::types::FrontImpl<tag, Ts...>::type;
