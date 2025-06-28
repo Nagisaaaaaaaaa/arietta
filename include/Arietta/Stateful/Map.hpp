@@ -10,13 +10,13 @@
 /// \code
 /// SRT_EXPR(Map<>::Insert<i32, f32>());
 /// SRT_EXPR(Map<>::Insert<i64, f64>());
-/// static_assert(std::is_same_v<Map<>::At<i32>, f32>);
-/// static_assert(std::is_same_v<Map<>::At<i64>, f64>);
+/// static_assert(is::Same<Map<>::At<i32>, f32>);
+/// static_assert(is::Same<Map<>::At<i64>, f64>);
 ///
 /// SRT_EXPR(Map<T>::Insert<i32, f64>());
 /// SRT_EXPR(Map<T>::Insert<i64, f32>());
-/// static_assert(std::is_same_v<Map<T>::At<i32>, f64>);
-/// static_assert(std::is_same_v<Map<T>::At<i64>, f32>);
+/// static_assert(is::Same<Map<T>::At<i32>, f64>);
+/// static_assert(is::Same<Map<T>::At<i64>, f32>);
 /// \endcode
 
 //
@@ -45,7 +45,7 @@ struct Invalid {};
 
 template <typename Value>
 struct Return {
-  [[nodiscard]] consteval operator bool() const { return !std::is_same_v<Value, Invalid>; }
+  [[nodiscard]] consteval operator bool() const { return !is::Same<Value, Invalid>; }
 };
 
 template <typename T, typename Key, typename Value>

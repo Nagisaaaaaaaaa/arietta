@@ -11,27 +11,27 @@ namespace {
 template <typename T>
 void ImplicitInstantiationByFunction() {
   static_assert(Map<T>::template Insert<i8, u8>());
-  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
   static_assert(Map<T>::template Insert<i16, T>());
-  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
-  static_assert(std::is_same_v<typename Map<T>::template At<i16>, T>);
+  static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
+  static_assert(is::Same<typename Map<T>::template At<i16>, T>);
   SRT_EXPR(Map<T>::template Insert<T, T>());
-  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
-  static_assert(std::is_same_v<typename Map<T>::template At<i16>, T>);
-  static_assert(std::is_same_v<typename Map<T>::template At<T>, T>);
+  static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
+  static_assert(is::Same<typename Map<T>::template At<i16>, T>);
+  static_assert(is::Same<typename Map<T>::template At<T>, T>);
 }
 
 template <typename T>
 class ImplicitInstantiationByClass {
   static_assert(Map<T>::template Insert<i8, u8>());
-  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+  static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
   static_assert(Map<T>::template Insert<i16, T>());
-  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
-  static_assert(std::is_same_v<typename Map<T>::template At<i16>, T>);
+  static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
+  static_assert(is::Same<typename Map<T>::template At<i16>, T>);
   SRT_EXPR(Map<T>::template Insert<T, T>());
-  static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
-  static_assert(std::is_same_v<typename Map<T>::template At<i16>, T>);
-  static_assert(std::is_same_v<typename Map<T>::template At<T>, T>);
+  static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
+  static_assert(is::Same<typename Map<T>::template At<i16>, T>);
+  static_assert(is::Same<typename Map<T>::template At<T>, T>);
 };
 
 //
@@ -44,32 +44,32 @@ suite<"Map"> _ = [] {
     Map<>::Insert<i8, u8>();
     Map<int>::Insert<u8, i8>();
     Map<float>::Insert<i8, u16>();
-    static_assert(std::is_same_v<Map<>::At<i8>, u8>);
-    static_assert(std::is_same_v<Map<int>::At<u8>, i8>);
-    static_assert(std::is_same_v<Map<float>::At<i8>, u16>);
+    static_assert(is::Same<Map<>::At<i8>, u8>);
+    static_assert(is::Same<Map<int>::At<u8>, i8>);
+    static_assert(is::Same<Map<float>::At<i8>, u16>);
 
     Map<>::Insert<i16, u16>();
     Map<int>::Insert<u16, i16>();
     Map<float>::Insert<i16, u32>();
-    static_assert(std::is_same_v<Map<>::At<i8>, u8>);
-    static_assert(std::is_same_v<Map<>::At<i16>, u16>);
-    static_assert(std::is_same_v<Map<int>::At<u8>, i8>);
-    static_assert(std::is_same_v<Map<int>::At<u16>, i16>);
-    static_assert(std::is_same_v<Map<float>::At<i8>, u16>);
-    static_assert(std::is_same_v<Map<float>::At<i16>, u32>);
+    static_assert(is::Same<Map<>::At<i8>, u8>);
+    static_assert(is::Same<Map<>::At<i16>, u16>);
+    static_assert(is::Same<Map<int>::At<u8>, i8>);
+    static_assert(is::Same<Map<int>::At<u16>, i16>);
+    static_assert(is::Same<Map<float>::At<i8>, u16>);
+    static_assert(is::Same<Map<float>::At<i16>, u32>);
 
     Map<>::Insert<i32, u32>();
     Map<int>::Insert<u32, i32>();
     Map<float>::Insert<i32, u64>();
-    static_assert(std::is_same_v<Map<>::At<i8>, u8>);
-    static_assert(std::is_same_v<Map<>::At<i16>, u16>);
-    static_assert(std::is_same_v<Map<>::At<i32>, u32>);
-    static_assert(std::is_same_v<Map<int>::At<u8>, i8>);
-    static_assert(std::is_same_v<Map<int>::At<u16>, i16>);
-    static_assert(std::is_same_v<Map<int>::At<u32>, i32>);
-    static_assert(std::is_same_v<Map<float>::At<i8>, u16>);
-    static_assert(std::is_same_v<Map<float>::At<i16>, u32>);
-    static_assert(std::is_same_v<Map<float>::At<i32>, u64>);
+    static_assert(is::Same<Map<>::At<i8>, u8>);
+    static_assert(is::Same<Map<>::At<i16>, u16>);
+    static_assert(is::Same<Map<>::At<i32>, u32>);
+    static_assert(is::Same<Map<int>::At<u8>, i8>);
+    static_assert(is::Same<Map<int>::At<u16>, i16>);
+    static_assert(is::Same<Map<int>::At<u32>, i32>);
+    static_assert(is::Same<Map<float>::At<i8>, u16>);
+    static_assert(is::Same<Map<float>::At<i16>, u32>);
+    static_assert(is::Same<Map<float>::At<i32>, u64>);
   };
 
   //
@@ -78,14 +78,14 @@ suite<"Map"> _ = [] {
   "Implicit"_test = [] {
     auto implicitInstantiationByLambda = []<typename T> {
       static_assert(Map<T>::template Insert<i8, u8>());
-      static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
+      static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
       static_assert(Map<T>::template Insert<i16, T>());
-      static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
-      static_assert(std::is_same_v<typename Map<T>::template At<i16>, T>);
+      static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
+      static_assert(is::Same<typename Map<T>::template At<i16>, T>);
       SRT_EXPR(Map<T>::template Insert<T, T>());
-      static_assert(std::is_same_v<typename Map<T>::template At<i8>, u8>);
-      static_assert(std::is_same_v<typename Map<T>::template At<i16>, T>);
-      static_assert(std::is_same_v<typename Map<T>::template At<T>, T>);
+      static_assert(is::Same<typename Map<T>::template At<i8>, u8>);
+      static_assert(is::Same<typename Map<T>::template At<i16>, T>);
+      static_assert(is::Same<typename Map<T>::template At<T>, T>);
     };
 
     ImplicitInstantiationByFunction<u8>();

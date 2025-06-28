@@ -168,7 +168,7 @@ struct RemoveImpl<T> {
 template <typename T, typename U, typename... Ts>
 struct RemoveImpl<T, U, Ts...> {
   using type = std::conditional_t<
-      std::is_same_v<T, U>,
+      is::Same<T, U>,
       typename RemoveImpl<T, Ts...>::type,
       typename RemoveImpl<T, Ts...>::type::template PushFront<U>>;
 };
