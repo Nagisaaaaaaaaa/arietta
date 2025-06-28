@@ -36,4 +36,38 @@ using usize = std::size_t;
 using f32 = float;
 using f64 = double;
 
+//
+//
+//
+namespace is {
+
+namespace detail::arietta {
+
+template <typename>
+struct IsArithmetic : std::false_type {};
+
+template <typename T>
+  requires std::is_arithmetic_v<T>
+struct IsArithmetic<T> : std::true_type {};
+
+} // namespace detail::arietta
+
+template <class T, class U>
+concept Same = std::same_as<T, U>;
+
+template <typename T>
+concept Arithmetic = detail::arietta::IsArithmetic<T>::value;
+
+} // namespace is
+
+namespace isnot {
+
+template <class T, class U>
+concept Same = !is::Same<T, U>;
+
+template <typename T>
+concept Arithmetic = !is::Arithmetic<T>;
+
+} // namespace isnot
+
 } // namespace arietta
