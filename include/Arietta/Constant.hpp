@@ -192,4 +192,47 @@ template <typename U, auto t>
 
 #undef ART_CONSTANT_OP_RETURN
 
+//
+//
+//
+//
+//
+namespace detail::constant {
+
+template <auto i, auto n, auto one, typename F>
+ART_SPECIFIER constexpr void ForEachImpl(F &&f) {
+  if constexpr (i < n) {
+    if constexpr (is::Invocable<F, C<i>>) {
+      static_assert(is::Void<decltype(f(C<i>{}))>, "Function must have void return type");
+      f(C<i>{});
+    } else {
+      static_assert(is::Void<decltype(f.template operator()<i>())>, "Function must have void return type");
+      f.template operator()<i>();
+    }
+
+    ForEachImpl<i + one, n, one>(std::forward<F>(f));
+  }
+}
+
+} // namespace detail::constant
+
+template <auto n, typename F>
+  requires is::Arithmetic<decltype(n)>
+ART_SPECIFIER constexpr void ForEach(C<n>, F &&f) {
+  using V = decltype(n);
+  detail::constant::ForEachImpl<static_cast<V>(0), n, static_cast<V>(1)>(std::forward<F>(f));
+}
+
+template <auto n, typename F>
+  requires is::Arithmetic<decltype(n)>
+ART_SPECIFIER constexpr void ForEach(F &&f) {
+  ForEach(C<n>{}, std::forward<F>(f));
+}
+
+template <is::C N, typename F>
+  requires is::Arithmetic<typename N::value_type>
+ART_SPECIFIER constexpr void ForEach(F &&f) {
+  ForEach(N{}, std::forward<F>(f));
+}
+
 } // namespace arietta

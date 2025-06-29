@@ -1,6 +1,7 @@
 #include "Arietta/Constant.hpp"
 
 #include <boost/ut.hpp>
+#include <cmath>
 
 using namespace arietta;
 using namespace boost::ut;
@@ -235,6 +236,101 @@ suite<"Constant"> _ = [] {
     static_assert(is::Same<decltype(3.0F || C<1>{}), C<true>>);
     static_assert(is::Same<decltype(3 || C<1.0>{}), C<true>>);
     static_assert(is::Same<decltype(3.0F || C<1.0>{}), C<true>>);
+  };
+
+  //
+  //
+  //
+  "For Each"_test = [] {
+    // `auto` type deductions.
+    {
+      auto f0 = [](is::C auto i) { static_assert(i != i); };
+      auto f1 = []<auto i> { static_assert(i != i); };
+      ForEach(C<0>{}, f0), ForEach<0>(f0), ForEach<C<0>>(f0);
+      ForEach(C<0>{}, f1), ForEach<0>(f1), ForEach<C<0>>(f1);
+    }
+    {
+      std::string s0, s1;
+      auto f0 = [&](is::C auto i) {
+        static_assert(is::Same<typename decltype(i)::value_type, int>);
+        s0 += std::to_string(static_cast<int>(i));
+      };
+      auto f1 = [&]<auto i> {
+        static_assert(is::Same<decltype(i), int>);
+        s1 += std::to_string(static_cast<int>(i));
+      };
+      ForEach(C<1>{}, f0), ForEach<1>(f0), ForEach<C<1>>(f0);
+      ForEach(C<1>{}, f1), ForEach<1>(f1), ForEach<C<1>>(f1);
+      expect(s0 == "000" && s1 == "000");
+    }
+    {
+      std::string s0, s1;
+      auto f0 = [&](is::C auto i) {
+        static_assert(is::Same<typename decltype(i)::value_type, unsigned>);
+        s0 += std::to_string(static_cast<int>(i));
+      };
+      auto f1 = [&]<auto i> {
+        static_assert(is::Same<decltype(i), unsigned>);
+        s1 += std::to_string(static_cast<int>(i));
+      };
+      ForEach(C<2U>{}, f0), ForEach<2U>(f0), ForEach<C<2U>>(f0);
+      ForEach(C<2U>{}, f1), ForEach<2U>(f1), ForEach<C<2U>>(f1);
+      expect(s0 == "010101" && s1 == "010101");
+    }
+    {
+      std::string s0, s1;
+      auto f0 = [&](is::C auto i) {
+        static_assert(is::Same<typename decltype(i)::value_type, float>);
+        s0 += std::to_string(static_cast<int>(i));
+      };
+      auto f1 = [&]<auto i> {
+        static_assert(is::Same<decltype(i), float>);
+        s1 += std::to_string(static_cast<int>(i));
+      };
+      ForEach(C<3.0F>{}, f0), ForEach<3.0F>(f0), ForEach<C<3.0F>>(f0);
+      ForEach(C<3.0F>{}, f1), ForEach<3.0F>(f1), ForEach<C<3.0F>>(f1);
+      expect(s0 == "012012012" && s1 == "012012012");
+    }
+    {
+      std::string s0, s1;
+      auto f0 = [&](is::C auto i) {
+        static_assert(is::Same<typename decltype(i)::value_type, double>);
+        s0 += std::to_string(static_cast<int>(i));
+      };
+      auto f1 = [&]<auto i> {
+        static_assert(is::Same<decltype(i), double>);
+        s1 += std::to_string(static_cast<int>(i));
+      };
+      ForEach(C<4.0>{}, f0), ForEach<4.0>(f0), ForEach<C<4.0>>(f0);
+      ForEach(C<4.0>{}, f1), ForEach<4.0>(f1), ForEach<C<4.0>>(f1);
+      expect(s0 == "012301230123" && s1 == "012301230123");
+    }
+
+    // `constexpr`.
+    static_assert([] {
+      int v{};
+      ForEach(C<5U>{}, [&](is::C auto i) { v += i; });
+      ForEach(C<5U>{}, [&]<auto i> { v += i; });
+      ForEach<6.0F>([&](is::C auto i) { v += i; });
+      ForEach<6.0F>([&]<auto i> { v += i; });
+      ForEach<C<7.0>>([&](is::C auto i) { v += i; });
+      ForEach<C<7.0>>([&]<auto i> { v += i; });
+      return v;
+    }() == (0 + 1 + 2 + 3 + 4) * 2 + (0 + 1 + 2 + 3 + 4 + 5) * 2 + (0 + 1 + 2 + 3 + 4 + 5 + 6) * 2);
+
+    // Floating point round-off errors.
+    auto f0 = [](is::C auto i) {
+      expect(i == std::round(decltype(i)::value));
+      expect(i == static_cast<int>(i));
+    };
+    auto f1 = []<auto i> {
+      expect(i == std::round(i));
+      expect(i == static_cast<int>(i));
+    };
+    ForEach(C<100.0F>{}, f0), ForEach<100.0F>(f0), ForEach<C<100.0F>>(f0);
+    ForEach(C<100.0F>{}, f1), ForEach<100.0F>(f1), ForEach<C<100.0F>>(f1);
+    ForEach(C<100.0>{}, f0), ForEach<100.0>(f0), ForEach<C<100.0>>(f0);
+    ForEach(C<100.0>{}, f1), ForEach<100.0>(f1), ForEach<C<100.0>>(f1);
   };
 };
 

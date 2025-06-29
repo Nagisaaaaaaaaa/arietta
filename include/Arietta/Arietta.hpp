@@ -13,6 +13,7 @@
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <utility>
 
 namespace arietta {
 
@@ -55,6 +56,9 @@ struct IsArithmetic<T> : std::true_type {};
 template <typename T>
 concept Arithmetic = detail::arietta::IsArithmetic<T>::value;
 
+template <typename F, typename... Args>
+concept Invocable = std::invocable<F, Args...>;
+
 template <class T, class U>
 concept Same = std::same_as<T, U>;
 
@@ -67,6 +71,9 @@ namespace isnot {
 
 template <typename T>
 concept Arithmetic = !is::Arithmetic<T>;
+
+template <typename F, typename... Args>
+concept Invocable = !is::Invocable<F, Args...>;
 
 template <class T, class U>
 concept Same = !is::Same<T, U>;
