@@ -9,7 +9,7 @@
 //
 //
 //
-#include "Arietta/Arietta.hpp"
+#include "Arietta/Constant.hpp"
 
 namespace arietta {
 
@@ -246,5 +246,19 @@ template <typename T>
 concept Types = !is::Types<T>;
 
 } // namespace isnot
+
+//
+//
+//
+//
+//
+template <is::Types Ts, typename F>
+ART_SPECIFIER constexpr void ForEach(F &&f) {
+  ForEach<Ts::Size()>([&]<auto i>() {
+    using T = typename Ts::template At<i>;
+    static_assert(is::Void<decltype(f.template operator()<T>())>, "Function must have void return type");
+    f.template operator()<T>();
+  });
+}
 
 } // namespace arietta
