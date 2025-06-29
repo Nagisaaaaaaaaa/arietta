@@ -1,5 +1,6 @@
 #include "Arietta/Types.hpp"
 
+#include <array>
 #include <boost/ut.hpp>
 
 using namespace arietta;
@@ -283,6 +284,47 @@ suite<"Types"> _ = [] {
     static_assert(isnot::Types<std::tuple<>>);
     static_assert(isnot::Types<std::tuple<void>>);
     static_assert(isnot::Types<std::tuple<Ts0>>);
+  };
+
+  //
+  //
+  //
+  "For Each"_test = [] {
+    auto label = []<typename Ts> {
+      std::array<int, Ts::Size()> vs{};
+      usize i{};
+      ForEach<Ts>([&]<typename T> {
+        if constexpr (is::Same<T, i8>)
+          vs[i] = 1;
+        else if constexpr (is::Same<T, i16>)
+          vs[i] = 2;
+        else if constexpr (is::Same<T, Tss>)
+          vs[i] = 3;
+        else
+          vs[i] = -1;
+        ++i;
+      });
+      return vs;
+    };
+
+    // Type deductions and correctness.
+    ForEach<Ts0>([]<typename T> { static_assert(!is::Same<T, T>); });
+    expect(label.template operator()<Ts0>() == std::array<int, 0>{});
+    expect(label.template operator()<Ts1>() == std::array{1});
+    expect(label.template operator()<Ts2>() == std::array{1, 2});
+    expect(label.template operator()<Ts3>() == std::array{1, 2, 3});
+    expect(label.template operator()<Ts4>() == std::array{1, 2, 3, 2});
+    expect(label.template operator()<Ts5>() == std::array{1, 2, 3, 2, 3});
+    expect(label.template operator()<Ts6>() == std::array{1, 2, 3, 2, 3, 3});
+
+    // `constexpr`.
+    static_assert(label.template operator()<Ts0>() == std::array<int, 0>{});
+    static_assert(label.template operator()<Ts1>() == std::array{1});
+    static_assert(label.template operator()<Ts2>() == std::array{1, 2});
+    static_assert(label.template operator()<Ts3>() == std::array{1, 2, 3});
+    static_assert(label.template operator()<Ts4>() == std::array{1, 2, 3, 2});
+    static_assert(label.template operator()<Ts5>() == std::array{1, 2, 3, 2, 3});
+    static_assert(label.template operator()<Ts6>() == std::array{1, 2, 3, 2, 3, 3});
   };
 };
 
