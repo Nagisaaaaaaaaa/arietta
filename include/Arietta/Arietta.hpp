@@ -52,21 +52,27 @@ struct IsArithmetic<T> : std::true_type {};
 
 } // namespace detail::arietta
 
+template <typename T>
+concept Arithmetic = detail::arietta::IsArithmetic<T>::value;
+
 template <class T, class U>
 concept Same = std::same_as<T, U>;
 
 template <typename T>
-concept Arithmetic = detail::arietta::IsArithmetic<T>::value;
+concept Void = std::is_void_v<T>;
 
 } // namespace is
 
 namespace isnot {
 
+template <typename T>
+concept Arithmetic = !is::Arithmetic<T>;
+
 template <class T, class U>
 concept Same = !is::Same<T, U>;
 
 template <typename T>
-concept Arithmetic = !is::Arithmetic<T>;
+concept Void = !is::Void<T>;
 
 } // namespace isnot
 

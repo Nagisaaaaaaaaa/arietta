@@ -12,6 +12,8 @@ class A {};
 
 enum class B : int { e };
 
+void foo();
+
 //
 //
 //
@@ -52,26 +54,6 @@ suite<"Arietta"> _ = [] {
   //
   //
   "Is And Is Not"_test = [] {
-    static_assert(is::Same<void, void>);
-    static_assert(is::Same<A, A>);
-
-    static_assert(!is::Same<A, void>);
-    static_assert(!is::Same<A, A const>);
-    static_assert(!is::Same<A, A volatile>);
-    static_assert(!is::Same<A, A *>);
-    static_assert(!is::Same<A, A &>);
-    static_assert(!is::Same<A, A &&>);
-
-    static_assert(!isnot::Same<void, void>);
-    static_assert(!isnot::Same<A, A>);
-
-    static_assert(isnot::Same<A, void>);
-    static_assert(isnot::Same<A, A const>);
-    static_assert(isnot::Same<A, A volatile>);
-    static_assert(isnot::Same<A, A *>);
-    static_assert(isnot::Same<A, A &>);
-    static_assert(isnot::Same<A, A &&>);
-
     static_assert(is::Arithmetic<bool>);
     static_assert(is::Arithmetic<char>);
     static_assert(is::Arithmetic<char const>);
@@ -92,6 +74,8 @@ suite<"Arietta"> _ = [] {
     static_assert(!is::Arithmetic<decltype(B::e)>);
     static_assert(!is::Arithmetic<std::byte>);
     static_assert(!is::Arithmetic<std::atomic_int>);
+    static_assert(!is::Arithmetic<std::false_type>);
+    static_assert(!is::Arithmetic<std::integral_constant<int, 0>>);
 
     static_assert(!isnot::Arithmetic<bool>);
     static_assert(!isnot::Arithmetic<char>);
@@ -113,6 +97,50 @@ suite<"Arietta"> _ = [] {
     static_assert(isnot::Arithmetic<decltype(B::e)>);
     static_assert(isnot::Arithmetic<std::byte>);
     static_assert(isnot::Arithmetic<std::atomic_int>);
+    static_assert(isnot::Arithmetic<std::false_type>);
+    static_assert(isnot::Arithmetic<std::integral_constant<int, 0>>);
+
+    static_assert(is::Same<void, void>);
+    static_assert(is::Same<A, A>);
+
+    static_assert(!is::Same<A, void>);
+    static_assert(!is::Same<A, A const>);
+    static_assert(!is::Same<A, A volatile>);
+    static_assert(!is::Same<A, A *>);
+    static_assert(!is::Same<A, A &>);
+    static_assert(!is::Same<A, A &&>);
+
+    static_assert(!isnot::Same<void, void>);
+    static_assert(!isnot::Same<A, A>);
+
+    static_assert(isnot::Same<A, void>);
+    static_assert(isnot::Same<A, A const>);
+    static_assert(isnot::Same<A, A volatile>);
+    static_assert(isnot::Same<A, A *>);
+    static_assert(isnot::Same<A, A &>);
+    static_assert(isnot::Same<A, A &&>);
+
+    static_assert(is::Void<void>);
+    static_assert(is::Void<void const>);
+    static_assert(is::Void<void volatile>);
+    static_assert(is::Void<void const volatile>);
+    static_assert(is::Void<std::void_t<>>);
+
+    static_assert(!is::Void<void *>);
+    static_assert(!is::Void<int>);
+    static_assert(!is::Void<decltype(foo)>);
+    static_assert(!is::Void<std::is_void<void>>);
+
+    static_assert(!isnot::Void<void>);
+    static_assert(!isnot::Void<void const>);
+    static_assert(!isnot::Void<void volatile>);
+    static_assert(!isnot::Void<void const volatile>);
+    static_assert(!isnot::Void<std::void_t<>>);
+
+    static_assert(isnot::Void<void *>);
+    static_assert(isnot::Void<int>);
+    static_assert(isnot::Void<decltype(foo)>);
+    static_assert(isnot::Void<std::is_void<void>>);
   };
 };
 
