@@ -76,4 +76,15 @@ concept Void = !is::Void<T>;
 
 } // namespace isnot
 
+//
+//
+//
+template <is::Arithmetic T, typename F>
+ART_SPECIFIER constexpr void ForEach(T const &n, F &&f) {
+  for (std::decay_t<T> i{}; i < n; ++i) {
+    static_assert(is::Void<decltype(f(i))>, "Function must have void return type");
+    f(i);
+  }
+}
+
 } // namespace arietta

@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <boost/ut.hpp>
+#include <cmath>
 
 using namespace arietta;
 using namespace boost::ut;
@@ -141,6 +142,89 @@ suite<"Arietta"> _ = [] {
     static_assert(isnot::Void<int>);
     static_assert(isnot::Void<decltype(foo)>);
     static_assert(isnot::Void<std::is_void<void>>);
+  };
+
+  //
+  //
+  //
+  "For Each"_test = [] {
+    // Implicit conversions.
+    {
+      std::string s;
+      ForEach(0, [&](unsigned i) { s += std::to_string(i); });
+      expect(s == "");
+    }
+    {
+      std::string s;
+      ForEach(1U, [&](int i) { s += std::to_string(i); });
+      expect(s == "0");
+    }
+
+    // `auto` type deductions.
+    {
+      std::string s;
+      ForEach(2, [&](auto i) {
+        static_assert(std::is_same_v<decltype(i), int>);
+        s += std::to_string(i);
+      });
+      expect(s == "01");
+    }
+    {
+      std::string s;
+      ForEach(3U, [&](auto i) {
+        static_assert(std::is_same_v<decltype(i), unsigned>);
+        s += std::to_string(i);
+      });
+      expect(s == "012");
+    }
+    {
+      std::string s;
+      ForEach(4.0F, [&](auto i) {
+        static_assert(std::is_same_v<decltype(i), float>);
+        s += std::to_string(static_cast<int>(i));
+      });
+      expect(s == "0123");
+    }
+    {
+      std::string s;
+      ForEach(5.0, [&](auto i) {
+        static_assert(std::is_same_v<decltype(i), double>);
+        s += std::to_string(static_cast<int>(i));
+      });
+      expect(s == "01234");
+    }
+
+    // `constexpr`.
+    static_assert([] {
+      int v{};
+      ForEach(6, [&](auto i) { v += i; });
+      return v;
+    }() == 0 + 1 + 2 + 3 + 4 + 5);
+    static_assert([] {
+      unsigned v{};
+      ForEach(7U, [&](auto i) { v += i; });
+      return v;
+    }() == 0U + 1U + 2U + 3U + 4U + 5U + 6U);
+    static_assert([] {
+      float v{};
+      ForEach(8.0F, [&](auto i) { v += i; });
+      return v;
+    }() == 0.0F + 1.0F + 2.0F + 3.0F + 4.0F + 5.0F + 6.0F + 7.0F);
+    static_assert([] {
+      double v{};
+      ForEach(9.0, [&](auto i) { v += i; });
+      return v;
+    }() == 0.0 + 1.0 + 2.0 + 3.0 + 4.0 + 5.0 + 6.0 + 7.0 + 8.0);
+
+    // Floating point round-off errors.
+    ForEach(10000.0F, [&](auto i) {
+      expect(i == std::round(i));
+      expect(i == static_cast<int>(i));
+    });
+    ForEach(10000.0, [&](auto i) {
+      expect(i == std::round(i));
+      expect(i == static_cast<int>(i));
+    });
   };
 };
 
