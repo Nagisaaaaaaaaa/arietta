@@ -101,6 +101,26 @@ suite<"Arietta"> _ = [] {
     static_assert(isnot::Arithmetic<std::false_type>);
     static_assert(isnot::Arithmetic<std::integral_constant<int, 0>>);
 
+    static_assert(is::Invocable<void()>);
+    static_assert(is::Invocable<void (*)()>);
+    static_assert(is::Invocable<void(int), int>);
+    static_assert(is::Invocable<void (*)(int), int>);
+
+    static_assert(!is::Invocable<void(), int>);
+    static_assert(!is::Invocable<void (*)(), int>);
+    static_assert(!is::Invocable<void(int)>);
+    static_assert(!is::Invocable<void (*)(int)>);
+
+    static_assert(!isnot::Invocable<void()>);
+    static_assert(!isnot::Invocable<void (*)()>);
+    static_assert(!isnot::Invocable<void(int), int>);
+    static_assert(!isnot::Invocable<void (*)(int), int>);
+
+    static_assert(isnot::Invocable<void(), int>);
+    static_assert(isnot::Invocable<void (*)(), int>);
+    static_assert(isnot::Invocable<void(int)>);
+    static_assert(isnot::Invocable<void (*)(int)>);
+
     static_assert(is::Same<void, void>);
     static_assert(is::Same<A, A>);
 
@@ -217,11 +237,11 @@ suite<"Arietta"> _ = [] {
     }() == 0.0 + 1.0 + 2.0 + 3.0 + 4.0 + 5.0 + 6.0 + 7.0 + 8.0);
 
     // Floating point round-off errors.
-    ForEach(10000.0F, [&](auto i) {
+    ForEach(10000.0F, [](auto i) {
       expect(i == std::round(i));
       expect(i == static_cast<int>(i));
     });
-    ForEach(10000.0, [&](auto i) {
+    ForEach(10000.0, [](auto i) {
       expect(i == std::round(i));
       expect(i == static_cast<int>(i));
     });
