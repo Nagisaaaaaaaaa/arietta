@@ -320,12 +320,12 @@ suite<"Constant"> _ = [] {
 
     // Floating point round-off errors.
     auto f0 = [](is::C auto i) {
-      expect(i == std::round(decltype(i)::value));
-      expect(i == static_cast<int>(i));
+      static_assert(i == std::round(decltype(i)::value));
+      static_assert(i == static_cast<int>(i));
     };
     auto f1 = []<auto i> {
-      expect(i == std::round(i));
-      expect(i == static_cast<int>(i));
+      static_assert(i == std::round(i));
+      static_assert(i == static_cast<int>(i));
     };
     ForEach(C<100.0F>{}, f0), ForEach<100.0F>(f0), ForEach<C<100.0F>>(f0);
     ForEach(C<100.0F>{}, f1), ForEach<100.0F>(f1), ForEach<C<100.0F>>(f1);
