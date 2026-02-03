@@ -9,11 +9,49 @@ using namespace boost::ut;
 
 namespace {
 
+namespace is_arithmetic {
+
 class A {};
 
 enum class B : int { e };
 
+} // namespace is_arithmetic
+
+namespace is_empty {
+
+struct A {};
+
+struct B {
+  int m;
+};
+
+struct C {
+  static int m;
+};
+
+struct D {
+  virtual ~D();
+};
+
+union E {};
+
+struct G {
+  int : 0;
+};
+
+} // namespace is_empty
+
+namespace is_same {
+
+class A {};
+
+} // namespace is_same
+
+namespace is_void {
+
 void foo();
+
+} // namespace is_void
 
 //
 //
@@ -70,9 +108,9 @@ suite<"Arietta"> _ = [] {
     static_assert(!is::Arithmetic<int *>);
     static_assert(!is::Arithmetic<float &>);
     static_assert(!is::Arithmetic<float *>);
-    static_assert(!is::Arithmetic<A>);
-    static_assert(!is::Arithmetic<B>);
-    static_assert(!is::Arithmetic<decltype(B::e)>);
+    static_assert(!is::Arithmetic<is_arithmetic::A>);
+    static_assert(!is::Arithmetic<is_arithmetic::B>);
+    static_assert(!is::Arithmetic<decltype(is_arithmetic::B::e)>);
     static_assert(!is::Arithmetic<std::byte>);
     static_assert(!is::Arithmetic<std::atomic_int>);
     static_assert(!is::Arithmetic<std::false_type>);
@@ -93,13 +131,27 @@ suite<"Arietta"> _ = [] {
     static_assert(isnot::Arithmetic<int *>);
     static_assert(isnot::Arithmetic<float &>);
     static_assert(isnot::Arithmetic<float *>);
-    static_assert(isnot::Arithmetic<A>);
-    static_assert(isnot::Arithmetic<B>);
-    static_assert(isnot::Arithmetic<decltype(B::e)>);
+    static_assert(isnot::Arithmetic<is_arithmetic::A>);
+    static_assert(isnot::Arithmetic<is_arithmetic::B>);
+    static_assert(isnot::Arithmetic<decltype(is_arithmetic::B::e)>);
     static_assert(isnot::Arithmetic<std::byte>);
     static_assert(isnot::Arithmetic<std::atomic_int>);
     static_assert(isnot::Arithmetic<std::false_type>);
     static_assert(isnot::Arithmetic<std::integral_constant<int, 0>>);
+
+    static_assert(is::Empty<is_empty::A>);
+    static_assert(!is::Empty<is_empty::B>);
+    static_assert(is::Empty<is_empty::C>);
+    static_assert(!is::Empty<is_empty::D>);
+    static_assert(!is::Empty<is_empty::E>);
+    static_assert(is::Empty<is_empty::G>);
+
+    static_assert(!isnot::Empty<is_empty::A>);
+    static_assert(isnot::Empty<is_empty::B>);
+    static_assert(!isnot::Empty<is_empty::C>);
+    static_assert(isnot::Empty<is_empty::D>);
+    static_assert(isnot::Empty<is_empty::E>);
+    static_assert(!isnot::Empty<is_empty::G>);
 
     static_assert(is::Invocable<void()>);
     static_assert(is::Invocable<void (*)()>);
@@ -122,24 +174,24 @@ suite<"Arietta"> _ = [] {
     static_assert(isnot::Invocable<void (*)(int)>);
 
     static_assert(is::Same<void, void>);
-    static_assert(is::Same<A, A>);
+    static_assert(is::Same<is_same::A, is_same::A>);
 
-    static_assert(!is::Same<A, void>);
-    static_assert(!is::Same<A, A const>);
-    static_assert(!is::Same<A, A volatile>);
-    static_assert(!is::Same<A, A *>);
-    static_assert(!is::Same<A, A &>);
-    static_assert(!is::Same<A, A &&>);
+    static_assert(!is::Same<is_same::A, void>);
+    static_assert(!is::Same<is_same::A, is_same::A const>);
+    static_assert(!is::Same<is_same::A, is_same::A volatile>);
+    static_assert(!is::Same<is_same::A, is_same::A *>);
+    static_assert(!is::Same<is_same::A, is_same::A &>);
+    static_assert(!is::Same<is_same::A, is_same::A &&>);
 
     static_assert(!isnot::Same<void, void>);
-    static_assert(!isnot::Same<A, A>);
+    static_assert(!isnot::Same<is_same::A, is_same::A>);
 
-    static_assert(isnot::Same<A, void>);
-    static_assert(isnot::Same<A, A const>);
-    static_assert(isnot::Same<A, A volatile>);
-    static_assert(isnot::Same<A, A *>);
-    static_assert(isnot::Same<A, A &>);
-    static_assert(isnot::Same<A, A &&>);
+    static_assert(isnot::Same<is_same::A, void>);
+    static_assert(isnot::Same<is_same::A, is_same::A const>);
+    static_assert(isnot::Same<is_same::A, is_same::A volatile>);
+    static_assert(isnot::Same<is_same::A, is_same::A *>);
+    static_assert(isnot::Same<is_same::A, is_same::A &>);
+    static_assert(isnot::Same<is_same::A, is_same::A &&>);
 
     static_assert(is::Void<void>);
     static_assert(is::Void<void const>);
@@ -149,7 +201,7 @@ suite<"Arietta"> _ = [] {
 
     static_assert(!is::Void<void *>);
     static_assert(!is::Void<int>);
-    static_assert(!is::Void<decltype(foo)>);
+    static_assert(!is::Void<decltype(is_void::foo)>);
     static_assert(!is::Void<std::is_void<void>>);
 
     static_assert(!isnot::Void<void>);
@@ -160,7 +212,7 @@ suite<"Arietta"> _ = [] {
 
     static_assert(isnot::Void<void *>);
     static_assert(isnot::Void<int>);
-    static_assert(isnot::Void<decltype(foo)>);
+    static_assert(isnot::Void<decltype(is_void::foo)>);
     static_assert(isnot::Void<std::is_void<void>>);
   };
 
