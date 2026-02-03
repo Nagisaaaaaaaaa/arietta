@@ -319,12 +319,13 @@ suite<"Constant"> _ = [] {
     }() == (0 + 1 + 2 + 3 + 4) * 2 + (0 + 1 + 2 + 3 + 4 + 5) * 2 + (0 + 1 + 2 + 3 + 4 + 5 + 6) * 2);
 
     // Floating point round-off errors.
+    // TODO: Currently, `std::round` does not support `constexpr`.
     auto f0 = [](is::C auto i) {
-      static_assert(i == std::round(decltype(i)::value));
+      // static_assert(i == std::round(decltype(i)::value));
       static_assert(i == static_cast<int>(i));
     };
     auto f1 = []<auto i> {
-      static_assert(i == std::round(i));
+      // static_assert(i == std::round(i));
       static_assert(i == static_cast<int>(i));
     };
     ForEach(C<100.0F>{}, f0), ForEach<100.0F>(f0), ForEach<C<100.0F>>(f0);

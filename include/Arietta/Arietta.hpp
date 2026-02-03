@@ -56,6 +56,9 @@ struct IsArithmetic<T> : std::true_type {};
 template <typename T>
 concept Arithmetic = detail::arietta::IsArithmetic<T>::value;
 
+template <typename T>
+concept Empty = std::is_empty_v<T>;
+
 template <typename F, typename... Args>
 concept Invocable = std::invocable<F, Args...>;
 
@@ -71,6 +74,9 @@ namespace isnot {
 
 template <typename T>
 concept Arithmetic = !is::Arithmetic<T>;
+
+template <typename T>
+concept Empty = !is::Empty<T>;
 
 template <typename F, typename... Args>
 concept Invocable = !is::Invocable<F, Args...>;
