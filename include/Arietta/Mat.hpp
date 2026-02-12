@@ -11,7 +11,32 @@
 
 namespace arietta {
 
-template <typename T, typename _Constants>
+namespace detail::mat {
+
+//! The last template parameter of `Mat` is an instance of `Token`.
+//! This design aims to strictly prohibit users from manually spelling out the `Mat` type.
+//! The rationale is as follows:
+//! 1. Users should never need to explicitly write the exact type of `Mat`.
+//! 2. It is difficult for users to correctly specify the `Mat` type due to the complexity of `Constants`.
+//!    Validating `Constants` upon every instantiation would impose a heavy burden on compilation speed.
+//!    The token achieves the validation goal with minimal compile-time overhead:
+//!    the presence of a token guarantees that `Constants` is valid.
+//!    Consequently, we can confine all validity checks to the `Deduce` phase.
+class Token {
+  //! `private` prevents users from manually constructing `Token` externally.
+private:
+  Token() = default;
+
+  template <typename...>
+  friend struct Deduce;
+};
+
+} // namespace detail::mat
+
+//
+//
+//
+template <typename T, typename _Constants, detail::mat::Token>
 class Mat {
 public:
   using type = Mat;
@@ -36,8 +61,8 @@ namespace detail::mat {
 template <typename>
 struct IsMat : std::false_type {};
 
-template <typename T, typename Constants>
-struct IsMat<Mat<T, Constants>> : std::true_type {};
+template <typename T, typename Constants, ::arietta::detail::mat::Token token>
+struct IsMat<Mat<T, Constants, token>> : std::true_type {};
 
 } // namespace detail::mat
 
@@ -138,12 +163,14 @@ struct DeduceImpl {
 
 //! `Ts...` are decayed and converted to `Param` specializations.
 template <typename... Ts>
-struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {};
+struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {
+  static constexpr Token token{};
+};
 
 } // namespace detail::mat
 
 // CTAD.
 template <typename... Ts, typename D = detail::mat::Deduce<Ts...>>
-Mat(Ts &&...) -> Mat<typename D::value_type, typename D::Constants>;
+Mat(Ts &&...) -> Mat<typename D::value_type, typename D::Constants, D::token>;
 
 } // namespace arietta
