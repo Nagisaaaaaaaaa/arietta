@@ -11,17 +11,16 @@
 
 namespace arietta {
 
-template <typename T, usize _rows, usize _cols, is::Types _constants>
+template <typename T, typename _Constants>
 class Mat {
 public:
   using type = Mat;
   using value_type = T;
+  using Constants = _Constants;
 
-  [[nodiscard]] static consteval auto rows() { return _rows; }
+  [[nodiscard]] static consteval auto rows() { return Constants::template At<0>::Size(); }
 
-  [[nodiscard]] static consteval auto cols() { return _cols; }
-
-  using constants = _constants;
+  [[nodiscard]] static consteval auto cols() { return Constants::Size(); }
 
   template <typename... Ts>
   constexpr explicit Mat(Ts &&...) {}
@@ -37,8 +36,8 @@ namespace detail::mat {
 template <typename>
 struct IsMat : std::false_type {};
 
-template <typename T, usize rows, usize cols, is::Types constants>
-struct IsMat<Mat<T, rows, cols, constants>> : std::true_type {};
+template <typename T, typename Constants>
+struct IsMat<Mat<T, Constants>> : std::true_type {};
 
 } // namespace detail::mat
 
@@ -66,34 +65,33 @@ namespace detail::mat {
 template <typename T>
 struct Param;
 
-template <is::Arithmetic T>
-struct Param<T> {
-  static constexpr bool isMat = false;
+// CRTP base providing `rows()` and `cols()` for `Param`.
+template <typename Derived>
+struct ParamBase {
+  [[nodiscard]] static consteval auto rows() { return Derived::Constants::template At<0>::Size(); }
 
+  [[nodiscard]] static consteval auto cols() { return Derived::Constants::Size(); }
+};
+
+template <is::Arithmetic T>
+struct Param<T> : ParamBase<Param<T>> {
+  static constexpr bool isMat = false;
   using value_type = T;
-  static constexpr usize rows = 1;
-  static constexpr usize cols = 1;
-  using constants = Types<Types<void>>;
+  using Constants = Types<Types<void>>;
 };
 
 template <is::C T>
-struct Param<T> {
+struct Param<T> : ParamBase<Param<T>> {
   static constexpr bool isMat = false;
-
   using value_type = T::value_type;
-  static constexpr usize rows = 1;
-  static constexpr usize cols = 1;
-  using constants = Types<Types<T>>;
+  using Constants = Types<Types<T>>;
 };
 
 template <is::Mat T>
-struct Param<T> {
+struct Param<T> : ParamBase<Param<T>> {
   static constexpr bool isMat = true;
-
   using value_type = T::value_type;
-  static constexpr usize rows = T::rows();
-  static constexpr usize cols = T::cols();
-  using constants = T::constants;
+  using Constants = T::Constants;
 };
 
 //
@@ -112,13 +110,13 @@ struct ConcatConstants;
 //! `Ps...` are assumed to be non-empty `Param` specializations with size (1, 1).
 template <typename... Ps>
 struct ConcatConstants<Row, Ps...> {
-  using type = Types<Types<typename Ps::constants::template At<0>::template At<0>...>>;
+  using type = Types<Types<typename Ps::Constants::template At<0>::template At<0>...>>;
 };
 
 //! `Ps...` are assumed to be non-empty `Param` specializations with size (r, 1).
 template <typename... Ps>
 struct ConcatConstants<Col, Ps...> {
-  using type = Types<typename Ps::constants::template At<0>...>;
+  using type = Types<typename Ps::Constants::template At<0>...>;
 };
 
 //
@@ -128,17 +126,14 @@ struct ConcatConstants<Col, Ps...> {
 template <typename P0, typename... Ps>
 struct DeduceImpl {
   static_assert(((P0::isMat == Ps::isMat) && ...), "All arguments must be either matrices or non-matrices");
-
   static_assert(
       (is::Same<typename P0::value_type, typename Ps::value_type> && ...), "All arguments must have the same value type"
   );
-  static_assert(((P0::rows == Ps::rows) && ...), "All arguments must have the same number of rows");
-  static_assert(P0::cols == 1 && ((Ps::cols == 1) && ...), "All arguments must have exactly one column");
+  static_assert(((P0::rows() == Ps::rows()) && ...), "All arguments must have the same number of rows");
+  static_assert(P0::cols() == 1 && ((Ps::cols() == 1) && ...), "All arguments must have exactly one column");
 
   using value_type = P0::value_type;
-  static constexpr usize rows = P0::isMat ? P0::rows : sizeof...(Ps) + 1;
-  static constexpr usize cols = P0::isMat ? sizeof...(Ps) + 1 : 1;
-  using constants = ConcatConstants<std::conditional_t<P0::isMat, Col, Row>, P0, Ps...>::type;
+  using Constants = ConcatConstants<std::conditional_t<P0::isMat, Col, Row>, P0, Ps...>::type;
 };
 
 //! `Ts...` are decayed and converted to `Param` specializations.
@@ -149,6 +144,6 @@ struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {};
 
 // CTAD.
 template <typename... Ts, typename D = detail::mat::Deduce<Ts...>>
-Mat(Ts &&...) -> Mat<typename D::value_type, D::rows, D::cols, typename D::constants>;
+Mat(Ts &&...) -> Mat<typename D::value_type, typename D::Constants>;
 
 } // namespace arietta
