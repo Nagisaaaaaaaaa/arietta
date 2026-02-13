@@ -30,9 +30,6 @@ class Token {
 private:
   Token() = default;
 
-  template <typename T, usize rows, usize cols>
-  friend class MatBase;
-
   template <typename T, usize rows, usize cols, typename... Ts>
   friend class arietta::Mat;
 
@@ -46,6 +43,7 @@ private:
 template <typename T, usize _rows, usize _cols>
 class MatBase {
 public:
+  using type = MatBase;
   using value_type = T;
 
   [[nodiscard]] static consteval auto rows() { return _rows; }
@@ -64,11 +62,16 @@ template <typename T, usize _rows, usize _cols, typename _Constants, typename To
 //! while `static_assert` is only evaluated during instantiation.
   requires(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>)
 class Mat<T, _rows, _cols, _Constants, Token> : public detail::mat::MatBase<T, _rows, _cols> {
-public:
   //! static_assert(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>);
+private:
+  using Base = typename Mat::type;
 
+public:
   using type = Mat;
   using Constants = _Constants;
+
+  using Base::rows, Base::cols;
+  using typename Base::value_type;
 
   template <typename... Ts>
   constexpr explicit Mat(Ts &&...) {}
@@ -79,8 +82,43 @@ public:
 //
 template <typename T, usize _rows, usize _cols>
 class Mat<T, _rows, _cols> : public detail::mat::MatBase<T, _rows, _cols> {
+private:
+  using Base = typename Mat::type;
+  static constexpr detail::mat::Token token{};
+
 public:
+  using type = Mat;
+
+  using Base::rows, Base::cols;
+  using typename Base::value_type;
+
   Mat() = delete;
+
+public:
+  template <T v>
+  [[nodiscard]] static consteval auto Constant() {
+    using ConstantsPerCol = Types<>::Fill<C<v>, rows()>;
+    using Constants = Types<>::Fill<ConstantsPerCol, cols()>;
+    return Mat<T, rows(), cols(), Constants, C<token>>{};
+  }
+
+  [[nodiscard]] static consteval auto Zero() { return Constant<static_cast<T>(0)>(); }
+
+  [[nodiscard]] static consteval auto Identity() {
+    static_assert(rows() == cols(), "The identity matrix is only defined for square matrices");
+    using Constants = Types<>::FillEach<IdentityConstantsPerCol, cols()>;
+    return Mat<T, rows(), cols(), Constants, C<token>>{};
+  }
+
+private:
+  template <usize col>
+  struct IdentityConstantsPerElement {
+    template <usize row>
+    using type = std::conditional_t<row == col, C<static_cast<T>(1)>, C<static_cast<T>(0)>>;
+  };
+
+  template <usize col>
+  using IdentityConstantsPerCol = Types<>::FillEach<IdentityConstantsPerElement<col>::template type, rows()>;
 };
 
 //
