@@ -258,6 +258,17 @@ suite<"Types"> _ = [] {
   //
   //
   //
+  "Fill"_test = [] {
+    static_assert(is::Same<Ts0::Fill<void, 0>, Types<>>);
+    static_assert(is::Same<Ts0::Fill<i8, 1>, Types<i8>>);
+    static_assert(is::Same<Ts0::Fill<i16, 2>, Types<i16, i16>>);
+    static_assert(is::Same<Ts0::Fill<Tss, 3>, Types<Tss, Tss, Tss>>);
+    // static_assert(is::Same<Ts1::Fill<void, 0>, Types<>>); //! Should not compile.
+  };
+
+  //
+  //
+  //
   "Is And Is Not"_test = [] {
     static_assert(is::Types<Ts0>);
     static_assert(is::Types<Ts1>);

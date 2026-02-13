@@ -173,7 +173,21 @@ struct RemoveImpl<T, U, Ts...> {
       typename RemoveImpl<T, Ts...>::type::template PushFront<U>>;
 };
 
-} // namespace detail::types
+//
+//
+//
+template <typename T, usize n>
+struct FillImpl;
+
+template <typename T>
+struct FillImpl<T, 0> {
+  using type = Types<>;
+};
+
+template <typename T, usize n>
+struct FillImpl {
+  using type = typename FillImpl<T, n - 1>::type::template PushFront<T>;
+};
 
 //
 //
@@ -181,22 +195,22 @@ struct RemoveImpl<T, U, Ts...> {
 //
 //
 template <typename... Ts>
-struct Types {
+struct TypesBase {
   [[nodiscard]] static consteval usize Size() { return sizeof...(Ts); }
 
 #if 0
   template <usize i>
-  using At = typename detail::types::AtImpl<i, Ts...>::type;
+  using At = typename AtImpl<i, Ts...>::type;
 #else
   template <usize i>
-  using At = typename decltype(detail::types::AtImpl<0, Ts...>::Type(detail::types::C<i>{}))::type;
+  using At = typename decltype(AtImpl<0, Ts...>::Type(C<i>{}))::type;
 #endif
 
   template <auto tag = 0>
-  using Front = typename detail::types::FrontImpl<tag, Ts...>::type;
+  using Front = typename FrontImpl<tag, Ts...>::type;
 
   template <auto tag = 0>
-  using Back = typename detail::types::BackImpl<tag, Ts...>::type;
+  using Back = typename BackImpl<tag, Ts...>::type;
 
   template <typename T>
   using PushFront = Types<T, Ts...>;
@@ -205,19 +219,30 @@ struct Types {
   using PushBack = Types<Ts..., T>;
 
   template <auto tag = 0>
-  using PopFront = typename detail::types::PopFrontImpl<tag, Ts...>::type;
+  using PopFront = typename PopFrontImpl<tag, Ts...>::type;
 
   template <auto tag = 0>
-  using PopBack = typename detail::types::PopBackImpl<tag, Ts...>::type;
+  using PopBack = typename PopBackImpl<tag, Ts...>::type;
 
   template <usize i, typename T>
-  using Insert = typename detail::types::InsertImpl<i, T, Ts...>::type;
+  using Insert = typename InsertImpl<i, T, Ts...>::type;
 
   template <usize i>
-  using Erase = typename detail::types::EraseImpl<i, Ts...>::type;
+  using Erase = typename EraseImpl<i, Ts...>::type;
 
   template <typename T>
-  using Remove = typename detail::types::RemoveImpl<T, Ts...>::type;
+  using Remove = typename RemoveImpl<T, Ts...>::type;
+};
+
+} // namespace detail::types
+
+template <typename... Ts>
+struct Types : detail::types::TypesBase<Ts...> {};
+
+template <>
+struct Types<> : detail::types::TypesBase<> {
+  template <typename T, usize n>
+  using Fill = typename detail::types::FillImpl<T, n>::type;
 };
 
 //
