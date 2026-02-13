@@ -11,9 +11,12 @@
 
 namespace arietta {
 
+template <typename T, usize rows, usize cols, typename... Ts>
+class Mat;
+
 namespace detail::mat {
 
-//! The last template parameter of `Mat` is an instance of `Token`.
+//! The last optional template parameter of `Mat` is an instance of `Token`, wrapped in `C`.
 //! This design aims to strictly prohibit users from manually spelling out the `Mat` type.
 //! The rationale is as follows:
 //! 1. Users should never need to explicitly write the exact type of `Mat`.
@@ -27,8 +30,27 @@ class Token {
 private:
   Token() = default;
 
+  template <typename T, usize rows, usize cols>
+  friend class MatBase;
+
+  template <typename T, usize rows, usize cols, typename... Ts>
+  friend class arietta::Mat;
+
   template <typename...>
   friend struct Deduce;
+};
+
+//
+//
+//
+template <typename T, usize _rows, usize _cols>
+class MatBase {
+public:
+  using value_type = T;
+
+  [[nodiscard]] static consteval auto rows() { return _rows; }
+
+  [[nodiscard]] static consteval auto cols() { return _cols; }
 };
 
 } // namespace detail::mat
@@ -36,19 +58,29 @@ private:
 //
 //
 //
-template <typename T, typename _Constants, detail::mat::Token>
-class Mat {
+template <typename T, usize _rows, usize _cols, typename _Constants, typename Token>
+//! The token constraint should be expressed via `requires` instead of `static_assert`,
+//! since `requires` participates in substitution failure,
+//! while `static_assert` is only evaluated during instantiation.
+  requires(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>)
+class Mat<T, _rows, _cols, _Constants, Token> : public detail::mat::MatBase<T, _rows, _cols> {
 public:
+  //! static_assert(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>);
+
   using type = Mat;
-  using value_type = T;
   using Constants = _Constants;
-
-  [[nodiscard]] static consteval auto rows() { return Constants::template At<0>::Size(); }
-
-  [[nodiscard]] static consteval auto cols() { return Constants::Size(); }
 
   template <typename... Ts>
   constexpr explicit Mat(Ts &&...) {}
+};
+
+//
+//
+//
+template <typename T, usize _rows, usize _cols>
+class Mat<T, _rows, _cols> : public detail::mat::MatBase<T, _rows, _cols> {
+public:
+  Mat() = delete;
 };
 
 //
@@ -61,8 +93,9 @@ namespace detail::mat {
 template <typename>
 struct IsMat : std::false_type {};
 
-template <typename T, typename Constants, ::arietta::detail::mat::Token token>
-struct IsMat<Mat<T, Constants, token>> : std::true_type {};
+//! Only a `Mat` with specified `Constants` and `Token` is considered `is::Mat`.
+template <typename T, usize rows, usize cols, typename Constants, typename Token>
+struct IsMat<Mat<T, rows, cols, Constants, Token>> : std::true_type {};
 
 } // namespace detail::mat
 
@@ -161,6 +194,15 @@ struct DeduceImpl {
   using Constants = ConcatConstants<std::conditional_t<P0::isMat, Col, Row>, P0, Ps...>::type;
 };
 
+// Specialization for copy and move constructors deduction.
+//! `P` is assumed to be a `Param` specialization.
+template <typename P>
+  requires(P::isMat)
+struct DeduceImpl<P> {
+  using value_type = P::value_type;
+  using Constants = P::Constants;
+};
+
 //! `Ts...` are decayed and converted to `Param` specializations.
 template <typename... Ts>
 struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {
@@ -171,6 +213,36 @@ struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {
 
 // CTAD.
 template <typename... Ts, typename D = detail::mat::Deduce<Ts...>>
-Mat(Ts &&...) -> Mat<typename D::value_type, typename D::Constants, D::token>;
+Mat(Ts &&...) -> Mat<
+    typename D::value_type,
+    D::Constants::template At<0>::Size(),
+    D::Constants::Size(),
+    typename D::Constants,
+    C<D::token>>;
+
+//
+//
+//
+//
+//
+// Aliases.
+
+template <typename T, typename... Ts>
+using Mat1 = Mat<T, 1, 1, Ts...>;
+template <typename T, typename... Ts>
+using Mat2 = Mat<T, 2, 2, Ts...>;
+template <typename T, typename... Ts>
+using Mat3 = Mat<T, 3, 3, Ts...>;
+template <typename T, typename... Ts>
+using Mat4 = Mat<T, 4, 4, Ts...>;
+
+template <typename T, typename... Ts>
+using Vec1 = Mat<T, 1, 1, Ts...>;
+template <typename T, typename... Ts>
+using Vec2 = Mat<T, 2, 1, Ts...>;
+template <typename T, typename... Ts>
+using Vec3 = Mat<T, 3, 1, Ts...>;
+template <typename T, typename... Ts>
+using Vec4 = Mat<T, 4, 1, Ts...>;
 
 } // namespace arietta
