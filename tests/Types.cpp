@@ -18,6 +18,15 @@ using Ts4 = Types<i8, i16, Tss, i16>;
 using Ts5 = Types<i8, i16, Tss, i16, Tss>;
 using Ts6 = Types<i8, i16, Tss, i16, Tss, Tss>;
 
+template <usize>
+using FillEachCase0 = void;
+
+template <usize i>
+using FillEachCase1 = C<static_cast<int>(i)>;
+
+template <usize i>
+using FillEachCase2 = std::conditional_t<i == 0, i8, std::conditional_t<i == 1 || i == 3, i16, Tss>>;
+
 //
 //
 //
@@ -264,6 +273,32 @@ suite<"Types"> _ = [] {
     static_assert(is::Same<Ts0::Fill<i16, 2>, Types<i16, i16>>);
     static_assert(is::Same<Ts0::Fill<Tss, 3>, Types<Tss, Tss, Tss>>);
     // static_assert(is::Same<Ts1::Fill<void, 0>, Types<>>); //! Should not compile.
+  };
+
+  //
+  //
+  //
+  "Fill Each"_test = [] {
+    static_assert(is::Same<Ts0::FillEach<FillEachCase0, 0>, Types<>>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase0, 1>, Types<void>>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase0, 2>, Types<void, void>>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase0, 3>, Types<void, void, void>>);
+    // static_assert(is::Same<Ts1::FillEach<FillEachCase0, 0>, Types<>>); //! Should not compile.
+
+    static_assert(is::Same<Ts0::FillEach<FillEachCase1, 0>, Types<>>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase1, 1>, Types<C<0>>>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase1, 2>, Types<C<0>, C<1>>>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase1, 3>, Types<C<0>, C<1>, C<2>>>);
+    // static_assert(is::Same<Ts1::FillEach<FillEachCase1, 0>, Types<>>); //! Should not compile.
+
+    static_assert(is::Same<Ts0::FillEach<FillEachCase2, 0>, Ts0>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase2, 1>, Ts1>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase2, 2>, Ts2>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase2, 3>, Ts3>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase2, 4>, Ts4>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase2, 5>, Ts5>);
+    static_assert(is::Same<Ts0::FillEach<FillEachCase2, 6>, Ts6>);
+    // static_assert(is::Same<Ts1::FillEach<FillEachCase2, 0>, Ts0>); //! Should not compile.
   };
 
   //
