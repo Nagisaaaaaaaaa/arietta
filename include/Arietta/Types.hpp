@@ -186,7 +186,23 @@ struct FillImpl<T, 0> {
 
 template <typename T, usize n>
 struct FillImpl {
-  using type = typename FillImpl<T, n - 1>::type::template PushFront<T>;
+  using type = typename FillImpl<T, n - 1>::type::template PushBack<T>;
+};
+
+//
+//
+//
+template <template <usize> typename T, usize n>
+struct FillEachImpl;
+
+template <template <usize> typename T>
+struct FillEachImpl<T, 0> {
+  using type = Types<>;
+};
+
+template <template <usize> typename T, usize n>
+struct FillEachImpl {
+  using type = typename FillEachImpl<T, n - 1>::type::template PushBack<T<n - 1>>;
 };
 
 //
@@ -243,6 +259,9 @@ template <>
 struct Types<> : detail::types::TypesBase<> {
   template <typename T, usize n>
   using Fill = typename detail::types::FillImpl<T, n>::type;
+
+  template <template <usize> typename T, usize n>
+  using FillEach = typename detail::types::FillEachImpl<T, n>::type;
 };
 
 //
