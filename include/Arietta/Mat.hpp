@@ -11,31 +11,22 @@
 
 namespace arietta {
 
-template <typename T, usize rows, usize cols, typename... Ts>
-class Mat;
-
 namespace detail::mat {
 
-//! The last optional template parameter of `Mat` is an instance of `Token`, wrapped in `C`.
+//! A special template parameter of `Mat` is an instance of `Token` wrapped in `C`.
 //! This design aims to strictly prohibit users from manually spelling out the `Mat` type.
 //! The rationale is as follows:
-//! 1. Users should never need to explicitly write the exact type of `Mat`.
-//! 2. It is difficult for users to correctly specify the `Mat` type due to the complexity of `Constants`.
+//! 1. Users should never need to explicitly write the exact template parameters of `Mat`.
+//! 2. It is highly error-prone for users to manually specify the `Mat` type due to the complexity of `Constants`.
 //!    Validating `Constants` upon every instantiation would impose a heavy burden on compilation speed.
 //!    The token achieves the validation goal with minimal compile-time overhead:
-//!    the presence of a token guarantees that `Constants` is valid.
-//!    Consequently, we can confine all validity checks to the `Deduce` phase.
-class Token {
-  //! `private` prevents users from manually constructing `Token` externally.
-private:
-  Token() = default;
-
-  template <typename T, usize rows, usize cols, typename... Ts>
-  friend class arietta::Mat;
-
-  template <typename...>
-  friend struct Deduce;
-};
+//!    the mere presence of a valid token guarantees that `Constants` is well-formed.
+//!    To enforce this mechanism, `Constants` is positioned after the token in the template parameter list,
+//!    making it impossible for users to specify `Constants` without first providing a valid token.
+//! 3. Supplying a token to instantiate `Mat` is strictly limited to two internal scenarios:
+//!    (1) When applying the default `Constants` to `Mat`.
+//!    (2) Upon completion of the `Deduce` phase (during CTAD).
+struct Token {};
 
 //
 //
@@ -56,15 +47,21 @@ public:
 //
 //
 //
-template <typename T, usize _rows, usize _cols, typename _Constants, typename Token>
+template <
+    typename T,
+    usize _rows,
+    usize _cols,
+    typename _Token = C<detail::mat::Token{}>,
+    typename _Constants = Types<>::Fill<Types<>::Fill<void, _rows>, _cols>>
 //! The token constraint should be expressed via `requires` instead of `static_assert`,
 //! since `requires` participates in substitution failure,
 //! while `static_assert` is only evaluated during instantiation.
-  requires(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>)
-class Mat<T, _rows, _cols, _Constants, Token> : public detail::mat::MatBase<T, _rows, _cols> {
+  requires(is::C<_Token> && is::Same<typename _Token::value_type, detail::mat::Token>)
+class Mat : public detail::mat::MatBase<T, _rows, _cols> {
   //! static_assert(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>);
 private:
   using Base = typename Mat::type;
+  using Token = _Token;
 
 public:
   using type = Mat;
@@ -84,22 +81,24 @@ template <typename T, usize _rows, usize _cols>
 class Mat<T, _rows, _cols> : public detail::mat::MatBase<T, _rows, _cols> {
 private:
   using Base = typename Mat::type;
-  static constexpr detail::mat::Token token{};
+  using Token = C<detail::mat::Token{}>;
 
 public:
   using type = Mat;
+  using Constants = Types<>::Fill<Types<>::Fill<void, _rows>, _cols>;
 
   using Base::rows, Base::cols;
   using typename Base::value_type;
 
-  Mat() = delete;
+  template <typename... Ts>
+  constexpr explicit Mat(Ts &&...) {}
 
 public:
   template <T v>
   [[nodiscard]] static consteval auto Constant() {
     using ConstantsPerCol = Types<>::Fill<C<v>, rows()>;
     using Constants = Types<>::Fill<ConstantsPerCol, cols()>;
-    return Mat<T, rows(), cols(), Constants, C<token>>{};
+    return Mat<T, rows(), cols(), Token, Constants>{};
   }
 
   [[nodiscard]] static consteval auto Zero() { return Constant<static_cast<T>(0)>(); }
@@ -107,7 +106,7 @@ public:
   [[nodiscard]] static consteval auto Identity() {
     static_assert(rows() == cols(), "The identity matrix is only defined for square matrices");
     using Constants = Types<>::FillEach<IdentityConstantsPerCol, cols()>;
-    return Mat<T, rows(), cols(), Constants, C<token>>{};
+    return Mat<T, rows(), cols(), Token, Constants>{};
   }
 
 private:
@@ -131,9 +130,8 @@ namespace detail::mat {
 template <typename>
 struct IsMat : std::false_type {};
 
-//! Only a `Mat` with specified `Constants` and `Token` is considered `is::Mat`.
-template <typename T, usize rows, usize cols, typename Constants, typename Token>
-struct IsMat<Mat<T, rows, cols, Constants, Token>> : std::true_type {};
+template <typename T, usize rows, usize cols, typename Token, typename Constant>
+struct IsMat<Mat<T, rows, cols, Token, Constant>> : std::true_type {};
 
 } // namespace detail::mat
 
@@ -243,9 +241,7 @@ struct DeduceImpl<P> {
 
 //! `Ts...` are decayed and converted to `Param` specializations.
 template <typename... Ts>
-struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {
-  static constexpr Token token{};
-};
+struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {};
 
 } // namespace detail::mat
 
@@ -255,8 +251,8 @@ Mat(Ts &&...) -> Mat<
     typename D::value_type,
     D::Constants::template At<0>::Size(),
     D::Constants::Size(),
-    typename D::Constants,
-    C<D::token>>;
+    C<detail::mat::Token{}>,
+    typename D::Constants>;
 
 //
 //
@@ -265,6 +261,9 @@ Mat(Ts &&...) -> Mat<
 //
 // Aliases.
 
+// TODO: Currently, only MSVC supports forwarding default template arguments
+//       via parameter packs (`...`) in alias templates.
+#if defined(_MSC_VER)
 template <typename T, typename... Ts>
 using Mat1 = Mat<T, 1, 1, Ts...>;
 template <typename T, typename... Ts>
@@ -282,5 +281,24 @@ template <typename T, typename... Ts>
 using Vec3 = Mat<T, 3, 1, Ts...>;
 template <typename T, typename... Ts>
 using Vec4 = Mat<T, 4, 1, Ts...>;
+#else
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 1>, 1>>
+using Mat1 = Mat<T, 1, 1, Token, Cs>;
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 2>, 2>>
+using Mat2 = Mat<T, 2, 2, Token, Cs>;
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 3>, 3>>
+using Mat3 = Mat<T, 3, 3, Token, Cs>;
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 3>, 3>>
+using Mat4 = Mat<T, 4, 4, Token, Cs>;
+
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 1>, 1>>
+using Vec1 = Mat<T, 1, 1, Token, Cs>;
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 2>, 1>>
+using Vec2 = Mat<T, 2, 1, Token, Cs>;
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 3>, 1>>
+using Vec3 = Mat<T, 3, 1, Token, Cs>;
+template <typename T, typename Token = C<detail::mat::Token{}>, typename Cs = Types<>::Fill<Types<>::Fill<void, 4>, 1>>
+using Vec4 = Mat<T, 4, 1, Token, Cs>;
+#endif
 
 } // namespace arietta
