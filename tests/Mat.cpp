@@ -332,6 +332,68 @@ suite<"Mat"> _ = [] {
       static_assert(is::Same<decltype(n_CC_CC), Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token> const>);
     });
   };
+
+  //
+  //
+  //
+  "Size Of"_test = [] {
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+
+      static_assert(sizeof(Mat<T, 1, 1, Types<Types<VO>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 1, Types<Types<C0>>, Token>) == sizeof(std::array<T, 0>));
+
+      static_assert(sizeof(Mat<T, 2, 1, Types<Types<VO, VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 1, Types<Types<C0, VO>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 1, Types<Types<VO, C1>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 1, Types<Types<C0, C1>>, Token>) == sizeof(std::array<T, 0>));
+
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>) == 3 * sizeof(T));
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<C0, VO, VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<VO, C1, VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<C0, C1, VO>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<VO, VO, C2>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<C0, VO, C2>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<VO, C1, C2>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 3, 1, Types<Types<C0, C1, C2>>, Token>) == sizeof(std::array<T, 0>));
+
+      static_assert(sizeof(Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 2, Types<Types<C0>, Types<VO>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 2, Types<Types<VO>, Types<C1>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 2, Types<Types<C0>, Types<C1>>, Token>) == sizeof(std::array<T, 0>));
+
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>) == 3 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>) == sizeof(std::array<T, 0>));
+
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>) == 4 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, VO>>, Token>) == 3 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, VO>>, Token>) == 3 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, VO>>, Token>) == 3 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, VO>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, VO>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C3>>, Token>) == 3 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, C3>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, C3>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, C3>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, C3>>, Token>) == 2 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, C3>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, C3>>, Token>) == 1 * sizeof(T));
+      static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token>) == sizeof(std::array<T, 0>));
+    });
+  };
 };
 
 } // namespace
