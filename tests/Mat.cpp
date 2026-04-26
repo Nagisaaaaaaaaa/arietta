@@ -76,7 +76,7 @@ suite<"Mat"> _ = [] {
   //
   //
   //
-  "Instantiations"_test = [] {
+  "Deductions And CTAD"_test = [] {
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
       using VO = void;
       T u0(0), u1(1), u2(2), u3(3);
@@ -89,6 +89,9 @@ suite<"Mat"> _ = [] {
       constexpr C1 c1;
       constexpr C2 c2;
       constexpr C3 c3;
+
+      // Mat m_{};           //! Should not compile.
+      // constexpr Mat n_{}; //! Should not compile.
 
       Mat m_V{u0};
       Mat m_C{c0};
@@ -149,6 +152,28 @@ suite<"Mat"> _ = [] {
       static_assert(is::Same<decltype(n_VCC), Mat<T, 3, 1, Types<Types<VO, C1, C2>>, Token> const>);
       static_assert(is::Same<decltype(n_CCC), Mat<T, 3, 1, Types<Types<C0, C1, C2>>, Token> const>);
 
+      // Compatibility with copy and move constructors.
+      Mat m_V0{Mat{u0}};
+      Mat m_C0{Mat{c0}};
+      Mat m_V1{m_V0};
+      Mat m_C1{m_C0};
+      Mat m_V2{std::move(m_V0)};
+      Mat m_C2{std::move(m_C0)};
+      constexpr Mat n_V0{Mat{u0}};
+      constexpr Mat n_C0{Mat{c0}};
+      constexpr Mat n_V1{n_V0};
+      constexpr Mat n_C1{n_C0};
+      static_assert(is::Same<decltype(m_V0), Mat<T, 1, 1, Types<Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_C0), Mat<T, 1, 1, Types<Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(m_V1), Mat<T, 1, 1, Types<Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_C1), Mat<T, 1, 1, Types<Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(m_V2), Mat<T, 1, 1, Types<Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_C2), Mat<T, 1, 1, Types<Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(n_V0), Mat<T, 1, 1, Types<Types<VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_C0), Mat<T, 1, 1, Types<Types<C0>>, Token> const>);
+      static_assert(is::Same<decltype(n_V1), Mat<T, 1, 1, Types<Types<VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_C1), Mat<T, 1, 1, Types<Types<C0>>, Token> const>);
+
       Mat m_V_V{Mat{u0}, Mat{u1}};
       Mat m_C_V{Mat{c0}, Mat{u1}};
       Mat m_V_C{Mat{u0}, Mat{c1}};
@@ -165,6 +190,81 @@ suite<"Mat"> _ = [] {
       static_assert(is::Same<decltype(n_C_V), Mat<T, 1, 2, Types<Types<C0>, Types<VO>>, Token> const>);
       static_assert(is::Same<decltype(n_V_C), Mat<T, 1, 2, Types<Types<VO>, Types<C1>>, Token> const>);
       static_assert(is::Same<decltype(n_C_C), Mat<T, 1, 2, Types<Types<C0>, Types<C1>>, Token> const>);
+
+      Mat m_V_V_V{Mat{u0}, Mat{u1}, Mat{u2}};
+      Mat m_C_V_V{Mat{c0}, Mat{u1}, Mat{u2}};
+      Mat m_V_C_V{Mat{u0}, Mat{c1}, Mat{u2}};
+      Mat m_C_C_V{Mat{c0}, Mat{c1}, Mat{u2}};
+      Mat m_V_V_C{Mat{u0}, Mat{u1}, Mat{c2}};
+      Mat m_C_V_C{Mat{c0}, Mat{u1}, Mat{c2}};
+      Mat m_V_C_C{Mat{u0}, Mat{c1}, Mat{c2}};
+      Mat m_C_C_C{Mat{c0}, Mat{c1}, Mat{c2}};
+      constexpr Mat n_V_V_V{Mat{v0}, Mat{v1}, Mat{v2}};
+      constexpr Mat n_C_V_V{Mat{c0}, Mat{v1}, Mat{v2}};
+      constexpr Mat n_V_C_V{Mat{v0}, Mat{c1}, Mat{v2}};
+      constexpr Mat n_C_C_V{Mat{c0}, Mat{c1}, Mat{v2}};
+      constexpr Mat n_V_V_C{Mat{v0}, Mat{v1}, Mat{c2}};
+      constexpr Mat n_C_V_C{Mat{c0}, Mat{v1}, Mat{c2}};
+      constexpr Mat n_V_C_C{Mat{v0}, Mat{c1}, Mat{c2}};
+      constexpr Mat n_C_C_C{Mat{c0}, Mat{c1}, Mat{c2}};
+      static_assert(is::Same<decltype(m_V_V_V), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_C_V_V), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_V_C_V), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_C_C_V), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_V_V_C), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token>>);
+      static_assert(is::Same<decltype(m_C_V_C), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token>>);
+      static_assert(is::Same<decltype(m_V_C_C), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token>>);
+      static_assert(is::Same<decltype(m_C_C_C), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>>);
+      static_assert(is::Same<decltype(n_V_V_V), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_C_V_V), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_V_C_V), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_C_C_V), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_V_V_C), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token> const>);
+      static_assert(is::Same<decltype(n_C_V_C), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token> const>);
+      static_assert(is::Same<decltype(n_V_C_C), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token> const>);
+      static_assert(is::Same<decltype(n_C_C_C), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token> const>);
+
+      // Compatibility with copy and move constructors.
+      Mat m_VV0{Mat{u0, u1}};
+      Mat m_CV0{Mat{c0, u1}};
+      Mat m_VC0{Mat{u0, c1}};
+      Mat m_CC0{Mat{c0, c1}};
+      Mat m_VV1{m_VV0};
+      Mat m_CV1{m_CV0};
+      Mat m_VC1{m_VC0};
+      Mat m_CC1{m_CC0};
+      Mat m_VV2{std::move(m_VV0)};
+      Mat m_CV2{std::move(m_CV0)};
+      Mat m_VC2{std::move(m_VC0)};
+      Mat m_CC2{std::move(m_CC0)};
+      constexpr Mat n_VV0{Mat{u0, u1}};
+      constexpr Mat n_CV0{Mat{c0, u1}};
+      constexpr Mat n_VC0{Mat{u0, c1}};
+      constexpr Mat n_CC0{Mat{c0, c1}};
+      constexpr Mat n_VV1{n_VV0};
+      constexpr Mat n_CV1{n_CV0};
+      constexpr Mat n_VC1{n_VC0};
+      constexpr Mat n_CC1{n_CC0};
+      static_assert(is::Same<decltype(m_VV0), Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_CV0), Mat<T, 2, 1, Types<Types<C0, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_VC0), Mat<T, 2, 1, Types<Types<VO, C1>>, Token>>);
+      static_assert(is::Same<decltype(m_CC0), Mat<T, 2, 1, Types<Types<C0, C1>>, Token>>);
+      static_assert(is::Same<decltype(m_VV1), Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_CV1), Mat<T, 2, 1, Types<Types<C0, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_VC1), Mat<T, 2, 1, Types<Types<VO, C1>>, Token>>);
+      static_assert(is::Same<decltype(m_CC1), Mat<T, 2, 1, Types<Types<C0, C1>>, Token>>);
+      static_assert(is::Same<decltype(m_VV2), Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_CV2), Mat<T, 2, 1, Types<Types<C0, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_VC2), Mat<T, 2, 1, Types<Types<VO, C1>>, Token>>);
+      static_assert(is::Same<decltype(m_CC2), Mat<T, 2, 1, Types<Types<C0, C1>>, Token>>);
+      static_assert(is::Same<decltype(n_VV0), Mat<T, 2, 1, Types<Types<VO, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_CV0), Mat<T, 2, 1, Types<Types<C0, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_VC0), Mat<T, 2, 1, Types<Types<VO, C1>>, Token> const>);
+      static_assert(is::Same<decltype(n_CC0), Mat<T, 2, 1, Types<Types<C0, C1>>, Token> const>);
+      static_assert(is::Same<decltype(n_VV1), Mat<T, 2, 1, Types<Types<VO, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_CV1), Mat<T, 2, 1, Types<Types<C0, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_VC1), Mat<T, 2, 1, Types<Types<VO, C1>>, Token> const>);
+      static_assert(is::Same<decltype(n_CC1), Mat<T, 2, 1, Types<Types<C0, C1>>, Token> const>);
 
       Mat m_VV_VV{Mat{u0, u1}, Mat{u2, u3}};
       Mat m_CV_VV{Mat{c0, u1}, Mat{u2, u3}};
@@ -230,39 +330,6 @@ suite<"Mat"> _ = [] {
       static_assert(is::Same<decltype(n_CV_CC), Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, C3>>, Token> const>);
       static_assert(is::Same<decltype(n_VC_CC), Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, C3>>, Token> const>);
       static_assert(is::Same<decltype(n_CC_CC), Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token> const>);
-
-      Mat m_V_V_V{Mat{u0}, Mat{u1}, Mat{u2}};
-      Mat m_C_V_V{Mat{c0}, Mat{u1}, Mat{u2}};
-      Mat m_V_C_V{Mat{u0}, Mat{c1}, Mat{u2}};
-      Mat m_C_C_V{Mat{c0}, Mat{c1}, Mat{u2}};
-      Mat m_V_V_C{Mat{u0}, Mat{u1}, Mat{c2}};
-      Mat m_C_V_C{Mat{c0}, Mat{u1}, Mat{c2}};
-      Mat m_V_C_C{Mat{u0}, Mat{c1}, Mat{c2}};
-      Mat m_C_C_C{Mat{c0}, Mat{c1}, Mat{c2}};
-      constexpr Mat n_V_V_V{Mat{v0}, Mat{v1}, Mat{v2}};
-      constexpr Mat n_C_V_V{Mat{c0}, Mat{v1}, Mat{v2}};
-      constexpr Mat n_V_C_V{Mat{v0}, Mat{c1}, Mat{v2}};
-      constexpr Mat n_C_C_V{Mat{c0}, Mat{c1}, Mat{v2}};
-      constexpr Mat n_V_V_C{Mat{v0}, Mat{v1}, Mat{c2}};
-      constexpr Mat n_C_V_C{Mat{c0}, Mat{v1}, Mat{c2}};
-      constexpr Mat n_V_C_C{Mat{v0}, Mat{c1}, Mat{c2}};
-      constexpr Mat n_C_C_C{Mat{c0}, Mat{c1}, Mat{c2}};
-      static_assert(is::Same<decltype(m_V_V_V), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>>);
-      static_assert(is::Same<decltype(m_C_V_V), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token>>);
-      static_assert(is::Same<decltype(m_V_C_V), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token>>);
-      static_assert(is::Same<decltype(m_C_C_V), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token>>);
-      static_assert(is::Same<decltype(m_V_V_C), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token>>);
-      static_assert(is::Same<decltype(m_C_V_C), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token>>);
-      static_assert(is::Same<decltype(m_V_C_C), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token>>);
-      static_assert(is::Same<decltype(m_C_C_C), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>>);
-      static_assert(is::Same<decltype(n_V_V_V), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token> const>);
-      static_assert(is::Same<decltype(n_C_V_V), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token> const>);
-      static_assert(is::Same<decltype(n_V_C_V), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token> const>);
-      static_assert(is::Same<decltype(n_C_C_V), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token> const>);
-      static_assert(is::Same<decltype(n_V_V_C), Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token> const>);
-      static_assert(is::Same<decltype(n_C_V_C), Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token> const>);
-      static_assert(is::Same<decltype(n_V_C_C), Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token> const>);
-      static_assert(is::Same<decltype(n_C_C_C), Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token> const>);
     });
   };
 };
