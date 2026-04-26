@@ -75,6 +75,20 @@ public:
 
   template <typename... Ts>
   constexpr explicit Mat(Ts &&...) {}
+
+private:
+  [[nodiscard]] static consteval usize storageSize() {
+    usize res = 0;
+    ForEach<Constants>([&]<typename ConstantsPerCol>() {
+      ForEach<ConstantsPerCol>([&]<typename Constant>() {
+        if constexpr (is::Same<Constant, void>)
+          ++res;
+      });
+    });
+    return res;
+  }
+
+  std::array<T, storageSize()> storage_{};
 };
 
 //
