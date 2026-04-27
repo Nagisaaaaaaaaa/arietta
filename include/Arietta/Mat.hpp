@@ -212,9 +212,42 @@ public:
 
   Mat() = default;
 
-  template <typename... Ts, typename D = detail::mat::Deduce<Ts...>>
-    requires(is::Same<Mat, Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>>)
-  constexpr explicit Mat(Ts &&...) {}
+  template <typename... Us, typename D = detail::mat::Deduce<Us...>>
+    requires(
+        is::Same<Mat, Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>> &&
+        is::Mat<std::decay_t<typename Types<Us...>::template At<0>>> &&
+        sizeof...(Us) > 1 //! Avoid conflicting with copy and move constructors.
+    )
+  constexpr explicit Mat(Us &&...us) {
+    auto init = [&]<usize col, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
+      ForEach<rows()>([&]<auto row>() {
+        if constexpr (is::Same<Constant<row, col>, void>)
+          storage_[storageIdx<row, col>()] = v[C<row>{}];
+      });
+
+      if constexpr (sizeof...(Vs) > 0)
+        self.template operator()<col + 1>(self, std::forward<Vs>(vs)...);
+    };
+
+    init.template operator()<0>(init, std::forward<Us>(us)...);
+  }
+
+  template <typename... Us, typename D = detail::mat::Deduce<Us...>>
+    requires(
+        is::Same<Mat, Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>> &&
+        isnot::Mat<std::decay_t<typename Types<Us...>::template At<0>>>
+    )
+  constexpr explicit Mat(Us &&...us) {
+    auto init = [&]<usize row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
+      if constexpr (is::Same<Constant<row, 0>, void>)
+        storage_[storageIdx<row, 0>()] = std::forward<V>(v);
+
+      if constexpr (sizeof...(Vs) > 0)
+        self.template operator()<row + 1>(self, std::forward<Vs>(vs)...);
+    };
+
+    init.template operator()<0>(init, std::forward<Us>(us)...);
+  }
 
 public:
   template <auto row, auto col>
