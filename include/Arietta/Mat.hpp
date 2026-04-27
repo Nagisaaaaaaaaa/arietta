@@ -210,6 +210,8 @@ public:
   using Base::rows, Base::cols;
   using typename Base::value_type;
 
+  Mat() = default;
+
   template <typename... Ts, typename D = detail::mat::Deduce<Ts...>>
     requires(is::Same<Mat, Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>>)
   constexpr explicit Mat(Ts &&...) {}
@@ -285,7 +287,7 @@ private:
     return res;
   }
 
-  std::array<T, storageSize()> storage_{};
+  std::array<T, storageSize()> storage_;
 
 private:
   template <usize row, usize col>
