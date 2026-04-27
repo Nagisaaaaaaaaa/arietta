@@ -76,6 +76,65 @@ public:
   template <typename... Ts>
   constexpr explicit Mat(Ts &&...) {}
 
+public:
+  template <auto row, auto col>
+  [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) const {
+    if constexpr (is::Same<Constant<row, col>, void>)
+      return storage_[storageIdx<row, col>()];
+    else
+      return Constant<row, col>{};
+  }
+
+  template <auto row, auto col>
+  [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) {
+    if constexpr (is::Same<Constant<row, col>, void>)
+      return storage_[storageIdx<row, col>()];
+    else
+      return Constant<row, col>{};
+  }
+
+  template <typename tag = void>
+  [[nodiscard]] constexpr decltype(auto) operator[](usize row, usize col) const {
+    static_assert(
+        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, _rows>, _cols>>,
+        "Runtime row-column access is only available for fully stored matrices"
+    );
+    return storage_[row + col * C<rows()>{}];
+  }
+
+  template <typename tag = void>
+  [[nodiscard]] constexpr decltype(auto) operator[](usize row, usize col) {
+    static_assert(
+        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, _rows>, _cols>>,
+        "Runtime row-column access is only available for fully stored matrices"
+    );
+    return storage_[row + col * C<rows()>{}];
+  }
+
+  template <auto row>
+  [[nodiscard]] constexpr decltype(auto) operator[](C<row>) const {
+    static_assert(cols() == 1, "Single-index access is only available for column vectors");
+    return operator[](C<row>{}, C<static_cast<usize>(0)>{});
+  }
+
+  template <auto row>
+  [[nodiscard]] constexpr decltype(auto) operator[](C<row>) {
+    static_assert(cols() == 1, "Single-index access is only available for column vectors");
+    return operator[](C<row>{}, C<static_cast<usize>(0)>{});
+  }
+
+  template <typename tag = void>
+  [[nodiscard]] constexpr decltype(auto) operator[](usize row) const {
+    static_assert(cols() == 1, "Single-index access is only available for column vectors");
+    return operator[]<tag>(row, static_cast<usize>(0));
+  }
+
+  template <typename tag = void>
+  [[nodiscard]] constexpr decltype(auto) operator[](usize row) {
+    static_assert(cols() == 1, "Single-index access is only available for column vectors");
+    return operator[]<tag>(row, static_cast<usize>(0));
+  }
+
 private:
   [[nodiscard]] static consteval usize storageSize() {
     usize res = 0;
@@ -89,6 +148,31 @@ private:
   }
 
   std::array<T, storageSize()> storage_{};
+
+private:
+  template <usize row, usize col>
+  using Constant = typename Constants::template At<col>::template At<row>;
+
+  template <usize row, usize col>
+  [[nodiscard]] static consteval usize storageIdx() {
+    //! `row` and `col` are assumed to satisfy `row < rows()` and `col < cols()`.
+
+    usize res = 0;
+
+    ForEach<col>([&]<auto c>() {
+      ForEach<rows()>([&]<auto r>() {
+        if constexpr (is::Same<Constant<r, c>, void>)
+          ++res;
+      });
+    });
+
+    ForEach<row>([&]<auto r>() {
+      if constexpr (is::Same<Constant<r, col>, void>)
+        ++res;
+    });
+
+    return res;
+  }
 };
 
 //
