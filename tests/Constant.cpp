@@ -128,6 +128,77 @@ suite<"Constant"> _ = [] {
   //
   //
   //
+  "Mimic Assignment Operators"_test = [] {
+    struct A {};
+
+    // `int`.
+    {
+      int v0, v1, v2, v3, v4, v5;
+      C<1> c0, c1, c2, c3, c4, c5;
+      v0 = 1;
+      v1 = 1U;
+      v2 = 1Z;
+      v3 = 1ZU;
+      v4 = 1.999F;
+      v5 = 1.999;
+      c0 = C<1>{};
+      c1 = C<1U>{};
+      c2 = C<1Z>{};
+      c3 = C<1ZU>{};
+      c4 = C<1.999F>{};
+      c5 = C<1.999>{};
+      static_assert(std::is_assignable_v<C<1> &, C<1>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1U>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1Z>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1ZU>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1.999F>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1.999>>);
+
+      static_assert(!std::is_assignable_v<C<1> &, C<2>>);
+      static_assert(!std::is_assignable_v<C<1> &, C<2.0F>>);
+      static_assert(!std::is_assignable_v<C<1> &, C<A{}>>);
+    }
+
+    // `float`.
+    {
+      float v0, v1, v2, v3, v4, v5;
+      C<1.0F> c0, c1, c2, c3;
+      C<1.999F> c4, c5;
+      v0 = 1;
+      v1 = 1U;
+      v2 = 1Z;
+      v3 = 1ZU;
+      v4 = 1.999F;
+      v5 = 1.999;
+      c0 = C<1>{};
+      c1 = C<1U>{};
+      c2 = C<1Z>{};
+      c3 = C<1ZU>{};
+      c4 = C<1.999F>{};
+      c5 = C<1.999>{};
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1>>);
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1U>>);
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1Z>>);
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1ZU>>);
+      static_assert(std::is_assignable_v<C<1.999F> &, C<1.999F>>);
+      static_assert(std::is_assignable_v<C<1.999F> &, C<1.999>>);
+
+      static_assert(!std::is_assignable_v<C<1.0F> &, C<2>>);
+      static_assert(!std::is_assignable_v<C<1.0F> &, C<2.0F>>);
+      static_assert(!std::is_assignable_v<C<1.0F> &, C<A{}>>);
+    }
+
+    // `A`.
+    {
+      static_assert(!std::is_assignable_v<C<A{}> &, C<2>>);
+      static_assert(!std::is_assignable_v<C<A{}> &, C<2.0F>>);
+      // static_assert(!std::is_assignable_v<C<A{}> &, C<A{}>>); //! Should not compile.
+    }
+  };
+
+  //
+  //
+  //
   "Implicit Casts By Operators"_test = [] {
     static_assert(is::Same<decltype(-3 + C<-3>{}), int>);
     static_assert(is::Same<decltype(0 + C<-3>{}), int>);
