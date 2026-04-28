@@ -51,6 +51,7 @@ suite<"Constant"> _ = [] {
   //
   //
   "Mimic Constructions"_test = [] {
+    // TODO: `std::constructible_from` has not yet been integrated into `arietta`.
     struct A {};
 
     // `int`.
@@ -129,6 +130,7 @@ suite<"Constant"> _ = [] {
   //
   //
   "Mimic Assignment Operators"_test = [] {
+    // TODO: `std::is_assignable_v` has not yet been integrated into `arietta`.
     struct A {};
 
     // `int`.
