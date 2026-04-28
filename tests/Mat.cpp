@@ -159,7 +159,7 @@ suite<"Mat"> _ = [] {
       Mat m_C1{m_C0};
       Mat m_V2{std::move(m_V0)};
       Mat m_C2{std::move(m_C0)};
-      constexpr Mat n_V0{Mat{u0}};
+      constexpr Mat n_V0{Mat{v0}};
       constexpr Mat n_C0{Mat{c0}};
       constexpr Mat n_V1{n_V0};
       constexpr Mat n_C1{n_C0};
@@ -237,9 +237,9 @@ suite<"Mat"> _ = [] {
       Mat m_CV2{std::move(m_CV0)};
       Mat m_VC2{std::move(m_VC0)};
       Mat m_CC2{std::move(m_CC0)};
-      constexpr Mat n_VV0{Mat{u0, u1}};
-      constexpr Mat n_CV0{Mat{c0, u1}};
-      constexpr Mat n_VC0{Mat{u0, c1}};
+      constexpr Mat n_VV0{Mat{v0, v1}};
+      constexpr Mat n_CV0{Mat{c0, v1}};
+      constexpr Mat n_VC0{Mat{v0, c1}};
       constexpr Mat n_CC0{Mat{c0, c1}};
       constexpr Mat n_VV1{n_VV0};
       constexpr Mat n_CV1{n_CV0};

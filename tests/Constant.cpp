@@ -50,6 +50,157 @@ suite<"Constant"> _ = [] {
   //
   //
   //
+  "Mimic Constructions"_test = [] {
+    // TODO: `std::constructible_from` has not yet been integrated into `arietta`.
+    struct A {};
+
+    // `int`.
+    {
+      int v0{1};
+      int v1{1U};
+      int v2{1Z};
+      int v3{1ZU};
+      // int v4{1.999F}; //! Should not compile.
+      // int v5{1.999}; //! Should not compile.
+      C<1> c0{C<1>{}};
+      C<1> c1{C<1U>{}};
+      C<1> c2{C<1Z>{}};
+      C<1> c3{C<1ZU>{}};
+      // C<1> c4{C<1.999F>{}}; //! Should not compile.
+      // C<1> c5{C<1.999>{}}; //! Should not compile.
+      constexpr C<1> cc0{C<1>{}};
+      constexpr C<1> cc1{C<1U>{}};
+      constexpr C<1> cc2{C<1Z>{}};
+      constexpr C<1> cc3{C<1ZU>{}};
+      // constexpr C<1> cc4{C<1.999F>{}}; //! Should not compile.
+      // constexpr C<1> cc5{C<1.999>{}}; //! Should not compile.
+      static_assert(std::constructible_from<C<1>, C<1>>);
+      static_assert(std::constructible_from<C<1>, C<1U>>);
+      static_assert(std::constructible_from<C<1>, C<1Z>>);
+      static_assert(std::constructible_from<C<1>, C<1ZU>>);
+      static_assert(!std::constructible_from<C<1>, C<1.999F>>);
+      static_assert(!std::constructible_from<C<1>, C<1.999>>);
+
+      static_assert(!std::constructible_from<C<1>, C<2>>);
+      static_assert(!std::constructible_from<C<1>, C<2.0F>>);
+      static_assert(!std::constructible_from<C<1>, C<A{}>>);
+    }
+
+    // `float`.
+    {
+      float v0{1};
+      float v1{1U};
+      float v2{1Z};
+      float v3{1ZU};
+      float v4{1.999F};
+      float v5{1.999};
+      C<1.0F> c0{C<1>{}};
+      C<1.0F> c1{C<1U>{}};
+      C<1.0F> c2{C<1Z>{}};
+      C<1.0F> c3{C<1ZU>{}};
+      C<1.999F> c4{C<1.999F>{}};
+      C<1.999F> c5{C<1.999>{}};
+      constexpr C<1.0F> cc0{C<1>{}};
+      constexpr C<1.0F> cc1{C<1U>{}};
+      constexpr C<1.0F> cc2{C<1Z>{}};
+      constexpr C<1.0F> cc3{C<1ZU>{}};
+      constexpr C<1.999F> cc4{C<1.999F>{}};
+      constexpr C<1.999F> cc5{C<1.999>{}};
+      static_assert(std::constructible_from<C<1.0F>, C<1>>);
+      static_assert(std::constructible_from<C<1.0F>, C<1U>>);
+      static_assert(std::constructible_from<C<1.0F>, C<1Z>>);
+      static_assert(std::constructible_from<C<1.0F>, C<1ZU>>);
+      static_assert(std::constructible_from<C<1.999F>, C<1.999F>>);
+      static_assert(std::constructible_from<C<1.999F>, C<1.999>>);
+
+      static_assert(!std::constructible_from<C<1.0F>, C<2>>);
+      static_assert(!std::constructible_from<C<1.0F>, C<2.0F>>);
+      static_assert(!std::constructible_from<C<1.0F>, C<A{}>>);
+    }
+
+    // `A`.
+    {
+      static_assert(!std::constructible_from<C<A{}>, C<2>>);
+      static_assert(!std::constructible_from<C<A{}>, C<2.0F>>);
+      // static_assert(!std::constructible_from<C<A{}>, C<A{}>>); //! Should not compile.
+    }
+  };
+
+  //
+  //
+  //
+  "Mimic Assignment Operators"_test = [] {
+    // TODO: `std::is_assignable_v` has not yet been integrated into `arietta`.
+    struct A {};
+
+    // `int`.
+    {
+      int v0, v1, v2, v3, v4, v5;
+      C<1> c0, c1, c2, c3, c4, c5;
+      v0 = 1;
+      v1 = 1U;
+      v2 = 1Z;
+      v3 = 1ZU;
+      v4 = 1.999F;
+      v5 = 1.999;
+      c0 = C<1>{};
+      c1 = C<1U>{};
+      c2 = C<1Z>{};
+      c3 = C<1ZU>{};
+      c4 = C<1.999F>{};
+      c5 = C<1.999>{};
+      static_assert(std::is_assignable_v<C<1> &, C<1>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1U>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1Z>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1ZU>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1.999F>>);
+      static_assert(std::is_assignable_v<C<1> &, C<1.999>>);
+
+      static_assert(!std::is_assignable_v<C<1> &, C<2>>);
+      static_assert(!std::is_assignable_v<C<1> &, C<2.0F>>);
+      static_assert(!std::is_assignable_v<C<1> &, C<A{}>>);
+    }
+
+    // `float`.
+    {
+      float v0, v1, v2, v3, v4, v5;
+      C<1.0F> c0, c1, c2, c3;
+      C<1.999F> c4, c5;
+      v0 = 1;
+      v1 = 1U;
+      v2 = 1Z;
+      v3 = 1ZU;
+      v4 = 1.999F;
+      v5 = 1.999;
+      c0 = C<1>{};
+      c1 = C<1U>{};
+      c2 = C<1Z>{};
+      c3 = C<1ZU>{};
+      c4 = C<1.999F>{};
+      c5 = C<1.999>{};
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1>>);
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1U>>);
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1Z>>);
+      static_assert(std::is_assignable_v<C<1.0F> &, C<1ZU>>);
+      static_assert(std::is_assignable_v<C<1.999F> &, C<1.999F>>);
+      static_assert(std::is_assignable_v<C<1.999F> &, C<1.999>>);
+
+      static_assert(!std::is_assignable_v<C<1.0F> &, C<2>>);
+      static_assert(!std::is_assignable_v<C<1.0F> &, C<2.0F>>);
+      static_assert(!std::is_assignable_v<C<1.0F> &, C<A{}>>);
+    }
+
+    // `A`.
+    {
+      static_assert(!std::is_assignable_v<C<A{}> &, C<2>>);
+      static_assert(!std::is_assignable_v<C<A{}> &, C<2.0F>>);
+      // static_assert(!std::is_assignable_v<C<A{}> &, C<A{}>>); //! Should not compile.
+    }
+  };
+
+  //
+  //
+  //
   "Implicit Casts By Operators"_test = [] {
     static_assert(is::Same<decltype(-3 + C<-3>{}), int>);
     static_assert(is::Same<decltype(0 + C<-3>{}), int>);
