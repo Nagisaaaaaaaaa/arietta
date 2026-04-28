@@ -21,6 +21,35 @@ struct C {
   static constexpr auto value = v;
 
   [[nodiscard]] consteval operator value_type() const noexcept { return value; }
+
+  C() = default;
+
+  //! Mimic constructor; it only makes `C` behave more like a `value_type` in use.
+  template <auto w>
+    requires(
+        //! `w` must be list-initializable `{}`, not direct-initializable `()`, as `value_type`.
+        //! This makes the constructor impose stricter requirements on types.
+        requires { value_type{w}; } &&
+        []() {
+          value_type x{w};
+          return x == v;
+        }()
+    )
+  consteval C(C<w>) noexcept {}
+
+  //! Mimic assignment operator; likewise.
+  template <auto w>
+    requires(
+        requires { std::declval<value_type &>() = w; } &&
+        []() {
+          value_type x{v}; //! `value_type` is assumed to be at least copy-constructible.
+          x = w;
+          return x == v;
+        }()
+    )
+  constexpr C &operator=(C<w>) noexcept {
+    return *this;
+  }
 };
 
 //
