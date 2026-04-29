@@ -220,10 +220,7 @@ public:
     )
   constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize col, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
-      ForEach<rows()>([&]<auto row>() {
-        if constexpr (is::Same<Constant<row, col>, void>)
-          storage_[storageIdx<row, col>()] = v[C<row>{}];
-      });
+      ForEach<rows()>([&]<auto row>() { this->operator[](C<row>{}, C<col>{}) = v[C<row>{}]; });
 
       if constexpr (sizeof...(Vs) > 0)
         self.template operator()<col + 1>(self, std::forward<Vs>(vs)...);
@@ -239,14 +236,26 @@ public:
     )
   constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
-      if constexpr (is::Same<Constant<row, 0>, void>)
-        storage_[storageIdx<row, 0>()] = std::forward<V>(v);
+      this->operator[](C<row>{}, C<static_cast<usize>(0)>{}) = std::forward<V>(v);
 
       if constexpr (sizeof...(Vs) > 0)
         self.template operator()<row + 1>(self, std::forward<Vs>(vs)...);
     };
 
     init.template operator()<0>(init, std::forward<Us>(us)...);
+  }
+
+  template <
+      typename... Us,
+      typename D = detail::mat::Deduce<Us...>,
+      typename M = Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>>
+    requires(isnot::Same<Mat, M>)
+  constexpr explicit Mat(Us &&...us) {
+    M m{std::forward<Us>(us)...};
+
+    ForEach<cols()>([&]<auto col>() {
+      ForEach<rows()>([&]<auto row>() { operator[](C<row>{}, C<col>{}) = m[C<row>{}, C<col>{}]; });
+    });
   }
 
 public:
