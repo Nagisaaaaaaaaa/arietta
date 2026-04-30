@@ -79,6 +79,53 @@ public:
   [[nodiscard]] static consteval auto cols() { return _cols; }
 };
 
+template <typename Constants>
+[[nodiscard]] consteval bool HasStorage() {
+  bool res = false;
+  ForEach<Constants>([&]<typename ConstantsPerCol>() {
+    ForEach<ConstantsPerCol>([&]<typename Constant>() {
+      if constexpr (is::Same<Constant, void>)
+        res = true;
+    });
+  });
+  return res;
+}
+
+template <typename T, typename Constants>
+class MatStorage {
+public:
+  using Storage = MatStorage;
+
+  constexpr void storage() const;
+
+  constexpr void storage();
+};
+
+template <typename T, typename Constants>
+  requires(HasStorage<Constants>())
+class MatStorage<T, Constants> {
+public:
+  using Storage = MatStorage;
+
+  [[nodiscard]] constexpr auto const &storage() const { return storage_; }
+
+  [[nodiscard]] constexpr auto &storage() { return storage_; }
+
+private:
+  [[nodiscard]] static consteval usize storageSize() {
+    usize res = 0;
+    ForEach<Constants>([&]<typename ConstantsPerCol>() {
+      ForEach<ConstantsPerCol>([&]<typename Constant>() {
+        if constexpr (is::Same<Constant, void>)
+          ++res;
+      });
+    });
+    return res;
+  }
+
+  std::array<T, storageSize()> storage_;
+};
+
 //
 //
 //
@@ -198,10 +245,12 @@ template <typename T, usize _rows, usize _cols, typename _Constants, typename To
 //! since `requires` participates in substitution failure,
 //! while `static_assert` is only evaluated during instantiation.
   requires(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>)
-class Mat<T, _rows, _cols, _Constants, Token> : public detail::mat::MatBase<T, _rows, _cols> {
+class Mat<T, _rows, _cols, _Constants, Token> : public detail::mat::MatBase<T, _rows, _cols>,
+                                                public detail::mat::MatStorage<T, _Constants> {
   //! static_assert(is::C<Token> && is::Same<typename Token::value_type, detail::mat::Token>);
 private:
   using Base = typename Mat::type;
+  using Mat::Storage::storage;
 
 public:
   using type = Mat;
@@ -262,7 +311,7 @@ public:
   template <auto row, auto col>
   [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) const {
     if constexpr (is::Same<Constant<row, col>, void>)
-      return storage_[storageIdx<row, col>()];
+      return storage()[storageIdx<row, col>()];
     else
       return Constant<row, col>{};
   }
@@ -270,7 +319,7 @@ public:
   template <auto row, auto col>
   [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) {
     if constexpr (is::Same<Constant<row, col>, void>)
-      return storage_[storageIdx<row, col>()];
+      return storage()[storageIdx<row, col>()];
     else
       return Constant<row, col>{};
   }
@@ -281,7 +330,7 @@ public:
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, _rows>, _cols>>,
         "Runtime row-column access is only available for fully stored matrices"
     );
-    return storage_[row + col * C<rows()>{}];
+    return storage()[row + col * C<rows()>{}];
   }
 
   template <typename tag = void>
@@ -290,7 +339,7 @@ public:
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, _rows>, _cols>>,
         "Runtime row-column access is only available for fully stored matrices"
     );
-    return storage_[row + col * C<rows()>{}];
+    return storage()[row + col * C<rows()>{}];
   }
 
   template <auto row>
@@ -316,20 +365,6 @@ public:
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator[]<tag>(row, static_cast<usize>(0));
   }
-
-private:
-  [[nodiscard]] static consteval usize storageSize() {
-    usize res = 0;
-    ForEach<Constants>([&]<typename ConstantsPerCol>() {
-      ForEach<ConstantsPerCol>([&]<typename Constant>() {
-        if constexpr (is::Same<Constant, void>)
-          ++res;
-      });
-    });
-    return res;
-  }
-
-  std::array<T, storageSize()> storage_;
 
 private:
   template <usize row, usize col>
