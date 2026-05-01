@@ -400,6 +400,259 @@ suite<"Mat"> _ = [] {
       static_assert(is::Empty<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token>>);
     });
   };
+
+  //
+  //
+  //
+  "Constructors"_test = [] {
+    // TODO: Testing all of these types would lead to very long compile times,
+    //       and some compilers do not allow such a large context.
+    ForEach<Types</*i8, u8, i16, u16,*/ i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      using I =
+          std::conditional_t<is::Same<T, f32> || is::Same<T, f64>, std::conditional_t<is::Same<T, f32>, i32, i64>, T>;
+      constexpr C<static_cast<I>(0)> i0;
+      constexpr C<static_cast<I>(1)> i1;
+      constexpr C<static_cast<I>(2)> i2;
+      constexpr C<static_cast<I>(3)> i3;
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        Mat<T, 1, 1, Types<Types<Cs0>>, Token> m{};
+        constexpr Mat<T, 1, 1, Types<Types<Cs0>>, Token> n{};
+
+        // Runtime indices.
+        if constexpr (is::Same<Cs0, VO>) {
+          expect(m[0, 0] == 0);
+          static_assert(n[0, 0] == 0);
+        } else {
+          // expect(m[0, 0] == 0); //! Should not compile.
+          // static_assert(n[0, 0] == 0); //! Should not compile.
+        }
+
+        // Compile-time indices.
+        auto test = [&]<typename Csi, auto x, auto y, typename Ci> {
+          if constexpr (is::Same<Csi, VO>) {
+            expect(m[x, y] == 0);
+            static_assert(n[x, y] == 0);
+            static_assert(is::Same<decltype(m[x, y]), T &>);
+            static_assert(is::Same<decltype(n[x, y]), T const &>);
+          } else {
+            static_assert(m[x, y] == Ci{});
+            static_assert(n[x, y] == Ci{});
+            static_assert(is::Same<decltype(m[x, y]), Ci>);
+            static_assert(is::Same<decltype(n[x, y]), Ci>);
+          }
+        };
+        test.template operator()<Cs0, i0, i0, C0>();
+      });
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          Mat<T, 2, 1, Types<Types<Cs0, Cs1>>, Token> m{};
+          constexpr Mat<T, 2, 1, Types<Types<Cs0, Cs1>>, Token> n{};
+
+          // Runtime indices.
+          if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO>) {
+            expect(m[0, 0] == 0);
+            expect(m[1, 0] == 0);
+            static_assert(n[0, 0] == 0);
+            static_assert(n[1, 0] == 0);
+          } else {
+            // expect(m[0, 0] == 0); //! Should not compile.
+            // static_assert(n[0, 0] == 0); //! Should not compile.
+          }
+
+          // Compile-time indices.
+          auto test = [&]<typename Csi, auto x, auto y, typename Ci> {
+            if constexpr (is::Same<Csi, VO>) {
+              expect(m[x, y] == 0);
+              static_assert(n[x, y] == 0);
+              static_assert(is::Same<decltype(m[x, y]), T &>);
+              static_assert(is::Same<decltype(n[x, y]), T const &>);
+            } else {
+              static_assert(m[x, y] == Ci{});
+              static_assert(n[x, y] == Ci{});
+              static_assert(is::Same<decltype(m[x, y]), Ci>);
+              static_assert(is::Same<decltype(n[x, y]), Ci>);
+            }
+          };
+          test.template operator()<Cs0, i0, i0, C0>();
+          test.template operator()<Cs1, i1, i0, C1>();
+        });
+      });
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          ForEach<Types<VO, C2>>([&]<typename Cs2> {
+            Mat<T, 3, 1, Types<Types<Cs0, Cs1, Cs2>>, Token> m{};
+            constexpr Mat<T, 3, 1, Types<Types<Cs0, Cs1, Cs2>>, Token> n{};
+
+            // Runtime indices.
+            if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO> && is::Same<Cs2, VO>) {
+              expect(m[0, 0] == 0);
+              expect(m[1, 0] == 0);
+              expect(m[2, 0] == 0);
+              static_assert(n[0, 0] == 0);
+              static_assert(n[1, 0] == 0);
+              static_assert(n[2, 0] == 0);
+            } else {
+              // expect(m[0, 0] == 0); //! Should not compile.
+              // static_assert(n[0, 0] == 0); //! Should not compile.
+            }
+
+            // Compile-time indices.
+            auto test = [&]<typename Csi, auto x, auto y, typename Ci> {
+              if constexpr (is::Same<Csi, VO>) {
+                expect(m[x, y] == 0);
+                static_assert(n[x, y] == 0);
+                static_assert(is::Same<decltype(m[x, y]), T &>);
+                static_assert(is::Same<decltype(n[x, y]), T const &>);
+              } else {
+                static_assert(m[x, y] == Ci{});
+                static_assert(n[x, y] == Ci{});
+                static_assert(is::Same<decltype(m[x, y]), Ci>);
+                static_assert(is::Same<decltype(n[x, y]), Ci>);
+              }
+            };
+            test.template operator()<Cs0, i0, i0, C0>();
+            test.template operator()<Cs1, i1, i0, C1>();
+            test.template operator()<Cs2, i2, i0, C2>();
+          });
+        });
+      });
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          Mat<T, 1, 2, Types<Types<Cs0>, Types<Cs1>>, Token> m{};
+          constexpr Mat<T, 1, 2, Types<Types<Cs0>, Types<Cs1>>, Token> n{};
+
+          // Runtime indices.
+          if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO>) {
+            expect(m[0, 0] == 0);
+            expect(m[0, 1] == 0);
+            static_assert(n[0, 0] == 0);
+            static_assert(n[0, 1] == 0);
+          } else {
+            // expect(m[0, 0] == 0); //! Should not compile.
+            // static_assert(n[0, 0] == 0); //! Should not compile.
+          }
+
+          // Compile-time indices.
+          auto test = [&]<typename Csi, auto x, auto y, typename Ci> {
+            if constexpr (is::Same<Csi, VO>) {
+              expect(m[x, y] == 0);
+              static_assert(n[x, y] == 0);
+              static_assert(is::Same<decltype(m[x, y]), T &>);
+              static_assert(is::Same<decltype(n[x, y]), T const &>);
+            } else {
+              static_assert(m[x, y] == Ci{});
+              static_assert(n[x, y] == Ci{});
+              static_assert(is::Same<decltype(m[x, y]), Ci>);
+              static_assert(is::Same<decltype(n[x, y]), Ci>);
+            }
+          };
+          test.template operator()<Cs0, i0, i0, C0>();
+          test.template operator()<Cs1, i0, i1, C1>();
+        });
+      });
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          ForEach<Types<VO, C2>>([&]<typename Cs2> {
+            Mat<T, 1, 3, Types<Types<Cs0>, Types<Cs1>, Types<Cs2>>, Token> m{};
+            constexpr Mat<T, 1, 3, Types<Types<Cs0>, Types<Cs1>, Types<Cs2>>, Token> n{};
+
+            // Runtime indices.
+            if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO> && is::Same<Cs2, VO>) {
+              expect(m[0, 0] == 0);
+              expect(m[0, 1] == 0);
+              expect(m[0, 2] == 0);
+              static_assert(n[0, 0] == 0);
+              static_assert(n[0, 1] == 0);
+              static_assert(n[0, 2] == 0);
+            } else {
+              // expect(m[0, 0] == 0); //! Should not compile.
+              // static_assert(n[0, 0] == 0); //! Should not compile.
+            }
+
+            // Compile-time indices.
+            auto test = [&]<typename Csi, auto x, auto y, typename Ci> {
+              if constexpr (is::Same<Csi, VO>) {
+                expect(m[x, y] == 0);
+                static_assert(n[x, y] == 0);
+                static_assert(is::Same<decltype(m[x, y]), T &>);
+                static_assert(is::Same<decltype(n[x, y]), T const &>);
+              } else {
+                static_assert(m[x, y] == Ci{});
+                static_assert(n[x, y] == Ci{});
+                static_assert(is::Same<decltype(m[x, y]), Ci>);
+                static_assert(is::Same<decltype(n[x, y]), Ci>);
+              }
+            };
+            test.template operator()<Cs0, i0, i0, C0>();
+            test.template operator()<Cs1, i0, i1, C1>();
+            test.template operator()<Cs2, i0, i2, C2>();
+          });
+        });
+      });
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          ForEach<Types<VO, C2>>([&]<typename Cs2> {
+            ForEach<Types<VO, C3>>([&]<typename Cs3> {
+              Mat<T, 2, 2, Types<Types<Cs0, Cs1>, Types<Cs2, Cs3>>, Token> m{};
+              constexpr Mat<T, 2, 2, Types<Types<Cs0, Cs1>, Types<Cs2, Cs3>>, Token> n{};
+
+              // Runtime indices.
+              if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO> && is::Same<Cs2, VO> && is::Same<Cs3, VO>) {
+                expect(m[0, 0] == 0);
+                expect(m[1, 0] == 0);
+                expect(m[0, 1] == 0);
+                expect(m[1, 1] == 0);
+                static_assert(n[0, 0] == 0);
+                static_assert(n[1, 0] == 0);
+                static_assert(n[0, 1] == 0);
+                static_assert(n[1, 1] == 0);
+              } else {
+                // expect(m[0, 0] == 0); //! Should not compile.
+                // static_assert(n[0, 0] == 0); //! Should not compile.
+              }
+
+              // Compile-time indices.
+              auto test = [&]<typename Csi, auto x, auto y, typename Ci> {
+                if constexpr (is::Same<Csi, VO>) {
+                  expect(m[x, y] == 0);
+                  static_assert(n[x, y] == 0);
+                  static_assert(is::Same<decltype(m[x, y]), T &>);
+                  static_assert(is::Same<decltype(n[x, y]), T const &>);
+                } else {
+                  static_assert(m[x, y] == Ci{});
+                  static_assert(n[x, y] == Ci{});
+                  static_assert(is::Same<decltype(m[x, y]), Ci>);
+                  static_assert(is::Same<decltype(n[x, y]), Ci>);
+                }
+              };
+              test.template operator()<Cs0, i0, i0, C0>();
+              test.template operator()<Cs1, i1, i0, C1>();
+              test.template operator()<Cs2, i0, i1, C2>();
+              test.template operator()<Cs3, i1, i1, C3>();
+            });
+          });
+        });
+      });
+    });
+  };
 };
 
 } // namespace
