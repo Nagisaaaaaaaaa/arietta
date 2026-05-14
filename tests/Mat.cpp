@@ -415,17 +415,13 @@ suite<"Mat"> _ = [] {
       using C1 = C<v1>;
       using C2 = C<v2>;
       using C3 = C<v3>;
-      constexpr C0 c0;
-      constexpr C1 c1;
-      constexpr C2 c2;
-      constexpr C3 c3;
 
       using I =
           std::conditional_t<is::Same<T, f32> || is::Same<T, f64>, std::conditional_t<is::Same<T, f32>, i32, i64>, T>;
-      constexpr C<static_cast<I>(0)> i0;
-      constexpr C<static_cast<I>(1)> i1;
-      constexpr C<static_cast<I>(2)> i2;
-      constexpr C<static_cast<I>(3)> i3;
+      using I0 = C<static_cast<I>(0)>;
+      using I1 = C<static_cast<I>(1)>;
+      using I2 = C<static_cast<I>(2)>;
+      using I3 = C<static_cast<I>(3)>;
 
       ForEach<Types<VO, C0>>([&]<typename Cs0> {
         Mat<T, 1, 1, Types<Types<Cs0>>, Token> m{};
@@ -454,7 +450,7 @@ suite<"Mat"> _ = [] {
             static_assert(is::Same<decltype(n[x, y]), Ci>);
           }
         };
-        test.template operator()<Cs0, i0, i0, C0>();
+        test.template operator()<Cs0, I0{}, I0{}, C0>();
       });
 
       ForEach<Types<VO, C0>>([&]<typename Cs0> {
@@ -487,8 +483,8 @@ suite<"Mat"> _ = [] {
               static_assert(is::Same<decltype(n[x, y]), Ci>);
             }
           };
-          test.template operator()<Cs0, i0, i0, C0>();
-          test.template operator()<Cs1, i1, i0, C1>();
+          test.template operator()<Cs0, I0{}, I0{}, C0>();
+          test.template operator()<Cs1, I1{}, I0{}, C1>();
         });
       });
 
@@ -525,9 +521,9 @@ suite<"Mat"> _ = [] {
                 static_assert(is::Same<decltype(n[x, y]), Ci>);
               }
             };
-            test.template operator()<Cs0, i0, i0, C0>();
-            test.template operator()<Cs1, i1, i0, C1>();
-            test.template operator()<Cs2, i2, i0, C2>();
+            test.template operator()<Cs0, I0{}, I0{}, C0>();
+            test.template operator()<Cs1, I1{}, I0{}, C1>();
+            test.template operator()<Cs2, I2{}, I0{}, C2>();
           });
         });
       });
@@ -562,8 +558,8 @@ suite<"Mat"> _ = [] {
               static_assert(is::Same<decltype(n[x, y]), Ci>);
             }
           };
-          test.template operator()<Cs0, i0, i0, C0>();
-          test.template operator()<Cs1, i0, i1, C1>();
+          test.template operator()<Cs0, I0{}, I0{}, C0>();
+          test.template operator()<Cs1, I0{}, I1{}, C1>();
         });
       });
 
@@ -600,9 +596,9 @@ suite<"Mat"> _ = [] {
                 static_assert(is::Same<decltype(n[x, y]), Ci>);
               }
             };
-            test.template operator()<Cs0, i0, i0, C0>();
-            test.template operator()<Cs1, i0, i1, C1>();
-            test.template operator()<Cs2, i0, i2, C2>();
+            test.template operator()<Cs0, I0{}, I0{}, C0>();
+            test.template operator()<Cs1, I0{}, I1{}, C1>();
+            test.template operator()<Cs2, I0{}, I2{}, C2>();
           });
         });
       });
@@ -643,10 +639,10 @@ suite<"Mat"> _ = [] {
                   static_assert(is::Same<decltype(n[x, y]), Ci>);
                 }
               };
-              test.template operator()<Cs0, i0, i0, C0>();
-              test.template operator()<Cs1, i1, i0, C1>();
-              test.template operator()<Cs2, i0, i1, C2>();
-              test.template operator()<Cs3, i1, i1, C3>();
+              test.template operator()<Cs0, I0{}, I0{}, C0>();
+              test.template operator()<Cs1, I1{}, I0{}, C1>();
+              test.template operator()<Cs2, I0{}, I1{}, C2>();
+              test.template operator()<Cs3, I1{}, I1{}, C3>();
             });
           });
         });

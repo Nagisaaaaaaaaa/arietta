@@ -61,7 +61,8 @@ private:
   template <typename T, usize rows, usize cols, typename... Ts>
   friend class arietta::Mat;
 
-  template <typename...>
+  template <typename... Ts>
+    requires(sizeof...(Ts) > 0)
   friend struct Deduce;
 };
 
@@ -221,6 +222,7 @@ struct DeduceImpl<P> {
 
 //! `Ts...` are decayed and converted to `Param` specializations.
 template <typename... Ts>
+  requires(sizeof...(Ts) > 0)
 struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {
   using Base = typename Deduce::type;
 
