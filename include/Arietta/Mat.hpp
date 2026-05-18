@@ -329,7 +329,7 @@ public:
   template <typename tag = void>
   [[nodiscard]] constexpr decltype(auto) operator[](usize row, usize col) const {
     static_assert(
-        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, _rows>, _cols>>,
+        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
     );
     return storage()[row + col * C<rows()>{}];
@@ -338,7 +338,7 @@ public:
   template <typename tag = void>
   [[nodiscard]] constexpr decltype(auto) operator[](usize row, usize col) {
     static_assert(
-        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, _rows>, _cols>>,
+        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
     );
     return storage()[row + col * C<rows()>{}];
@@ -412,6 +412,8 @@ public:
   Mat() = delete;
 
 public:
+  using AsStorage = Mat<T, rows(), cols(), Types<>::Fill<Types<>::Fill<void, rows()>, cols()>, C<token>>;
+
   template <T v>
   [[nodiscard]] static consteval auto Constant() {
     return Constant<C<v>>();

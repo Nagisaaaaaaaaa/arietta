@@ -1180,6 +1180,32 @@ suite<"Mat"> _ = [] {
   //
   //
   //
+  "As Storages"_test = [] {
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+
+      typename Mat<T, 1, 1>::AsStorage s11{};
+      typename Mat<T, 2, 1>::AsStorage s21{};
+      typename Mat<T, 3, 1>::AsStorage s31{};
+      typename Mat<T, 1, 2>::AsStorage s12{};
+      typename Mat<T, 1, 3>::AsStorage s13{};
+      typename Mat<T, 2, 2>::AsStorage s22{};
+      static_assert(is::Same<typename Mat<T, 1, 1>::AsStorage, Mat<T, 1, 1, Types<Types<VO>>, Token>>);
+      static_assert(is::Same<typename Mat<T, 2, 1>::AsStorage, Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>);
+      static_assert(is::Same<typename Mat<T, 3, 1>::AsStorage, Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>>);
+      static_assert(is::Same<typename Mat<T, 1, 2>::AsStorage, Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token>>);
+      static_assert(
+          is::Same<typename Mat<T, 1, 3>::AsStorage, Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>>
+      );
+      static_assert(
+          is::Same<typename Mat<T, 2, 2>::AsStorage, Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>
+      );
+    });
+  };
+
+  //
+  //
+  //
   "Constants"_test = [] {
     // `Constant`.
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
