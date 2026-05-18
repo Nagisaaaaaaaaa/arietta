@@ -1018,6 +1018,159 @@ suite<"Mat"> _ = [] {
   //
   //
   //
+  "Is And Is Not"_test = [] {
+    // `is::Mat`.
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      static_assert(is::Mat<Mat<T, 1, 1, Types<Types<VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 1, Types<Types<C0>>, Token>>);
+
+      static_assert(is::Mat<Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 1, Types<Types<C0, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 1, Types<Types<VO, C1>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 1, Types<Types<C0, C1>>, Token>>);
+
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<C0, VO, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<VO, C1, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<C0, C1, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<VO, VO, C2>>, Token>>);
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<C0, VO, C2>>, Token>>);
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<VO, C1, C2>>, Token>>);
+      static_assert(is::Mat<Mat<T, 3, 1, Types<Types<C0, C1, C2>>, Token>>);
+
+      static_assert(is::Mat<Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 2, Types<Types<C0>, Types<VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 2, Types<Types<VO>, Types<C1>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 2, Types<Types<C0>, Types<C1>>, Token>>);
+
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token>>);
+      static_assert(is::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>>);
+
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, VO>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C3>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, C3>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, C3>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, C3>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, C3>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, C3>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, C3>>, Token>>);
+      static_assert(is::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token>>);
+
+      static_assert(!is::Mat<Mat<T, 1, 1>>);
+      static_assert(!is::Mat<Mat<T, 2, 1>>);
+      static_assert(!is::Mat<Mat<T, 3, 1>>);
+      static_assert(!is::Mat<Mat<T, 1, 2>>);
+      static_assert(!is::Mat<Mat<T, 1, 3>>);
+      static_assert(!is::Mat<Mat<T, 2, 2>>);
+
+      static_assert(!is::Mat<void>);
+      static_assert(!is::Mat<C<0>>);
+      static_assert(!is::Mat<std::array<T, 1>>);
+    });
+
+    // `isnot::Mat`.
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      static_assert(!isnot::Mat<Mat<T, 1, 1, Types<Types<VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 1, Types<Types<C0>>, Token>>);
+
+      static_assert(!isnot::Mat<Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 1, Types<Types<C0, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 1, Types<Types<VO, C1>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 1, Types<Types<C0, C1>>, Token>>);
+
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<C0, VO, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<VO, C1, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<C0, C1, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<VO, VO, C2>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<C0, VO, C2>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<VO, C1, C2>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 3, 1, Types<Types<C0, C1, C2>>, Token>>);
+
+      static_assert(!isnot::Mat<Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 2, Types<Types<C0>, Types<VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 2, Types<Types<VO>, Types<C1>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 2, Types<Types<C0>, Types<C1>>, Token>>);
+
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>>);
+
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, VO>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C3>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, C3>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, C3>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, C3>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, C3>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, C3>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, C3>>, Token>>);
+      static_assert(!isnot::Mat<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token>>);
+
+      static_assert(isnot::Mat<Mat<T, 1, 1>>);
+      static_assert(isnot::Mat<Mat<T, 2, 1>>);
+      static_assert(isnot::Mat<Mat<T, 3, 1>>);
+      static_assert(isnot::Mat<Mat<T, 1, 2>>);
+      static_assert(isnot::Mat<Mat<T, 1, 3>>);
+      static_assert(isnot::Mat<Mat<T, 2, 2>>);
+
+      static_assert(isnot::Mat<void>);
+      static_assert(isnot::Mat<C<0>>);
+      static_assert(isnot::Mat<std::array<T, 1>>);
+    });
+  };
+
+  //
+  //
+  //
   "Constants"_test = [] {
     // `Constant`.
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
