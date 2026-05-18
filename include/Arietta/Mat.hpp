@@ -414,7 +414,13 @@ public:
 public:
   template <T v>
   [[nodiscard]] static consteval auto Constant() {
-    using ConstantsPerCol = Types<>::Fill<C<v>, rows()>;
+    return Constant<C<v>>();
+  }
+
+  template <is::C V>
+    requires is::Same<typename V::value_type, T>
+  [[nodiscard]] static consteval auto Constant() {
+    using ConstantsPerCol = Types<>::Fill<V, rows()>;
     using Constants = Types<>::Fill<ConstantsPerCol, cols()>;
     return Mat<T, rows(), cols(), Constants, C<token>>{};
   }
