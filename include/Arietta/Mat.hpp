@@ -412,6 +412,8 @@ public:
   Mat() = delete;
 
 public:
+  using AsStorage = Mat<T, rows(), cols(), Types<>::Fill<Types<>::Fill<void, rows()>, cols()>, C<token>>;
+
   template <T v>
   [[nodiscard]] static consteval auto Constant() {
     return Constant<C<v>>();
