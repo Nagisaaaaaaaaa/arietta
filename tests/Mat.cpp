@@ -14,6 +14,15 @@ struct AsConstants {
   using Constants = T;
 };
 
+template <typename... Ts>
+using Vec1f = Mat<float, 1, 1, Ts...>;
+template <typename... Ts>
+using Vec2f = Mat<float, 2, 1, Ts...>;
+template <typename... Ts>
+using Vec3f = Mat<float, 3, 1, Ts...>;
+template <typename... Ts>
+using Vec4f = Mat<float, 4, 1, Ts...>;
+
 //
 //
 //
@@ -1339,6 +1348,61 @@ suite<"Mat"> _ = [] {
                                    Token> const>
       );
     });
+  };
+
+  //
+  //
+  //
+  "Aliases"_test = [] {
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      static_assert(is::Same<Mat1<T>, Mat<T, 1, 1>>);
+      static_assert(is::Same<Mat2<T>, Mat<T, 2, 2>>);
+      static_assert(is::Same<Mat3<T>, Mat<T, 3, 3>>);
+      static_assert(is::Same<Mat4<T>, Mat<T, 4, 4>>);
+      static_assert(is::Same<Mat1<T, Types<Types<C1>>, Token>, decltype(Mat1<T>::Identity())>);
+      static_assert(is::Same<Mat2<T, Types<Types<C1, C0>, Types<C0, C1>>, Token>, decltype(Mat2<T>::Identity())>);
+      static_assert(is::Same<
+                    Mat3<T, Types<Types<C1, C0, C0>, Types<C0, C1, C0>, Types<C0, C0, C1>>, Token>,
+                    decltype(Mat3<T>::Identity())>);
+      static_assert(
+          is::Same<
+              Mat4<
+                  T, Types<Types<C1, C0, C0, C0>, Types<C0, C1, C0, C0>, Types<C0, C0, C1, C0>, Types<C0, C0, C0, C1>>,
+                  Token>,
+              decltype(Mat4<T>::Identity())>
+      );
+
+      static_assert(is::Same<Vec1<T>, Mat<T, 1, 1>>);
+      static_assert(is::Same<Vec2<T>, Mat<T, 2, 1>>);
+      static_assert(is::Same<Vec3<T>, Mat<T, 3, 1>>);
+      static_assert(is::Same<Vec4<T>, Mat<T, 4, 1>>);
+      static_assert(is::Same<Vec1<T, Types<Types<C0>>, Token>, decltype(Vec1<T>::Zero())>);
+      static_assert(is::Same<Vec2<T, Types<Types<C0, C0>>, Token>, decltype(Vec2<T>::Zero())>);
+      static_assert(is::Same<Vec3<T, Types<Types<C0, C0, C0>>, Token>, decltype(Vec3<T>::Zero())>);
+      static_assert(is::Same<Vec4<T, Types<Types<C0, C0, C0, C0>>, Token>, decltype(Vec4<T>::Zero())>);
+    });
+
+    using C0 = C<0.0F>;
+    static_assert(is::Same<Vec1f<>, Mat<float, 1, 1>>);
+    static_assert(is::Same<Vec2f<>, Mat<float, 2, 1>>);
+    static_assert(is::Same<Vec3f<>, Mat<float, 3, 1>>);
+    static_assert(is::Same<Vec4f<>, Mat<float, 4, 1>>);
+    static_assert(is::Same<Vec1<float, Types<Types<C0>>, Token>, decltype(Vec1f<>::Zero())>);
+    static_assert(is::Same<Vec2<float, Types<Types<C0, C0>>, Token>, decltype(Vec2f<>::Zero())>);
+    static_assert(is::Same<Vec3<float, Types<Types<C0, C0, C0>>, Token>, decltype(Vec3f<>::Zero())>);
+    static_assert(is::Same<Vec4<float, Types<Types<C0, C0, C0, C0>>, Token>, decltype(Vec4f<>::Zero())>);
   };
 };
 
