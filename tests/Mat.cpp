@@ -1019,6 +1019,7 @@ suite<"Mat"> _ = [] {
   //
   //
   "Constants"_test = [] {
+    // `Constant`.
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
       using VO = void;
       T u0(0), u1(1), u2(2), u3(3);
@@ -1097,6 +1098,93 @@ suite<"Mat"> _ = [] {
       static_assert(is::Same<decltype(n22_0), Mat<T, 2, 2, Types<Types<C3, C3>, Types<C3, C3>>, Token> const>);
       static_assert(is::Same<decltype(m22_1), decltype(m22_0)> && is::Same<decltype(m22_2), decltype(m22_0)>);
       static_assert(is::Same<decltype(n22_1), decltype(n22_0)> && is::Same<decltype(n22_2), decltype(n22_0)>);
+    });
+
+    // `Zero` and `Identity`.
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+
+      auto m11_z = Mat<T, 1, 1>::Zero();
+      auto m21_z = Mat<T, 2, 1>::Zero();
+      auto m31_z = Mat<T, 3, 1>::Zero();
+      auto m12_z = Mat<T, 1, 2>::Zero();
+      auto m13_z = Mat<T, 1, 3>::Zero();
+      auto m22_z = Mat<T, 2, 2>::Zero();
+      constexpr auto n11_z = Mat<T, 1, 1>::Zero();
+      constexpr auto n21_z = Mat<T, 2, 1>::Zero();
+      constexpr auto n31_z = Mat<T, 3, 1>::Zero();
+      constexpr auto n12_z = Mat<T, 1, 2>::Zero();
+      constexpr auto n13_z = Mat<T, 1, 3>::Zero();
+      constexpr auto n22_z = Mat<T, 2, 2>::Zero();
+      static_assert(is::Same<decltype(m11_z), Mat<T, 1, 1, Types<Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(n11_z), Mat<T, 1, 1, Types<Types<C0>>, Token> const>);
+      static_assert(is::Same<decltype(m21_z), Mat<T, 2, 1, Types<Types<C0, C0>>, Token>>);
+      static_assert(is::Same<decltype(n21_z), Mat<T, 2, 1, Types<Types<C0, C0>>, Token> const>);
+      static_assert(is::Same<decltype(m31_z), Mat<T, 3, 1, Types<Types<C0, C0, C0>>, Token>>);
+      static_assert(is::Same<decltype(n31_z), Mat<T, 3, 1, Types<Types<C0, C0, C0>>, Token> const>);
+      static_assert(is::Same<decltype(m12_z), Mat<T, 1, 2, Types<Types<C0>, Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(n12_z), Mat<T, 1, 2, Types<Types<C0>, Types<C0>>, Token> const>);
+      static_assert(is::Same<decltype(m13_z), Mat<T, 1, 3, Types<Types<C0>, Types<C0>, Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(n13_z), Mat<T, 1, 3, Types<Types<C0>, Types<C0>, Types<C0>>, Token> const>);
+      static_assert(is::Same<decltype(m22_z), Mat<T, 2, 2, Types<Types<C0, C0>, Types<C0, C0>>, Token>>);
+      static_assert(is::Same<decltype(n22_z), Mat<T, 2, 2, Types<Types<C0, C0>, Types<C0, C0>>, Token> const>);
+
+      auto m11_i = Mat<T, 1, 1>::Identity();
+      auto m22_i = Mat<T, 2, 2>::Identity();
+      auto m33_i = Mat<T, 3, 3>::Identity();
+      auto m44_i = Mat<T, 4, 4>::Identity();
+      auto m55_i = Mat<T, 5, 5>::Identity();
+      constexpr auto n11_i = Mat<T, 1, 1>::Identity();
+      constexpr auto n22_i = Mat<T, 2, 2>::Identity();
+      constexpr auto n33_i = Mat<T, 3, 3>::Identity();
+      constexpr auto n44_i = Mat<T, 4, 4>::Identity();
+      constexpr auto n55_i = Mat<T, 5, 5>::Identity();
+      static_assert(is::Same<decltype(m11_i), Mat<T, 1, 1, Types<Types<C1>>, Token>>);
+      static_assert(is::Same<decltype(n11_i), Mat<T, 1, 1, Types<Types<C1>>, Token> const>);
+      static_assert(is::Same<decltype(m22_i), Mat<T, 2, 2, Types<Types<C1, C0>, Types<C0, C1>>, Token>>);
+      static_assert(is::Same<decltype(n22_i), Mat<T, 2, 2, Types<Types<C1, C0>, Types<C0, C1>>, Token> const>);
+      static_assert(
+          is::Same<decltype(m33_i), Mat<T, 3, 3, Types<Types<C1, C0, C0>, Types<C0, C1, C0>, Types<C0, C0, C1>>, Token>>
+      );
+      static_assert(is::Same<
+                    decltype(n33_i),
+                    Mat<T, 3, 3, Types<Types<C1, C0, C0>, Types<C0, C1, C0>, Types<C0, C0, C1>>, Token> const>);
+      static_assert(
+          is::Same<
+              decltype(m44_i),
+              Mat<T, 4, 4,
+                  Types<Types<C1, C0, C0, C0>, Types<C0, C1, C0, C0>, Types<C0, C0, C1, C0>, Types<C0, C0, C0, C1>>,
+                  Token>>
+      );
+      static_assert(
+          is::Same<
+              decltype(n44_i),
+              Mat<T, 4, 4,
+                  Types<Types<C1, C0, C0, C0>, Types<C0, C1, C0, C0>, Types<C0, C0, C1, C0>, Types<C0, C0, C0, C1>>,
+                  Token> const>
+      );
+      static_assert(
+          is::Same<
+              decltype(m55_i), Mat<T, 5, 5,
+                                   Types<
+                                       Types<C1, C0, C0, C0, C0>, Types<C0, C1, C0, C0, C0>, Types<C0, C0, C1, C0, C0>,
+                                       Types<C0, C0, C0, C1, C0>, Types<C0, C0, C0, C0, C1>>,
+                                   Token>>
+      );
+      static_assert(
+          is::Same<
+              decltype(n55_i), Mat<T, 5, 5,
+                                   Types<
+                                       Types<C1, C0, C0, C0, C0>, Types<C0, C1, C0, C0, C0>, Types<C0, C0, C1, C0, C0>,
+                                       Types<C0, C0, C0, C1, C0>, Types<C0, C0, C0, C0, C1>>,
+                                   Token> const>
+      );
     });
   };
 };
