@@ -146,7 +146,8 @@ struct ParamBase {
   [[nodiscard]] static constexpr auto cols() { return Derived::Constants::Size(); }
 };
 
-template <is::Arithmetic T>
+template <typename T>
+  requires(!is::C<T> && !is::Mat<T>)
 struct Param<T> : ParamBase<Param<T>> {
   static constexpr bool isMat = false;
   using value_type = T;
@@ -461,6 +462,7 @@ Mat(Ts &&...) -> Mat<typename D::value_type, D::rows, D::cols, typename D::Const
 // Operators.
 namespace detail::mat {
 
+//! `M` is assumed to satisfy `is::Mat`.
 template <auto op, usize col, typename M, usize... row>
 [[nodiscard]] constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
   return Mat{op(m[C<row>{}, C<col>{}])...};
