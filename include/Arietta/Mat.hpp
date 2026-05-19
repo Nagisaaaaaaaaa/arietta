@@ -458,6 +458,99 @@ Mat(Ts &&...) -> Mat<typename D::value_type, D::rows, D::cols, typename D::Const
 //
 //
 //
+// Operators.
+namespace detail::mat {
+
+template <auto op, usize col, typename M, usize... row>
+[[nodiscard]] constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
+  return Mat{op(m[C<row>{}, C<col>{}])...};
+}
+
+template <auto op, typename M, usize... col>
+[[nodiscard]] constexpr auto OpUnaryImpl(M const &m, std::index_sequence<col...>) {
+  return Mat{OpUnaryImplPerCol<op, col>(m, std::make_index_sequence<M::rows()>{})...};
+}
+
+template <auto op, typename M>
+[[nodiscard]] constexpr auto OpUnary(M const &m) {
+  return OpUnaryImpl<op>(m, std::make_index_sequence<M::cols()>{});
+}
+
+//! If both `Lhs` and `Rhs` satisfy `is::Mat`, they are assumed to have the same rows and columns,
+//! which are already passed as template parameters.
+template <auto op, usize col, typename Lhs, typename Rhs, usize... row>
+[[nodiscard]] constexpr auto OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
+  if constexpr (is::Mat<Lhs> && is::Mat<Rhs>)
+    return Mat{op(lhs[C<row>{}, C<col>{}], rhs[C<row>{}, C<col>{}])...};
+  else if constexpr (!is::Mat<Lhs> && is::Mat<Rhs>)
+    return Mat{op(lhs, rhs[C<row>{}, C<col>{}])...};
+  else if constexpr (is::Mat<Lhs> && !is::Mat<Rhs>)
+    return Mat{op(lhs[C<row>{}, C<col>{}], rhs)...};
+}
+
+template <auto op, usize rows, typename Lhs, typename Rhs, usize... col>
+[[nodiscard]] constexpr auto OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
+  return Mat{OpBinaryImplPerCol<op, col>(lhs, rhs, std::make_index_sequence<rows>{})...};
+}
+
+template <auto op, usize rows, usize cols, typename Lhs, typename Rhs>
+[[nodiscard]] constexpr auto OpBinary(Lhs const &lhs, Rhs const &rhs) {
+  return OpBinaryImpl<op, rows>(lhs, rhs, std::make_index_sequence<cols>{});
+}
+
+} // namespace detail::mat
+
+//
+//
+//
+template <is::Mat M>
+[[nodiscard]] constexpr auto operator+(M const &m) {
+  return detail::mat::OpUnary<[](auto const &v) { return +v; }>(m);
+}
+
+template <is::Mat M>
+[[nodiscard]] constexpr auto operator-(M const &m) {
+  return detail::mat::OpUnary<[](auto const &v) { return -v; }>(m);
+}
+
+template <is::Mat Lhs, is::Mat Rhs>
+[[nodiscard]] constexpr auto operator+(Lhs const &lhs, Rhs const &rhs) {
+  static_assert(
+      Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
+      "Binary operators are only defined for matrices with the same dimensions"
+  );
+  return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l + r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
+}
+
+template <is::Mat Lhs, is::Mat Rhs>
+[[nodiscard]] constexpr auto operator-(Lhs const &lhs, Rhs const &rhs) {
+  static_assert(
+      Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
+      "Binary operators are only defined for matrices with the same dimensions"
+  );
+  return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l - r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
+}
+
+template <is::Mat Lhs, isnot::Mat Rhs>
+[[nodiscard]] constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+  return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l * r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
+}
+
+template <isnot::Mat Lhs, is::Mat Rhs>
+[[nodiscard]] constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+  return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l * r; }, Rhs::rows(), Rhs::cols()>(lhs, rhs);
+}
+
+template <is::Mat Lhs, isnot::Mat Rhs>
+[[nodiscard]] constexpr auto operator/(Lhs const &lhs, Rhs const &rhs) {
+  return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l / r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
+}
+
+//
+//
+//
+//
+//
 // Aliases.
 
 template <typename T, typename... Ts>
