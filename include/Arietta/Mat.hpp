@@ -75,9 +75,9 @@ public:
   using type = MatBase;
   using value_type = T;
 
-  [[nodiscard]] static consteval auto rows() { return _rows; }
+  [[nodiscard]] static constexpr auto rows() { return _rows; }
 
-  [[nodiscard]] static consteval auto cols() { return _cols; }
+  [[nodiscard]] static constexpr auto cols() { return _cols; }
 };
 
 template <typename Constants>
@@ -141,9 +141,9 @@ struct Param;
 // CRTP base providing `rows()` and `cols()` for `Param`.
 template <typename Derived>
 struct ParamBase {
-  [[nodiscard]] static consteval auto rows() { return Derived::Constants::template At<0>::Size(); }
+  [[nodiscard]] static constexpr auto rows() { return Derived::Constants::template At<0>::Size(); }
 
-  [[nodiscard]] static consteval auto cols() { return Derived::Constants::Size(); }
+  [[nodiscard]] static constexpr auto cols() { return Derived::Constants::Size(); }
 };
 
 template <is::Arithmetic T>
