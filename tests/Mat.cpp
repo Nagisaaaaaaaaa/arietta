@@ -14,6 +14,10 @@ struct AsConstants {
   using Constants = T;
 };
 
+struct A {};
+
+[[nodiscard]] constexpr bool operator==(A const &, A const &) { return true; }
+
 template <typename... Ts>
 using Vec1f = Mat<float, 1, 1, Ts...>;
 template <typename... Ts>
@@ -339,6 +343,22 @@ suite<"Mat"> _ = [] {
       static_assert(is::Same<decltype(n_CV_CC), Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, C3>>, Token> const>);
       static_assert(is::Same<decltype(n_VC_CC), Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, C3>>, Token> const>);
       static_assert(is::Same<decltype(n_CC_CC), Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token> const>);
+    });
+
+    ForEach<Types<std::array<f32, 8>, A>>([]<typename T> {
+      Mat m_V{T{}};
+      Mat m_C{C<T{}>{}};
+      constexpr Mat n_V{T{}};
+      constexpr Mat n_C{C<T{}>{}};
+      static_assert(is::Same<decltype(m_V), Mat<T, 1, 1, Types<Types<void>>, Token>>);
+      static_assert(is::Same<decltype(m_C), Mat<T, 1, 1, Types<Types<C<T{}>>>, Token>>);
+      static_assert(is::Same<decltype(n_V), Mat<T, 1, 1, Types<Types<void>>, Token> const>);
+      static_assert(is::Same<decltype(n_C), Mat<T, 1, 1, Types<Types<C<T{}>>>, Token> const>);
+    });
+
+    ForEach<Types<std::string, std::vector<f32>>>([]<typename T> {
+      Mat m_V{T{}};
+      static_assert(is::Same<decltype(m_V), Mat<T, 1, 1, Types<Types<void>>, Token>>);
     });
   };
 
