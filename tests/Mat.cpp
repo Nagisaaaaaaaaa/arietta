@@ -1399,6 +1399,293 @@ suite<"Mat"> _ = [] {
   //
   //
   //
+  "Operators"_test = [] {
+    ForEach<Types<f32>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      using I =
+          std::conditional_t<is::Same<T, f32> || is::Same<T, f64>, std::conditional_t<is::Same<T, f32>, i32, i64>, T>;
+      using I0 = C<static_cast<I>(0)>;
+      using I1 = C<static_cast<I>(1)>;
+      using I2 = C<static_cast<I>(2)>;
+      using I3 = C<static_cast<I>(3)>;
+      constexpr I0 i0;
+      constexpr I1 i1;
+      constexpr I2 i2;
+      constexpr I3 i3;
+
+      Mat m_VV_VV{Mat{T(2), T(3)}, Mat{T(5), T(7)}};
+      Mat m_CV_VV{Mat{C<T(2)>{}, T(3)}, Mat{T(5), T(7)}};
+      Mat m_VC_VV{Mat{T(2), C<T(3)>{}}, Mat{T(5), T(7)}};
+      Mat m_CC_VV{Mat{C<T(2)>{}, C<T(3)>{}}, Mat{T(5), T(7)}};
+      Mat m_VV_CV{Mat{T(2), T(3)}, Mat{C<T(5)>{}, T(7)}};
+      Mat m_CV_CV{Mat{C<T(2)>{}, T(3)}, Mat{C<T(5)>{}, T(7)}};
+      Mat m_VC_CV{Mat{T(2), C<T(3)>{}}, Mat{C<T(5)>{}, T(7)}};
+      Mat m_CC_CV{Mat{C<T(2)>{}, C<T(3)>{}}, Mat{C<T(5)>{}, T(7)}};
+      Mat m_VV_VC{Mat{T(2), T(3)}, Mat{T(5), C<T(7)>{}}};
+      Mat m_CV_VC{Mat{C<T(2)>{}, T(3)}, Mat{T(5), C<T(7)>{}}};
+      Mat m_VC_VC{Mat{T(2), C<T(3)>{}}, Mat{T(5), C<T(7)>{}}};
+      Mat m_CC_VC{Mat{C<T(2)>{}, C<T(3)>{}}, Mat{T(5), C<T(7)>{}}};
+      Mat m_VV_CC{Mat{T(2), T(3)}, Mat{C<T(5)>{}, C<T(7)>{}}};
+      Mat m_CV_CC{Mat{C<T(2)>{}, T(3)}, Mat{C<T(5)>{}, C<T(7)>{}}};
+      Mat m_VC_CC{Mat{T(2), C<T(3)>{}}, Mat{C<T(5)>{}, C<T(7)>{}}};
+      Mat m_CC_CC{Mat{C<T(2)>{}, C<T(3)>{}}, Mat{C<T(5)>{}, C<T(7)>{}}};
+
+      // Positive.
+      {
+        Mat VV_VV = +m_VV_VV;
+        Mat VC_VV = +m_VC_VV;
+        Mat VV_CV = +m_VV_CV;
+        Mat VC_CV = +m_VC_CV;
+        Mat VV_VC = +m_VV_VC;
+        Mat VC_VC = +m_VC_VC;
+        Mat VV_CC = +m_VV_CC;
+        Mat VC_CC = +m_VC_CC;
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VV), Mat<T, 2, 2, Types<Types<VO, C<T(3)>>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_CV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(5)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_CV), Mat<T, 2, 2, Types<Types<VO, C<T(3)>>, Types<C<T(5)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_VC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C<T(7)>>>, Token>>);
+        static_assert(is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(3)>>, Types<VO, C<T(7)>>>, Token>>);
+        static_assert(is::Same<decltype(VV_CC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(5)>, C<T(7)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(3)>>, Types<C<T(5)>, C<T(7)>>>, Token>>
+        );
+        expect(VV_VV[i0, i0] == 2 && VV_VV[i1, i0] == 3 && VV_VV[i0, i1] == 5 && VV_VV[i1, i1] == 7);
+        expect(VC_VV[i0, i0] == 2 && VC_VV[i1, i0] == 3 && VC_VV[i0, i1] == 5 && VC_VV[i1, i1] == 7);
+        expect(VV_CV[i0, i0] == 2 && VV_CV[i1, i0] == 3 && VV_CV[i0, i1] == 5 && VV_CV[i1, i1] == 7);
+        expect(VC_CV[i0, i0] == 2 && VC_CV[i1, i0] == 3 && VC_CV[i0, i1] == 5 && VC_CV[i1, i1] == 7);
+        expect(VV_VC[i0, i0] == 2 && VV_VC[i1, i0] == 3 && VV_VC[i0, i1] == 5 && VV_VC[i1, i1] == 7);
+        expect(VC_VC[i0, i0] == 2 && VC_VC[i1, i0] == 3 && VC_VC[i0, i1] == 5 && VC_VC[i1, i1] == 7);
+        expect(VV_CC[i0, i0] == 2 && VV_CC[i1, i0] == 3 && VV_CC[i0, i1] == 5 && VV_CC[i1, i1] == 7);
+        expect(VC_CC[i0, i0] == 2 && VC_CC[i1, i0] == 3 && VC_CC[i0, i1] == 5 && VC_CC[i1, i1] == 7);
+      }
+
+      // Negative.
+      {
+        Mat VV_VV = -m_VV_VV;
+        Mat VC_VV = -m_VC_VV;
+        Mat VV_CV = -m_VV_CV;
+        Mat VC_CV = -m_VC_CV;
+        Mat VV_VC = -m_VV_VC;
+        Mat VC_VC = -m_VC_VC;
+        Mat VV_CC = -m_VV_CC;
+        Mat VC_CC = -m_VC_CC;
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VV), Mat<T, 2, 2, Types<Types<VO, C<T(-3)>>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_CV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(-5)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_CV), Mat<T, 2, 2, Types<Types<VO, C<T(-3)>>, Types<C<T(-5)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_VC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C<T(-7)>>>, Token>>);
+        static_assert(is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(-3)>>, Types<VO, C<T(-7)>>>, Token>>);
+        static_assert(is::Same<decltype(VV_CC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(-5)>, C<T(-7)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(-3)>>, Types<C<T(-5)>, C<T(-7)>>>, Token>>
+        );
+        expect(VV_VV[i0, i0] == -2 && VV_VV[i1, i0] == -3 && VV_VV[i0, i1] == -5 && VV_VV[i1, i1] == -7);
+        expect(VC_VV[i0, i0] == -2 && VC_VV[i1, i0] == -3 && VC_VV[i0, i1] == -5 && VC_VV[i1, i1] == -7);
+        expect(VV_CV[i0, i0] == -2 && VV_CV[i1, i0] == -3 && VV_CV[i0, i1] == -5 && VV_CV[i1, i1] == -7);
+        expect(VC_CV[i0, i0] == -2 && VC_CV[i1, i0] == -3 && VC_CV[i0, i1] == -5 && VC_CV[i1, i1] == -7);
+        expect(VV_VC[i0, i0] == -2 && VV_VC[i1, i0] == -3 && VV_VC[i0, i1] == -5 && VV_VC[i1, i1] == -7);
+        expect(VC_VC[i0, i0] == -2 && VC_VC[i1, i0] == -3 && VC_VC[i0, i1] == -5 && VC_VC[i1, i1] == -7);
+        expect(VV_CC[i0, i0] == -2 && VV_CC[i1, i0] == -3 && VV_CC[i0, i1] == -5 && VV_CC[i1, i1] == -7);
+        expect(VC_CC[i0, i0] == -2 && VC_CC[i1, i0] == -3 && VC_CC[i0, i1] == -5 && VC_CC[i1, i1] == -7);
+      }
+
+      // Add.
+      {
+        Mat VV_VV = m_VV_VV + m_CV_VV;
+        Mat VC_VV = m_VC_VV + m_CC_VV;
+        Mat VV_CV = m_VV_CV + m_CV_CV;
+        Mat VC_CV = m_VC_CV + m_CC_CV;
+        Mat VV_VC = m_VV_VC + m_CV_VC;
+        Mat VC_VC = m_VC_VC + m_CC_VC;
+        Mat VV_CC = m_VV_CC + m_CV_CC;
+        Mat VC_CC = m_VC_CC + m_CC_CC;
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VV), Mat<T, 2, 2, Types<Types<VO, C<T(6)>>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_CV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(10)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_CV), Mat<T, 2, 2, Types<Types<VO, C<T(6)>>, Types<C<T(10)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_VC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C<T(14)>>>, Token>>);
+        static_assert(is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(6)>>, Types<VO, C<T(14)>>>, Token>>);
+        static_assert(is::Same<decltype(VV_CC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(10)>, C<T(14)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(6)>>, Types<C<T(10)>, C<T(14)>>>, Token>>
+        );
+        expect(VV_VV[i0, i0] == 4 && VV_VV[i1, i0] == 6 && VV_VV[i0, i1] == 10 && VV_VV[i1, i1] == 14);
+        expect(VC_VV[i0, i0] == 4 && VC_VV[i1, i0] == 6 && VC_VV[i0, i1] == 10 && VC_VV[i1, i1] == 14);
+        expect(VV_CV[i0, i0] == 4 && VV_CV[i1, i0] == 6 && VV_CV[i0, i1] == 10 && VV_CV[i1, i1] == 14);
+        expect(VC_CV[i0, i0] == 4 && VC_CV[i1, i0] == 6 && VC_CV[i0, i1] == 10 && VC_CV[i1, i1] == 14);
+        expect(VV_VC[i0, i0] == 4 && VV_VC[i1, i0] == 6 && VV_VC[i0, i1] == 10 && VV_VC[i1, i1] == 14);
+        expect(VC_VC[i0, i0] == 4 && VC_VC[i1, i0] == 6 && VC_VC[i0, i1] == 10 && VC_VC[i1, i1] == 14);
+        expect(VV_CC[i0, i0] == 4 && VV_CC[i1, i0] == 6 && VV_CC[i0, i1] == 10 && VV_CC[i1, i1] == 14);
+        expect(VC_CC[i0, i0] == 4 && VC_CC[i1, i0] == 6 && VC_CC[i0, i1] == 10 && VC_CC[i1, i1] == 14);
+      }
+
+      // Subtract.
+      {
+        Mat VV_VV = m_VV_VV - m_CV_VV;
+        Mat VC_VV = m_VC_VV - m_CC_VV;
+        Mat VV_CV = m_VV_CV - m_CV_CV;
+        Mat VC_CV = m_VC_CV - m_CC_CV;
+        Mat VV_VC = m_VV_VC - m_CV_VC;
+        Mat VC_VC = m_VC_VC - m_CC_VC;
+        Mat VV_CC = m_VV_CC - m_CV_CC;
+        Mat VC_CC = m_VC_CC - m_CC_CC;
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VV), Mat<T, 2, 2, Types<Types<VO, C<T(0)>>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_CV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(0)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_CV), Mat<T, 2, 2, Types<Types<VO, C<T(0)>>, Types<C<T(0)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_VC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C<T(0)>>>, Token>>);
+        static_assert(is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(0)>>, Types<VO, C<T(0)>>>, Token>>);
+        static_assert(is::Same<decltype(VV_CC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(0)>, C<T(0)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(0)>>, Types<C<T(0)>, C<T(0)>>>, Token>>
+        );
+        expect(VV_VV[i0, i0] == 0 && VV_VV[i1, i0] == 0 && VV_VV[i0, i1] == 0 && VV_VV[i1, i1] == 0);
+        expect(VC_VV[i0, i0] == 0 && VC_VV[i1, i0] == 0 && VC_VV[i0, i1] == 0 && VC_VV[i1, i1] == 0);
+        expect(VV_CV[i0, i0] == 0 && VV_CV[i1, i0] == 0 && VV_CV[i0, i1] == 0 && VV_CV[i1, i1] == 0);
+        expect(VC_CV[i0, i0] == 0 && VC_CV[i1, i0] == 0 && VC_CV[i0, i1] == 0 && VC_CV[i1, i1] == 0);
+        expect(VV_VC[i0, i0] == 0 && VV_VC[i1, i0] == 0 && VV_VC[i0, i1] == 0 && VV_VC[i1, i1] == 0);
+        expect(VC_VC[i0, i0] == 0 && VC_VC[i1, i0] == 0 && VC_VC[i0, i1] == 0 && VC_VC[i1, i1] == 0);
+        expect(VV_CC[i0, i0] == 0 && VV_CC[i1, i0] == 0 && VV_CC[i0, i1] == 0 && VV_CC[i1, i1] == 0);
+        expect(VC_CC[i0, i0] == 0 && VC_CC[i1, i0] == 0 && VC_CC[i0, i1] == 0 && VC_CC[i1, i1] == 0);
+      }
+
+      // Multiply.
+      {
+        Mat VV_VV = m_VV_VV * C<T(3)>{};
+        Mat VC_VV = m_VC_VV * C<T(3)>{};
+        Mat VV_CV = m_VV_CV * C<T(3)>{};
+        Mat VC_CV = m_VC_CV * C<T(3)>{};
+        Mat VV_VC = m_VV_VC * C<T(3)>{};
+        Mat VC_VC = m_VC_VC * C<T(3)>{};
+        Mat VV_CC = m_VV_CC * C<T(3)>{};
+        Mat VC_CC = m_VC_CC * C<T(3)>{};
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VV), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_CV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(15)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_CV), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<C<T(15)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_VC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C<T(21)>>>, Token>>);
+        static_assert(is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<VO, C<T(21)>>>, Token>>);
+        static_assert(is::Same<decltype(VV_CC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(15)>, C<T(21)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<C<T(15)>, C<T(21)>>>, Token>>
+        );
+        expect(VV_VV[i0, i0] == 6 && VV_VV[i1, i0] == 9 && VV_VV[i0, i1] == 15 && VV_VV[i1, i1] == 21);
+        expect(VC_VV[i0, i0] == 6 && VC_VV[i1, i0] == 9 && VC_VV[i0, i1] == 15 && VC_VV[i1, i1] == 21);
+        expect(VV_CV[i0, i0] == 6 && VV_CV[i1, i0] == 9 && VV_CV[i0, i1] == 15 && VV_CV[i1, i1] == 21);
+        expect(VC_CV[i0, i0] == 6 && VC_CV[i1, i0] == 9 && VC_CV[i0, i1] == 15 && VC_CV[i1, i1] == 21);
+        expect(VV_VC[i0, i0] == 6 && VV_VC[i1, i0] == 9 && VV_VC[i0, i1] == 15 && VV_VC[i1, i1] == 21);
+        expect(VC_VC[i0, i0] == 6 && VC_VC[i1, i0] == 9 && VC_VC[i0, i1] == 15 && VC_VC[i1, i1] == 21);
+        expect(VV_CC[i0, i0] == 6 && VV_CC[i1, i0] == 9 && VV_CC[i0, i1] == 15 && VV_CC[i1, i1] == 21);
+        expect(VC_CC[i0, i0] == 6 && VC_CC[i1, i0] == 9 && VC_CC[i0, i1] == 15 && VC_CC[i1, i1] == 21);
+      }
+
+      {
+        Mat VV_VV = C<T(3)>{} * m_VV_VV;
+        Mat VC_VV = C<T(3)>{} * m_VC_VV;
+        Mat VV_CV = C<T(3)>{} * m_VV_CV;
+        Mat VC_CV = C<T(3)>{} * m_VC_CV;
+        Mat VV_VC = C<T(3)>{} * m_VV_VC;
+        Mat VC_VC = C<T(3)>{} * m_VC_VC;
+        Mat VV_CC = C<T(3)>{} * m_VV_CC;
+        Mat VC_CC = C<T(3)>{} * m_VC_CC;
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VV), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_CV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(15)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_CV), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<C<T(15)>, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_VC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C<T(21)>>>, Token>>);
+        static_assert(is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<VO, C<T(21)>>>, Token>>);
+        static_assert(is::Same<decltype(VV_CC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(15)>, C<T(21)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<C<T(15)>, C<T(21)>>>, Token>>
+        );
+        expect(VV_VV[i0, i0] == 6 && VV_VV[i1, i0] == 9 && VV_VV[i0, i1] == 15 && VV_VV[i1, i1] == 21);
+        expect(VC_VV[i0, i0] == 6 && VC_VV[i1, i0] == 9 && VC_VV[i0, i1] == 15 && VC_VV[i1, i1] == 21);
+        expect(VV_CV[i0, i0] == 6 && VV_CV[i1, i0] == 9 && VV_CV[i0, i1] == 15 && VV_CV[i1, i1] == 21);
+        expect(VC_CV[i0, i0] == 6 && VC_CV[i1, i0] == 9 && VC_CV[i0, i1] == 15 && VC_CV[i1, i1] == 21);
+        expect(VV_VC[i0, i0] == 6 && VV_VC[i1, i0] == 9 && VV_VC[i0, i1] == 15 && VV_VC[i1, i1] == 21);
+        expect(VC_VC[i0, i0] == 6 && VC_VC[i1, i0] == 9 && VC_VC[i0, i1] == 15 && VC_VC[i1, i1] == 21);
+        expect(VV_CC[i0, i0] == 6 && VV_CC[i1, i0] == 9 && VV_CC[i0, i1] == 15 && VV_CC[i1, i1] == 21);
+        expect(VC_CC[i0, i0] == 6 && VC_CC[i1, i0] == 9 && VC_CC[i0, i1] == 15 && VC_CC[i1, i1] == 21);
+      }
+
+      // Divide.
+      {
+        Mat VV_VV = m_VV_VV / C<T(3)>{};
+        Mat VC_VV = m_VC_VV / C<T(3)>{};
+        Mat VV_CV = m_VV_CV / C<T(3)>{};
+        Mat VC_CV = m_VC_CV / C<T(3)>{};
+        Mat VV_VC = m_VV_VC / C<T(3)>{};
+        Mat VC_VC = m_VC_VC / C<T(3)>{};
+        Mat VV_CC = m_VV_CC / C<T(3)>{};
+        Mat VC_CC = m_VC_CC / C<T(3)>{};
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VV), Mat<T, 2, 2, Types<Types<VO, C<T(1)>>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VV_CV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(5) / T(3)>, VO>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_CV), Mat<T, 2, 2, Types<Types<VO, C<T(1)>>, Types<C<T(5) / T(3)>, VO>>, Token>>
+        );
+        static_assert(is::Same<decltype(VV_VC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C<T(7) / T(3)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(1)>>, Types<VO, C<T(7) / T(3)>>>, Token>>
+        );
+        static_assert(
+            is::Same<decltype(VV_CC), Mat<T, 2, 2, Types<Types<VO, VO>, Types<C<T(5) / T(3)>, C<T(7) / T(3)>>>, Token>>
+        );
+        static_assert(
+            is::Same<
+                decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(1)>>, Types<C<T(5) / T(3)>, C<T(7) / T(3)>>>, Token>>
+        );
+        expect(
+            VV_VV[i0, i0] == T(2) / T(3) && VV_VV[i1, i0] == 1 && VV_VV[i0, i1] == T(5) / T(3) &&
+            VV_VV[i1, i1] == T(7) / T(3)
+        );
+        expect(
+            VC_VV[i0, i0] == T(2) / T(3) && VC_VV[i1, i0] == 1 && VC_VV[i0, i1] == T(5) / T(3) &&
+            VC_VV[i1, i1] == T(7) / T(3)
+        );
+        expect(
+            VV_CV[i0, i0] == T(2) / T(3) && VV_CV[i1, i0] == 1 && VV_CV[i0, i1] == T(5) / T(3) &&
+            VV_CV[i1, i1] == T(7) / T(3)
+        );
+        expect(
+            VC_CV[i0, i0] == T(2) / T(3) && VC_CV[i1, i0] == 1 && VC_CV[i0, i1] == T(5) / T(3) &&
+            VC_CV[i1, i1] == T(7) / T(3)
+        );
+        expect(
+            VV_VC[i0, i0] == T(2) / T(3) && VV_VC[i1, i0] == 1 && VV_VC[i0, i1] == T(5) / T(3) &&
+            VV_VC[i1, i1] == T(7) / T(3)
+        );
+        expect(
+            VC_VC[i0, i0] == T(2) / T(3) && VC_VC[i1, i0] == 1 && VC_VC[i0, i1] == T(5) / T(3) &&
+            VC_VC[i1, i1] == T(7) / T(3)
+        );
+        expect(
+            VV_CC[i0, i0] == T(2) / T(3) && VV_CC[i1, i0] == 1 && VV_CC[i0, i1] == T(5) / T(3) &&
+            VV_CC[i1, i1] == T(7) / T(3)
+        );
+        expect(
+            VC_CC[i0, i0] == T(2) / T(3) && VC_CC[i1, i0] == 1 && VC_CC[i0, i1] == T(5) / T(3) &&
+            VC_CC[i1, i1] == T(7) / T(3)
+        );
+      }
+    });
+  };
+
+  //
+  //
+  //
   "Aliases"_test = [] {
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
       using VO = void;
