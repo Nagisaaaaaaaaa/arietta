@@ -505,6 +505,8 @@ template <auto op, usize rows, usize cols, typename Lhs, typename Rhs>
 //
 //
 //
+// TODO: The current operator design follows integral promotion,
+//       so integer types narrower than `int` are promoted during computation.
 template <is::Mat M>
 [[nodiscard]] constexpr auto operator+(M const &m) {
   return detail::mat::OpUnary<[](auto const &v) { return +v; }>(m);
