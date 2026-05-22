@@ -310,6 +310,12 @@ public:
     });
   }
 
+  template <typename M>
+    requires(is::Mat<std::decay_t<M>> && isnot::Same<Mat, std::decay_t<M>>)
+  constexpr Mat &operator=(M &&m) {
+    return *this = Mat{std::forward<M>(m)};
+  }
+
 public:
   template <auto row, auto col>
   [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) const {
@@ -575,6 +581,31 @@ template <isnot::Mat Lhs, is::Mat Rhs>
 template <is::Mat Lhs, isnot::Mat Rhs>
 [[nodiscard]] constexpr auto operator/(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l / r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
+}
+
+//! The type range of `Rhs` is also intentionally unconstrained here.
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator+=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs + rhs;
+  return lhs;
+}
+
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator-=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs - rhs;
+  return lhs;
+}
+
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator*=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs * rhs;
+  return lhs;
+}
+
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator/=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs / rhs;
+  return lhs;
 }
 
 //

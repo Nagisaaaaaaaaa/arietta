@@ -864,6 +864,142 @@ suite<"Mat"> _ = [] {
   //
   //
   "Assignments"_test = [] {
+    // Assignment operators.
+    ForEach<Types</*i8, u8, i16, u16, i32, u32, i64, u64, isize, usize,*/ f32 /*, f64*/>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+
+      using I =
+          std::conditional_t<is::Same<T, f32> || is::Same<T, f64>, std::conditional_t<is::Same<T, f32>, i32, i64>, T>;
+      using I0 = C<static_cast<I>(0)>;
+      using I1 = C<static_cast<I>(1)>;
+      using I2 = C<static_cast<I>(2)>;
+      using I3 = C<static_cast<I>(3)>;
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        Mat<T, 1, 1, Types<Types<Cs0>>, Token> m{};
+        Mat m1{C0{}};
+        m = m1;
+
+        auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
+          if constexpr (is::Same<Csi, VO>)
+            expect(m[x, y] == Ci{});
+          else
+            static_assert(m[x, y] == Ci{});
+        };
+        testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
+      });
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          Mat<T, 2, 1, Types<Types<Cs0, Cs1>>, Token> m{};
+          Mat m1{C0{}, C1{}};
+          m = m1;
+
+          auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
+            if constexpr (is::Same<Csi, VO>)
+              expect(m[x, y] == Ci{});
+            else
+              static_assert(m[x, y] == Ci{});
+          };
+          testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
+          testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
+        });
+      });
+
+#if 0
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          ForEach<Types<VO, C2>>([&]<typename Cs2> {
+            Mat<T, 3, 1, Types<Types<Cs0, Cs1, Cs2>>, Token> m{};
+            Mat m1{C0{}, C1{}, C2{}};
+            m = m1;
+
+            auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
+              if constexpr (is::Same<Csi, VO>)
+                expect(m[x, y] == Ci{});
+              else
+                static_assert(m[x, y] == Ci{});
+            };
+            testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
+            testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
+            testIndices.template operator()<Cs2, I2{}, I0{}, C2>();
+          });
+        });
+      });
+#endif
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          Mat<T, 1, 2, Types<Types<Cs0>, Types<Cs1>>, Token> m{};
+          Mat m1{Mat{C0{}}, Mat{C1{}}};
+          m = m1;
+
+          auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
+            if constexpr (is::Same<Csi, VO>)
+              expect(m[x, y] == Ci{});
+            else
+              static_assert(m[x, y] == Ci{});
+          };
+          testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
+          testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
+        });
+      });
+
+#if 0
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          ForEach<Types<VO, C2>>([&]<typename Cs2> {
+            Mat<T, 1, 3, Types<Types<Cs0>, Types<Cs1>, Types<Cs2>>, Token> m{};
+            Mat m1{Mat{C0{}}, Mat{C1{}}, Mat{C2{}}};
+            m = m1;
+
+            auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
+              if constexpr (is::Same<Csi, VO>)
+                expect(m[x, y] == Ci{});
+              else
+                static_assert(m[x, y] == Ci{});
+            };
+            testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
+            testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
+            testIndices.template operator()<Cs2, I0{}, I2{}, C2>();
+          });
+        });
+      });
+#endif
+
+#if 0
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          ForEach<Types<VO, C2>>([&]<typename Cs2> {
+            ForEach<Types<VO, C3>>([&]<typename Cs3> {
+              Mat<T, 2, 2, Types<Types<Cs0, Cs1>, Types<Cs2, Cs3>>, Token> m{};
+              Mat m1{Mat{C0{}, C1{}}, Mat{C2{}, C3{}}};
+              m = m1;
+
+              auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
+                if constexpr (is::Same<Csi, VO>)
+                  expect(m[x, y] == Ci{});
+                else
+                  static_assert(m[x, y] == Ci{});
+              };
+              testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
+              testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
+              testIndices.template operator()<Cs2, I0{}, I1{}, C2>();
+              testIndices.template operator()<Cs3, I1{}, I1{}, C3>();
+            });
+          });
+        });
+      });
+#endif
+    });
+
+    // `operator[]`.
     ForEach<Types</*i8, u8, i16, u16, i32, u32, i64, u64, isize, usize,*/ f32 /*, f64*/>>([]<typename T> {
       using VO = void;
       T u0(0), u1(1), u2(2), u3(3);
@@ -1553,6 +1689,9 @@ suite<"Mat"> _ = [] {
         expect(VC_VC[i0, i0] == 4 && VC_VC[i1, i0] == 6 && VC_VC[i0, i1] == 10 && VC_VC[i1, i1] == 14);
         expect(VV_CC[i0, i0] == 4 && VV_CC[i1, i0] == 6 && VV_CC[i0, i1] == 10 && VV_CC[i1, i1] == 14);
         expect(VC_CC[i0, i0] == 4 && VC_CC[i1, i0] == 6 && VC_CC[i0, i1] == 10 && VC_CC[i1, i1] == 14);
+
+        VC_CC += Mat{Mat{c3, c0}, Mat{c0, c0}};
+        expect(VC_CC[i0, i0] == 7 && VC_CC[i1, i0] == 6 && VC_CC[i0, i1] == 10 && VC_CC[i1, i1] == 14);
       }
 
       // Subtract.
@@ -1583,6 +1722,9 @@ suite<"Mat"> _ = [] {
         expect(VC_VC[i0, i0] == 0 && VC_VC[i1, i0] == 0 && VC_VC[i0, i1] == 0 && VC_VC[i1, i1] == 0);
         expect(VV_CC[i0, i0] == 0 && VV_CC[i1, i0] == 0 && VV_CC[i0, i1] == 0 && VV_CC[i1, i1] == 0);
         expect(VC_CC[i0, i0] == 0 && VC_CC[i1, i0] == 0 && VC_CC[i0, i1] == 0 && VC_CC[i1, i1] == 0);
+
+        VC_CC -= Mat{Mat{c3, c0}, Mat{c0, c0}};
+        expect(VC_CC[i0, i0] == -3 && VC_CC[i1, i0] == 0 && VC_CC[i0, i1] == 0 && VC_CC[i1, i1] == 0);
       }
 
       // Multiply.
@@ -1613,6 +1755,9 @@ suite<"Mat"> _ = [] {
         expect(VC_VC[i0, i0] == 6 && VC_VC[i1, i0] == 9 && VC_VC[i0, i1] == 15 && VC_VC[i1, i1] == 21);
         expect(VV_CC[i0, i0] == 6 && VV_CC[i1, i0] == 9 && VV_CC[i0, i1] == 15 && VV_CC[i1, i1] == 21);
         expect(VC_CC[i0, i0] == 6 && VC_CC[i1, i0] == 9 && VC_CC[i0, i1] == 15 && VC_CC[i1, i1] == 21);
+
+        VV_VV *= C<3>{};
+        expect(VV_VV[i0, i0] == 18 && VV_VV[i1, i0] == 27 && VV_VV[i0, i1] == 45 && VV_VV[i1, i1] == 63);
       }
 
       {
@@ -1702,6 +1847,12 @@ suite<"Mat"> _ = [] {
         expect(
             VC_CC[i0, i0] == T(2) / T(3) && VC_CC[i1, i0] == 1 && VC_CC[i0, i1] == T(5) / T(3) &&
             VC_CC[i1, i1] == T(7) / T(3)
+        );
+
+        VV_VV /= C<3>{};
+        expect(
+            VV_VV[i0, i0] == T(2) / T(3) / T(3) && VV_VV[i1, i0] == T(1) / T(3) &&
+            VV_VV[i0, i1] == T(5) / T(3) / T(3) && VV_VV[i1, i1] == T(7) / T(3) / T(3)
         );
       }
     });
