@@ -1501,6 +1501,30 @@ suite<"Mat"> _ = [] {
         expect(VC_CC[i0, i0] == -2 && VC_CC[i1, i0] == -3 && VC_CC[i0, i1] == -5 && VC_CC[i1, i1] == -7);
       }
 
+      // Equal to.
+      {
+        expect(m_VV_VV == m_CV_VV);
+        expect(m_VC_VV == m_CC_VV);
+        expect(m_VV_CV == m_CV_CV);
+        expect(m_VC_CV == m_CC_CV);
+        expect(m_VV_VC == m_CV_VC);
+        expect(m_VC_VC == m_CC_VC);
+        expect(m_VV_CC == m_CV_CC);
+        expect(m_VC_CC == m_CC_CC);
+      }
+
+      // Unequal to.
+      {
+        expect(m_VV_VV != -m_CV_VV);
+        expect(m_VC_VV != -m_CC_VV);
+        expect(m_VV_CV != -m_CV_CV);
+        expect(m_VC_CV != -m_CC_CV);
+        expect(m_VV_VC != -m_CV_VC);
+        expect(m_VC_VC != -m_CC_VC);
+        expect(m_VV_CC != -m_CV_CC);
+        expect(m_VC_CC != -m_CC_CC);
+      }
+
       // Add.
       {
         Mat VV_VV = m_VV_VV + m_CV_VV;

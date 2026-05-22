@@ -518,6 +518,33 @@ template <is::Mat M>
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
+[[nodiscard]] constexpr bool operator==(Lhs const &lhs, Rhs const &rhs) {
+  static_assert(
+      Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
+      "Binary operators are only defined for matrices with the same dimensions"
+  );
+
+  bool res = true;
+  ForEach<Lhs::cols()>([&]<auto col>() {
+    ForEach<Lhs::rows()>([&]<auto row>() {
+      if (!res)
+        return;
+      if (!(lhs[C<row>{}, C<col>{}] == rhs[C<row>{}, C<col>{}]))
+        res = false;
+    });
+  });
+
+  return res;
+}
+
+//! The type ranges of `Lhs` and `Rhs` are intentionally unconstrained here,
+//! because every `operator!=` must be generated directly from `operator==`.
+template <typename Lhs, typename Rhs>
+[[nodiscard]] constexpr bool operator!=(Lhs const &lhs, Rhs const &rhs) {
+  return !(lhs == rhs);
+}
+
+template <is::Mat Lhs, is::Mat Rhs>
 [[nodiscard]] constexpr auto operator+(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),

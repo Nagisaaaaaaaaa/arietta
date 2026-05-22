@@ -291,6 +291,20 @@ suite<"Constant"> _ = [] {
     static_assert(is::Same<decltype(!C<0>{}), C<true>>);
     static_assert(is::Same<decltype(!C<3>{}), C<false>>);
 
+    static_assert(C<-3>{} == C<-3>{});
+    static_assert(C<0>{} == C<0>{});
+    static_assert(C<3>{} == C<3>{});
+    static_assert(C<-3>{} == -3);
+    static_assert(C<0>{} == 0);
+    static_assert(C<3>{} == 3);
+
+    static_assert(C<-3>{} != C<3>{});
+    static_assert(C<0>{} != C<10>{});
+    static_assert(C<3>{} != C<-3>{});
+    static_assert(C<-3>{} != 3);
+    static_assert(C<0>{} != 10);
+    static_assert(C<3>{} != -3);
+
     static_assert(is::Same<decltype(C<-3>{} + C<-3>{}), C<-6>>);
     static_assert(is::Same<decltype(C<0>{} + C<-3>{}), C<-3>>);
     static_assert(is::Same<decltype(C<3>{} + C<-3>{}), C<0>>);
