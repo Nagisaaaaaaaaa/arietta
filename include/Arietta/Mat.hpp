@@ -9,6 +9,8 @@
 //
 #include "Arietta/Types.hpp"
 
+#include <array>
+
 namespace arietta {
 
 template <typename T, usize rows, usize cols, typename... Ts>
@@ -60,6 +62,11 @@ concept Vec = !is::Vec<T>;
 //
 namespace detail::mat {
 
+#if 1 // TODO: Bypass NVCC bugs.
+template <typename... Ts>
+struct Deduce;
+#endif
+
 //! The last optional template parameter of `Mat` is an instance of `Token`, wrapped in `C`.
 //! This design aims to strictly prohibit users from manually spelling out the `Mat` type.
 //! The rationale is as follows:
@@ -71,14 +78,20 @@ namespace detail::mat {
 //!    Consequently, we can confine all validity checks to the `Deduce` phase.
 class Token {
   //! `private` prevents users from manually constructing `Token` externally.
+#if 0 // TODO: Bypass NVCC bugs.
 private:
+#else
+public:
+#endif
   Token() = default;
 
   template <typename T, usize rows, usize cols, typename... Ts>
   friend class arietta::Mat;
 
   template <typename... Ts>
+#if 0 // TODO: Bypass NVCC bugs.
     requires(sizeof...(Ts) > 0)
+#endif
   friend struct Deduce;
 };
 
@@ -238,9 +251,14 @@ struct DeduceImpl<P> {
 };
 
 //! `Ts...` are decayed and converted to `Param` specializations.
+#if 0 // TODO: Bypass NVCC bugs.
 template <typename... Ts>
   requires(sizeof...(Ts) > 0)
 struct Deduce : DeduceImpl<Param<std::decay_t<Ts>>...> {
+#else
+template <typename T0, typename... Ts>
+struct Deduce<T0, Ts...> : DeduceImpl<Param<std::decay_t<T0>>, Param<std::decay_t<Ts>>...> {
+#endif
   using Base = typename Deduce::type;
 
   using type = Deduce;
