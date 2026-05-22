@@ -310,6 +310,12 @@ public:
     });
   }
 
+  template <typename M>
+    requires(is::Mat<std::decay_t<M>> && isnot::Same<Mat, std::decay_t<M>>)
+  constexpr Mat &operator=(M &&m) {
+    return *this = Mat{std::forward<M>(m)};
+  }
+
 public:
   template <auto row, auto col>
   [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) const {
@@ -518,6 +524,33 @@ template <is::Mat M>
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
+[[nodiscard]] constexpr bool operator==(Lhs const &lhs, Rhs const &rhs) {
+  static_assert(
+      Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
+      "Binary operators are only defined for matrices with the same dimensions"
+  );
+
+  bool res = true;
+  ForEach<Lhs::cols()>([&]<auto col>() {
+    ForEach<Lhs::rows()>([&]<auto row>() {
+      if (!res)
+        return;
+      if (!(lhs[C<row>{}, C<col>{}] == rhs[C<row>{}, C<col>{}]))
+        res = false;
+    });
+  });
+
+  return res;
+}
+
+//! The type ranges of `Lhs` and `Rhs` are intentionally unconstrained here,
+//! because every `operator!=` must be generated directly from `operator==`.
+template <typename Lhs, typename Rhs>
+[[nodiscard]] constexpr bool operator!=(Lhs const &lhs, Rhs const &rhs) {
+  return !(lhs == rhs);
+}
+
+template <is::Mat Lhs, is::Mat Rhs>
 [[nodiscard]] constexpr auto operator+(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
@@ -548,6 +581,31 @@ template <isnot::Mat Lhs, is::Mat Rhs>
 template <is::Mat Lhs, isnot::Mat Rhs>
 [[nodiscard]] constexpr auto operator/(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l / r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
+}
+
+//! The type range of `Rhs` is also intentionally unconstrained here.
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator+=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs + rhs;
+  return lhs;
+}
+
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator-=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs - rhs;
+  return lhs;
+}
+
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator*=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs * rhs;
+  return lhs;
+}
+
+template <is::Mat Lhs, typename Rhs>
+constexpr Lhs &operator/=(Lhs &lhs, Rhs const &rhs) {
+  lhs = lhs / rhs;
+  return lhs;
 }
 
 //
