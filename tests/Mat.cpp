@@ -464,7 +464,7 @@ suite<"Mat"> _ = [] {
           static_assert(n(0, 0) == 0);
           static_assert(n(0) == 0);
         } else {
-          // expect(m(0, 0) == 0); //! Should not compile.
+          // expect(m(0, 0) == 0);        //! Should not compile.
           // static_assert(n(0, 0) == 0); //! Should not compile.
         }
 
@@ -501,7 +501,7 @@ suite<"Mat"> _ = [] {
             static_assert(n(0) == 0);
             static_assert(n(1) == 0);
           } else {
-            // expect(m(0, 0) == 0); //! Should not compile.
+            // expect(m(0, 0) == 0);        //! Should not compile.
             // static_assert(n(0, 0) == 0); //! Should not compile.
           }
 
@@ -545,7 +545,7 @@ suite<"Mat"> _ = [] {
               static_assert(n(1) == 0);
               static_assert(n(2) == 0);
             } else {
-              // expect(m(0, 0) == 0); //! Should not compile.
+              // expect(m(0, 0) == 0);        //! Should not compile.
               // static_assert(n(0, 0) == 0); //! Should not compile.
             }
 
@@ -582,7 +582,7 @@ suite<"Mat"> _ = [] {
             static_assert(n(0, 0) == 0);
             static_assert(n(0, 1) == 0);
           } else {
-            // expect(m(0, 0) == 0); //! Should not compile.
+            // expect(m(0, 0) == 0);        //! Should not compile.
             // static_assert(n(0, 0) == 0); //! Should not compile.
           }
 
@@ -620,7 +620,7 @@ suite<"Mat"> _ = [] {
               static_assert(n(0, 1) == 0);
               static_assert(n(0, 2) == 0);
             } else {
-              // expect(m(0, 0) == 0); //! Should not compile.
+              // expect(m(0, 0) == 0);        //! Should not compile.
               // static_assert(n(0, 0) == 0); //! Should not compile.
             }
 
@@ -663,7 +663,7 @@ suite<"Mat"> _ = [] {
                 static_assert(n(0, 1) == 0);
                 static_assert(n(1, 1) == 0);
               } else {
-                // expect(m(0, 0) == 0); //! Should not compile.
+                // expect(m(0, 0) == 0);        //! Should not compile.
                 // static_assert(n(0, 0) == 0); //! Should not compile.
               }
 
