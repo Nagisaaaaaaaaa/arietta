@@ -14,6 +14,9 @@ namespace arietta {
 template <typename T, usize rows, usize cols, typename... Ts>
 class Mat;
 
+template <typename T, usize rows, typename... Ts>
+using Vec = Mat<T, rows, 1, Ts...>;
+
 namespace is {
 
 namespace detail::mat {
@@ -25,10 +28,20 @@ struct IsMat : std::false_type {};
 template <typename T, usize rows, usize cols, typename Constants, typename Token>
 struct IsMat<Mat<T, rows, cols, Constants, Token>> : std::true_type {};
 
+template <typename>
+struct IsVec : std::false_type {};
+
+//! Only a `Vec` with specified `Constants` and `Token` is considered `is::Vec`.
+template <typename T, usize rows, typename Constants, typename Token>
+struct IsVec<Vec<T, rows, Constants, Token>> : std::true_type {};
+
 } // namespace detail::mat
 
 template <typename T>
 concept Mat = detail::mat::IsMat<T>::value;
+
+template <typename T>
+concept Vec = detail::mat::IsVec<T>::value;
 
 } // namespace is
 
@@ -36,6 +49,9 @@ namespace isnot {
 
 template <typename T>
 concept Mat = !is::Mat<T>;
+
+template <typename T>
+concept Vec = !is::Vec<T>;
 
 } // namespace isnot
 
@@ -625,12 +641,12 @@ template <typename T, typename... Ts>
 using Mat4 = Mat<T, 4, 4, Ts...>;
 
 template <typename T, typename... Ts>
-using Vec1 = Mat<T, 1, 1, Ts...>;
+using Vec1 = Vec<T, 1, Ts...>;
 template <typename T, typename... Ts>
-using Vec2 = Mat<T, 2, 1, Ts...>;
+using Vec2 = Vec<T, 2, Ts...>;
 template <typename T, typename... Ts>
-using Vec3 = Mat<T, 3, 1, Ts...>;
+using Vec3 = Vec<T, 3, Ts...>;
 template <typename T, typename... Ts>
-using Vec4 = Mat<T, 4, 1, Ts...>;
+using Vec4 = Vec<T, 4, Ts...>;
 
 } // namespace arietta

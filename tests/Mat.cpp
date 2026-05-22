@@ -19,13 +19,13 @@ struct A {};
 [[nodiscard]] constexpr bool operator==(A const &, A const &) { return true; }
 
 template <typename... Ts>
-using Vec1f = Mat<float, 1, 1, Ts...>;
+using Vec1f = Vec<float, 1, Ts...>;
 template <typename... Ts>
-using Vec2f = Mat<float, 2, 1, Ts...>;
+using Vec2f = Vec<float, 2, Ts...>;
 template <typename... Ts>
-using Vec3f = Mat<float, 3, 1, Ts...>;
+using Vec3f = Vec<float, 3, Ts...>;
 template <typename... Ts>
-using Vec4f = Mat<float, 4, 1, Ts...>;
+using Vec4f = Vec<float, 4, Ts...>;
 
 //
 //
@@ -90,6 +90,7 @@ suite<"Mat"> _ = [] {
   //
   //
   "Deductions And CTAD"_test = [] {
+    // `Mat`.
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
       using VO = void;
       T u0(0), u1(1), u2(2), u3(3);
@@ -345,6 +346,81 @@ suite<"Mat"> _ = [] {
       static_assert(is::Same<decltype(n_CC_CC), Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token> const>);
     });
 
+    // `Vec`.
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      Vec m_V{u0};
+      Vec m_C{c0};
+      constexpr Vec n_V{v0};
+      constexpr Vec n_C{c0};
+      static_assert(is::Same<decltype(m_V), Vec<T, 1, Types<Types<VO>>, Token>>);
+      static_assert(is::Same<decltype(m_C), Vec<T, 1, Types<Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(n_V), Vec<T, 1, Types<Types<VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_C), Vec<T, 1, Types<Types<C0>>, Token> const>);
+
+      Vec m_VV{u0, u1};
+      Vec m_CV{c0, u1};
+      Vec m_VC{u0, c1};
+      Vec m_CC{c0, c1};
+      constexpr Vec n_VV{v0, v1};
+      constexpr Vec n_CV{c0, v1};
+      constexpr Vec n_VC{v0, c1};
+      constexpr Vec n_CC{c0, c1};
+      static_assert(is::Same<decltype(m_VV), Vec<T, 2, Types<Types<VO, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_CV), Vec<T, 2, Types<Types<C0, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_VC), Vec<T, 2, Types<Types<VO, C1>>, Token>>);
+      static_assert(is::Same<decltype(m_CC), Vec<T, 2, Types<Types<C0, C1>>, Token>>);
+      static_assert(is::Same<decltype(n_VV), Vec<T, 2, Types<Types<VO, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_CV), Vec<T, 2, Types<Types<C0, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_VC), Vec<T, 2, Types<Types<VO, C1>>, Token> const>);
+      static_assert(is::Same<decltype(n_CC), Vec<T, 2, Types<Types<C0, C1>>, Token> const>);
+
+      Vec m_VVV{u0, u1, u2};
+      Vec m_CVV{c0, u1, u2};
+      Vec m_VCV{u0, c1, u2};
+      Vec m_CCV{c0, c1, u2};
+      Vec m_VVC{u0, u1, c2};
+      Vec m_CVC{c0, u1, c2};
+      Vec m_VCC{u0, c1, c2};
+      Vec m_CCC{c0, c1, c2};
+      constexpr Vec n_VVV{v0, v1, v2};
+      constexpr Vec n_CVV{c0, v1, v2};
+      constexpr Vec n_VCV{v0, c1, v2};
+      constexpr Vec n_CCV{c0, c1, v2};
+      constexpr Vec n_VVC{v0, v1, c2};
+      constexpr Vec n_CVC{c0, v1, c2};
+      constexpr Vec n_VCC{v0, c1, c2};
+      constexpr Vec n_CCC{c0, c1, c2};
+      static_assert(is::Same<decltype(m_VVV), Vec<T, 3, Types<Types<VO, VO, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_CVV), Vec<T, 3, Types<Types<C0, VO, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_VCV), Vec<T, 3, Types<Types<VO, C1, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_CCV), Vec<T, 3, Types<Types<C0, C1, VO>>, Token>>);
+      static_assert(is::Same<decltype(m_VVC), Vec<T, 3, Types<Types<VO, VO, C2>>, Token>>);
+      static_assert(is::Same<decltype(m_CVC), Vec<T, 3, Types<Types<C0, VO, C2>>, Token>>);
+      static_assert(is::Same<decltype(m_VCC), Vec<T, 3, Types<Types<VO, C1, C2>>, Token>>);
+      static_assert(is::Same<decltype(m_CCC), Vec<T, 3, Types<Types<C0, C1, C2>>, Token>>);
+      static_assert(is::Same<decltype(n_VVV), Vec<T, 3, Types<Types<VO, VO, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_CVV), Vec<T, 3, Types<Types<C0, VO, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_VCV), Vec<T, 3, Types<Types<VO, C1, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_CCV), Vec<T, 3, Types<Types<C0, C1, VO>>, Token> const>);
+      static_assert(is::Same<decltype(n_VVC), Vec<T, 3, Types<Types<VO, VO, C2>>, Token> const>);
+      static_assert(is::Same<decltype(n_CVC), Vec<T, 3, Types<Types<C0, VO, C2>>, Token> const>);
+      static_assert(is::Same<decltype(n_VCC), Vec<T, 3, Types<Types<VO, C1, C2>>, Token> const>);
+      static_assert(is::Same<decltype(n_CCC), Vec<T, 3, Types<Types<C0, C1, C2>>, Token> const>);
+    });
+
+    // Non-arithmetic value types.
     ForEach<Types<std::array<f32, 8>, A>>([]<typename T> {
       Mat m_V{T{}};
       Mat m_C{C<T{}>{}};
@@ -1433,6 +1509,86 @@ suite<"Mat"> _ = [] {
       static_assert(isnot::Mat<void>);
       static_assert(isnot::Mat<C<0>>);
       static_assert(isnot::Mat<std::array<T, 1>>);
+    });
+
+    // `is::Vec`.
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      static_assert(is::Vec<Vec<T, 1, Types<Types<VO>>, Token>>);
+      static_assert(is::Vec<Vec<T, 1, Types<Types<C0>>, Token>>);
+
+      static_assert(is::Vec<Vec<T, 2, Types<Types<VO, VO>>, Token>>);
+      static_assert(is::Vec<Vec<T, 2, Types<Types<C0, VO>>, Token>>);
+      static_assert(is::Vec<Vec<T, 2, Types<Types<VO, C1>>, Token>>);
+      static_assert(is::Vec<Vec<T, 2, Types<Types<C0, C1>>, Token>>);
+
+      static_assert(is::Vec<Vec<T, 3, Types<Types<VO, VO, VO>>, Token>>);
+      static_assert(is::Vec<Vec<T, 3, Types<Types<C0, VO, VO>>, Token>>);
+      static_assert(is::Vec<Vec<T, 3, Types<Types<VO, C1, VO>>, Token>>);
+      static_assert(is::Vec<Vec<T, 3, Types<Types<C0, C1, VO>>, Token>>);
+      static_assert(is::Vec<Vec<T, 3, Types<Types<VO, VO, C2>>, Token>>);
+      static_assert(is::Vec<Vec<T, 3, Types<Types<C0, VO, C2>>, Token>>);
+      static_assert(is::Vec<Vec<T, 3, Types<Types<VO, C1, C2>>, Token>>);
+      static_assert(is::Vec<Vec<T, 3, Types<Types<C0, C1, C2>>, Token>>);
+
+      static_assert(!is::Vec<Vec<T, 1>>);
+      static_assert(!is::Vec<Vec<T, 2>>);
+      static_assert(!is::Vec<Vec<T, 3>>);
+
+      static_assert(!is::Vec<void>);
+      static_assert(!is::Vec<C<0>>);
+      static_assert(!is::Vec<std::array<T, 1>>);
+    });
+
+    // `isnot::Vec`.
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      static_assert(!isnot::Vec<Vec<T, 1, Types<Types<VO>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 1, Types<Types<C0>>, Token>>);
+
+      static_assert(!isnot::Vec<Vec<T, 2, Types<Types<VO, VO>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 2, Types<Types<C0, VO>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 2, Types<Types<VO, C1>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 2, Types<Types<C0, C1>>, Token>>);
+
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<VO, VO, VO>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<C0, VO, VO>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<VO, C1, VO>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<C0, C1, VO>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<VO, VO, C2>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<C0, VO, C2>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<VO, C1, C2>>, Token>>);
+      static_assert(!isnot::Vec<Vec<T, 3, Types<Types<C0, C1, C2>>, Token>>);
+
+      static_assert(isnot::Vec<Vec<T, 1>>);
+      static_assert(isnot::Vec<Vec<T, 2>>);
+      static_assert(isnot::Vec<Vec<T, 3>>);
+
+      static_assert(isnot::Vec<void>);
+      static_assert(isnot::Vec<C<0>>);
+      static_assert(isnot::Vec<std::array<T, 1>>);
     });
   };
 
