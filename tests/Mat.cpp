@@ -460,7 +460,9 @@ suite<"Mat"> _ = [] {
         // Runtime indices.
         if constexpr (is::Same<Cs0, VO>) {
           expect(m[0, 0] == 0);
+          expect(m[0] == 0);
           static_assert(n[0, 0] == 0);
+          static_assert(n[0] == 0);
         } else {
           // expect(m[0, 0] == 0); //! Should not compile.
           // static_assert(n[0, 0] == 0); //! Should not compile.
@@ -492,8 +494,12 @@ suite<"Mat"> _ = [] {
           if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO>) {
             expect(m[0, 0] == 0);
             expect(m[1, 0] == 0);
+            expect(m[0] == 0);
+            expect(m[1] == 0);
             static_assert(n[0, 0] == 0);
             static_assert(n[1, 0] == 0);
+            static_assert(n[0] == 0);
+            static_assert(n[1] == 0);
           } else {
             // expect(m[0, 0] == 0); //! Should not compile.
             // static_assert(n[0, 0] == 0); //! Should not compile.
@@ -529,9 +535,15 @@ suite<"Mat"> _ = [] {
               expect(m[0, 0] == 0);
               expect(m[1, 0] == 0);
               expect(m[2, 0] == 0);
+              expect(m[0] == 0);
+              expect(m[1] == 0);
+              expect(m[2] == 0);
               static_assert(n[0, 0] == 0);
               static_assert(n[1, 0] == 0);
               static_assert(n[2, 0] == 0);
+              static_assert(n[0] == 0);
+              static_assert(n[1] == 0);
+              static_assert(n[2] == 0);
             } else {
               // expect(m[0, 0] == 0); //! Should not compile.
               // static_assert(n[0, 0] == 0); //! Should not compile.
@@ -1173,6 +1185,97 @@ suite<"Mat"> _ = [] {
               testIndices.template operator()<Cs2, I0{}, I1{}, C2>();
               testIndices.template operator()<Cs3, I1{}, I1{}, C3>();
             });
+          });
+        });
+      });
+#endif
+    });
+
+    ForEach<Types</*i8, u8, i16, u16, i32, u32, i64, u64, isize, usize,*/ f32 /*, f64*/>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+
+      using I =
+          std::conditional_t<is::Same<T, f32> || is::Same<T, f64>, std::conditional_t<is::Same<T, f32>, i32, i64>, T>;
+      using I0 = C<static_cast<I>(0)>;
+      using I1 = C<static_cast<I>(1)>;
+      using I2 = C<static_cast<I>(2)>;
+      using I3 = C<static_cast<I>(3)>;
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        Mat<T, 1, 1, Types<Types<Cs0>>, Token> m{};
+
+        auto assign = [&]<typename Csi, auto x, typename Ci> {
+          if constexpr (is::Same<Csi, VO>)
+            m[x] = Ci{} + static_cast<T>(10);
+          else
+            m[x] = Ci{};
+        };
+        assign.template operator()<Cs0, I0{}, C0>();
+
+        auto testIndices = [&]<typename Csi, auto x, typename Ci> {
+          if constexpr (is::Same<Csi, VO>)
+            expect(m[x] == Ci{} + static_cast<T>(10));
+          else
+            static_assert(m[x] == Ci{});
+        };
+        testIndices.template operator()<Cs0, I0{}, C0>();
+      });
+
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          Mat<T, 2, 1, Types<Types<Cs0, Cs1>>, Token> m{};
+
+          auto assign = [&]<typename Csi, auto x, typename Ci> {
+            if constexpr (is::Same<Csi, VO>)
+              m[x] = Ci{} + static_cast<T>(10);
+            else
+              m[x] = Ci{};
+          };
+          assign.template operator()<Cs0, I0{}, C0>();
+          assign.template operator()<Cs1, I1{}, C1>();
+
+          auto testIndices = [&]<typename Csi, auto x, typename Ci> {
+            if constexpr (is::Same<Csi, VO>)
+              expect(m[x] == Ci{} + static_cast<T>(10));
+            else
+              static_assert(m[x] == Ci{});
+          };
+          testIndices.template operator()<Cs0, I0{}, C0>();
+          testIndices.template operator()<Cs1, I1{}, C1>();
+        });
+      });
+
+#if 0
+      ForEach<Types<VO, C0>>([&]<typename Cs0> {
+        ForEach<Types<VO, C1>>([&]<typename Cs1> {
+          ForEach<Types<VO, C2>>([&]<typename Cs2> {
+            Mat<T, 3, 1, Types<Types<Cs0, Cs1, Cs2>>, Token> m{};
+
+            auto assign = [&]<typename Csi, auto x, typename Ci> {
+              if constexpr (is::Same<Csi, VO>)
+                m[x] = Ci{} + static_cast<T>(10);
+              else
+                m[x] = Ci{};
+            };
+            assign.template operator()<Cs0, I0{}, C0>();
+            assign.template operator()<Cs1, I1{}, C1>();
+            assign.template operator()<Cs2, I2{}, C2>();
+
+            auto testIndices = [&]<typename Csi, auto x, typename Ci> {
+              if constexpr (is::Same<Csi, VO>)
+                expect(m[x] == Ci{} + static_cast<T>(10));
+              else
+                static_assert(m[x] == Ci{});
+            };
+            testIndices.template operator()<Cs0, I0{}, C0>();
+            testIndices.template operator()<Cs1, I1{}, C1>();
+            testIndices.template operator()<Cs2, I2{}, C2>();
           });
         });
       });
