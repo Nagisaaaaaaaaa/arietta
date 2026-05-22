@@ -272,7 +272,7 @@ public:
     )
   constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize col, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
-      ForEach<rows()>([&]<auto row>() { this->operator[](C<row>{}, C<col>{}) = v[C<row>{}]; });
+      ForEach<rows()>([&]<auto row>() { this->operator()(C<row>{}, C<col>{}) = v(C<row>{}); });
 
       if constexpr (sizeof...(Vs) > 0)
         self.template operator()<col + 1>(self, std::forward<Vs>(vs)...);
@@ -288,7 +288,7 @@ public:
     )
   constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
-      this->operator[](C<row>{}, C<static_cast<usize>(0)>{}) = std::forward<V>(v);
+      this->operator()(C<row>{}, C<static_cast<usize>(0)>{}) = std::forward<V>(v);
 
       if constexpr (sizeof...(Vs) > 0)
         self.template operator()<row + 1>(self, std::forward<Vs>(vs)...);
@@ -306,7 +306,7 @@ public:
     M m{std::forward<Us>(us)...};
 
     ForEach<cols()>([&]<auto col>() {
-      ForEach<rows()>([&]<auto row>() { operator[](C<row>{}, C<col>{}) = m[C<row>{}, C<col>{}]; });
+      ForEach<rows()>([&]<auto row>() { operator()(C<row>{}, C<col>{}) = m(C<row>{}, C<col>{}); });
     });
   }
 
@@ -318,7 +318,7 @@ public:
 
 public:
   template <auto row, auto col>
-  [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) const {
+  [[nodiscard]] constexpr decltype(auto) operator()(C<row>, C<col>) const {
     if constexpr (is::Same<Constant<row, col>, void>)
       return storage()[storageIdx<row, col>()];
     else
@@ -326,7 +326,7 @@ public:
   }
 
   template <auto row, auto col>
-  [[nodiscard]] constexpr decltype(auto) operator[](C<row>, C<col>) {
+  [[nodiscard]] constexpr decltype(auto) operator()(C<row>, C<col>) {
     if constexpr (is::Same<Constant<row, col>, void>)
       return storage()[storageIdx<row, col>()];
     else
@@ -334,7 +334,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator[](usize row, usize col) const {
+  [[nodiscard]] constexpr decltype(auto) operator()(usize row, usize col) const {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -343,7 +343,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator[](usize row, usize col) {
+  [[nodiscard]] constexpr decltype(auto) operator()(usize row, usize col) {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -352,27 +352,27 @@ public:
   }
 
   template <auto row>
-  [[nodiscard]] constexpr decltype(auto) operator[](C<row>) const {
+  [[nodiscard]] constexpr decltype(auto) operator()(C<row>) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator[](C<row>{}, C<static_cast<usize>(0)>{});
+    return operator()(C<row>{}, C<static_cast<usize>(0)>{});
   }
 
   template <auto row>
-  [[nodiscard]] constexpr decltype(auto) operator[](C<row>) {
+  [[nodiscard]] constexpr decltype(auto) operator()(C<row>) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator[](C<row>{}, C<static_cast<usize>(0)>{});
+    return operator()(C<row>{}, C<static_cast<usize>(0)>{});
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator[](usize row) const {
+  [[nodiscard]] constexpr decltype(auto) operator()(usize row) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator[]<tag>(row, static_cast<usize>(0));
+    return operator()<tag>(row, static_cast<usize>(0));
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator[](usize row) {
+  [[nodiscard]] constexpr decltype(auto) operator()(usize row) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator[]<tag>(row, static_cast<usize>(0));
+    return operator()<tag>(row, static_cast<usize>(0));
   }
 
 private:
@@ -471,7 +471,7 @@ namespace detail::mat {
 //! `M` is assumed to satisfy `is::Mat`.
 template <auto op, usize col, typename M, usize... row>
 [[nodiscard]] constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
-  return Mat{op(m[C<row>{}, C<col>{}])...};
+  return Mat{op(m(C<row>{}, C<col>{}))...};
 }
 
 template <auto op, typename M, usize... col>
@@ -489,11 +489,11 @@ template <auto op, typename M>
 template <auto op, usize col, typename Lhs, typename Rhs, usize... row>
 [[nodiscard]] constexpr auto OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
   if constexpr (is::Mat<Lhs> && is::Mat<Rhs>)
-    return Mat{op(lhs[C<row>{}, C<col>{}], rhs[C<row>{}, C<col>{}])...};
+    return Mat{op(lhs(C<row>{}, C<col>{}), rhs(C<row>{}, C<col>{}))...};
   else if constexpr (!is::Mat<Lhs> && is::Mat<Rhs>)
-    return Mat{op(lhs, rhs[C<row>{}, C<col>{}])...};
+    return Mat{op(lhs, rhs(C<row>{}, C<col>{}))...};
   else if constexpr (is::Mat<Lhs> && !is::Mat<Rhs>)
-    return Mat{op(lhs[C<row>{}, C<col>{}], rhs)...};
+    return Mat{op(lhs(C<row>{}, C<col>{}), rhs)...};
 }
 
 template <auto op, usize rows, typename Lhs, typename Rhs, usize... col>
@@ -535,7 +535,7 @@ template <is::Mat Lhs, is::Mat Rhs>
     ForEach<Lhs::rows()>([&]<auto row>() {
       if (!res)
         return;
-      if (!(lhs[C<row>{}, C<col>{}] == rhs[C<row>{}, C<col>{}]))
+      if (!(lhs(C<row>{}, C<col>{}) == rhs(C<row>{}, C<col>{})))
         res = false;
     });
   });

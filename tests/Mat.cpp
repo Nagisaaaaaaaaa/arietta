@@ -459,27 +459,27 @@ suite<"Mat"> _ = [] {
 
         // Runtime indices.
         if constexpr (is::Same<Cs0, VO>) {
-          expect(m[0, 0] == 0);
-          expect(m[0] == 0);
-          static_assert(n[0, 0] == 0);
-          static_assert(n[0] == 0);
+          expect(m(0, 0) == 0);
+          expect(m(0) == 0);
+          static_assert(n(0, 0) == 0);
+          static_assert(n(0) == 0);
         } else {
-          // expect(m[0, 0] == 0); //! Should not compile.
-          // static_assert(n[0, 0] == 0); //! Should not compile.
+          // expect(m(0, 0) == 0); //! Should not compile.
+          // static_assert(n(0, 0) == 0); //! Should not compile.
         }
 
         // Compile-time indices.
         auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
           if constexpr (is::Same<Csi, VO>) {
-            expect(m[x, y] == 0);
-            static_assert(n[x, y] == 0);
-            static_assert(is::Same<decltype(m[x, y]), T &>);
-            static_assert(is::Same<decltype(n[x, y]), T const &>);
+            expect(m(x, y) == 0);
+            static_assert(n(x, y) == 0);
+            static_assert(is::Same<decltype(m(x, y)), T &>);
+            static_assert(is::Same<decltype(n(x, y)), T const &>);
           } else {
-            static_assert(m[x, y] == Ci{});
-            static_assert(n[x, y] == Ci{});
-            static_assert(is::Same<decltype(m[x, y]), Ci>);
-            static_assert(is::Same<decltype(n[x, y]), Ci>);
+            static_assert(m(x, y) == Ci{});
+            static_assert(n(x, y) == Ci{});
+            static_assert(is::Same<decltype(m(x, y)), Ci>);
+            static_assert(is::Same<decltype(n(x, y)), Ci>);
           }
         };
         testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
@@ -492,31 +492,31 @@ suite<"Mat"> _ = [] {
 
           // Runtime indices.
           if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO>) {
-            expect(m[0, 0] == 0);
-            expect(m[1, 0] == 0);
-            expect(m[0] == 0);
-            expect(m[1] == 0);
-            static_assert(n[0, 0] == 0);
-            static_assert(n[1, 0] == 0);
-            static_assert(n[0] == 0);
-            static_assert(n[1] == 0);
+            expect(m(0, 0) == 0);
+            expect(m(1, 0) == 0);
+            expect(m(0) == 0);
+            expect(m(1) == 0);
+            static_assert(n(0, 0) == 0);
+            static_assert(n(1, 0) == 0);
+            static_assert(n(0) == 0);
+            static_assert(n(1) == 0);
           } else {
-            // expect(m[0, 0] == 0); //! Should not compile.
-            // static_assert(n[0, 0] == 0); //! Should not compile.
+            // expect(m(0, 0) == 0); //! Should not compile.
+            // static_assert(n(0, 0) == 0); //! Should not compile.
           }
 
           // Compile-time indices.
           auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>) {
-              expect(m[x, y] == 0);
-              static_assert(n[x, y] == 0);
-              static_assert(is::Same<decltype(m[x, y]), T &>);
-              static_assert(is::Same<decltype(n[x, y]), T const &>);
+              expect(m(x, y) == 0);
+              static_assert(n(x, y) == 0);
+              static_assert(is::Same<decltype(m(x, y)), T &>);
+              static_assert(is::Same<decltype(n(x, y)), T const &>);
             } else {
-              static_assert(m[x, y] == Ci{});
-              static_assert(n[x, y] == Ci{});
-              static_assert(is::Same<decltype(m[x, y]), Ci>);
-              static_assert(is::Same<decltype(n[x, y]), Ci>);
+              static_assert(m(x, y) == Ci{});
+              static_assert(n(x, y) == Ci{});
+              static_assert(is::Same<decltype(m(x, y)), Ci>);
+              static_assert(is::Same<decltype(n(x, y)), Ci>);
             }
           };
           testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
@@ -532,35 +532,35 @@ suite<"Mat"> _ = [] {
 
             // Runtime indices.
             if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO> && is::Same<Cs2, VO>) {
-              expect(m[0, 0] == 0);
-              expect(m[1, 0] == 0);
-              expect(m[2, 0] == 0);
-              expect(m[0] == 0);
-              expect(m[1] == 0);
-              expect(m[2] == 0);
-              static_assert(n[0, 0] == 0);
-              static_assert(n[1, 0] == 0);
-              static_assert(n[2, 0] == 0);
-              static_assert(n[0] == 0);
-              static_assert(n[1] == 0);
-              static_assert(n[2] == 0);
+              expect(m(0, 0) == 0);
+              expect(m(1, 0) == 0);
+              expect(m(2, 0) == 0);
+              expect(m(0) == 0);
+              expect(m(1) == 0);
+              expect(m(2) == 0);
+              static_assert(n(0, 0) == 0);
+              static_assert(n(1, 0) == 0);
+              static_assert(n(2, 0) == 0);
+              static_assert(n(0) == 0);
+              static_assert(n(1) == 0);
+              static_assert(n(2) == 0);
             } else {
-              // expect(m[0, 0] == 0); //! Should not compile.
-              // static_assert(n[0, 0] == 0); //! Should not compile.
+              // expect(m(0, 0) == 0); //! Should not compile.
+              // static_assert(n(0, 0) == 0); //! Should not compile.
             }
 
             // Compile-time indices.
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>) {
-                expect(m[x, y] == 0);
-                static_assert(n[x, y] == 0);
-                static_assert(is::Same<decltype(m[x, y]), T &>);
-                static_assert(is::Same<decltype(n[x, y]), T const &>);
+                expect(m(x, y) == 0);
+                static_assert(n(x, y) == 0);
+                static_assert(is::Same<decltype(m(x, y)), T &>);
+                static_assert(is::Same<decltype(n(x, y)), T const &>);
               } else {
-                static_assert(m[x, y] == Ci{});
-                static_assert(n[x, y] == Ci{});
-                static_assert(is::Same<decltype(m[x, y]), Ci>);
-                static_assert(is::Same<decltype(n[x, y]), Ci>);
+                static_assert(m(x, y) == Ci{});
+                static_assert(n(x, y) == Ci{});
+                static_assert(is::Same<decltype(m(x, y)), Ci>);
+                static_assert(is::Same<decltype(n(x, y)), Ci>);
               }
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
@@ -577,27 +577,27 @@ suite<"Mat"> _ = [] {
 
           // Runtime indices.
           if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO>) {
-            expect(m[0, 0] == 0);
-            expect(m[0, 1] == 0);
-            static_assert(n[0, 0] == 0);
-            static_assert(n[0, 1] == 0);
+            expect(m(0, 0) == 0);
+            expect(m(0, 1) == 0);
+            static_assert(n(0, 0) == 0);
+            static_assert(n(0, 1) == 0);
           } else {
-            // expect(m[0, 0] == 0); //! Should not compile.
-            // static_assert(n[0, 0] == 0); //! Should not compile.
+            // expect(m(0, 0) == 0); //! Should not compile.
+            // static_assert(n(0, 0) == 0); //! Should not compile.
           }
 
           // Compile-time indices.
           auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>) {
-              expect(m[x, y] == 0);
-              static_assert(n[x, y] == 0);
-              static_assert(is::Same<decltype(m[x, y]), T &>);
-              static_assert(is::Same<decltype(n[x, y]), T const &>);
+              expect(m(x, y) == 0);
+              static_assert(n(x, y) == 0);
+              static_assert(is::Same<decltype(m(x, y)), T &>);
+              static_assert(is::Same<decltype(n(x, y)), T const &>);
             } else {
-              static_assert(m[x, y] == Ci{});
-              static_assert(n[x, y] == Ci{});
-              static_assert(is::Same<decltype(m[x, y]), Ci>);
-              static_assert(is::Same<decltype(n[x, y]), Ci>);
+              static_assert(m(x, y) == Ci{});
+              static_assert(n(x, y) == Ci{});
+              static_assert(is::Same<decltype(m(x, y)), Ci>);
+              static_assert(is::Same<decltype(n(x, y)), Ci>);
             }
           };
           testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
@@ -613,29 +613,29 @@ suite<"Mat"> _ = [] {
 
             // Runtime indices.
             if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO> && is::Same<Cs2, VO>) {
-              expect(m[0, 0] == 0);
-              expect(m[0, 1] == 0);
-              expect(m[0, 2] == 0);
-              static_assert(n[0, 0] == 0);
-              static_assert(n[0, 1] == 0);
-              static_assert(n[0, 2] == 0);
+              expect(m(0, 0) == 0);
+              expect(m(0, 1) == 0);
+              expect(m(0, 2) == 0);
+              static_assert(n(0, 0) == 0);
+              static_assert(n(0, 1) == 0);
+              static_assert(n(0, 2) == 0);
             } else {
-              // expect(m[0, 0] == 0); //! Should not compile.
-              // static_assert(n[0, 0] == 0); //! Should not compile.
+              // expect(m(0, 0) == 0); //! Should not compile.
+              // static_assert(n(0, 0) == 0); //! Should not compile.
             }
 
             // Compile-time indices.
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>) {
-                expect(m[x, y] == 0);
-                static_assert(n[x, y] == 0);
-                static_assert(is::Same<decltype(m[x, y]), T &>);
-                static_assert(is::Same<decltype(n[x, y]), T const &>);
+                expect(m(x, y) == 0);
+                static_assert(n(x, y) == 0);
+                static_assert(is::Same<decltype(m(x, y)), T &>);
+                static_assert(is::Same<decltype(n(x, y)), T const &>);
               } else {
-                static_assert(m[x, y] == Ci{});
-                static_assert(n[x, y] == Ci{});
-                static_assert(is::Same<decltype(m[x, y]), Ci>);
-                static_assert(is::Same<decltype(n[x, y]), Ci>);
+                static_assert(m(x, y) == Ci{});
+                static_assert(n(x, y) == Ci{});
+                static_assert(is::Same<decltype(m(x, y)), Ci>);
+                static_assert(is::Same<decltype(n(x, y)), Ci>);
               }
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
@@ -654,31 +654,31 @@ suite<"Mat"> _ = [] {
 
               // Runtime indices.
               if constexpr (is::Same<Cs0, VO> && is::Same<Cs1, VO> && is::Same<Cs2, VO> && is::Same<Cs3, VO>) {
-                expect(m[0, 0] == 0);
-                expect(m[1, 0] == 0);
-                expect(m[0, 1] == 0);
-                expect(m[1, 1] == 0);
-                static_assert(n[0, 0] == 0);
-                static_assert(n[1, 0] == 0);
-                static_assert(n[0, 1] == 0);
-                static_assert(n[1, 1] == 0);
+                expect(m(0, 0) == 0);
+                expect(m(1, 0) == 0);
+                expect(m(0, 1) == 0);
+                expect(m(1, 1) == 0);
+                static_assert(n(0, 0) == 0);
+                static_assert(n(1, 0) == 0);
+                static_assert(n(0, 1) == 0);
+                static_assert(n(1, 1) == 0);
               } else {
-                // expect(m[0, 0] == 0); //! Should not compile.
-                // static_assert(n[0, 0] == 0); //! Should not compile.
+                // expect(m(0, 0) == 0); //! Should not compile.
+                // static_assert(n(0, 0) == 0); //! Should not compile.
               }
 
               // Compile-time indices.
               auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
                 if constexpr (is::Same<Csi, VO>) {
-                  expect(m[x, y] == 0);
-                  static_assert(n[x, y] == 0);
-                  static_assert(is::Same<decltype(m[x, y]), T &>);
-                  static_assert(is::Same<decltype(n[x, y]), T const &>);
+                  expect(m(x, y) == 0);
+                  static_assert(n(x, y) == 0);
+                  static_assert(is::Same<decltype(m(x, y)), T &>);
+                  static_assert(is::Same<decltype(n(x, y)), T const &>);
                 } else {
-                  static_assert(m[x, y] == Ci{});
-                  static_assert(n[x, y] == Ci{});
-                  static_assert(is::Same<decltype(m[x, y]), Ci>);
-                  static_assert(is::Same<decltype(n[x, y]), Ci>);
+                  static_assert(m(x, y) == Ci{});
+                  static_assert(n(x, y) == Ci{});
+                  static_assert(is::Same<decltype(m(x, y)), Ci>);
+                  static_assert(is::Same<decltype(n(x, y)), Ci>);
                 }
               };
               testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
@@ -716,9 +716,9 @@ suite<"Mat"> _ = [] {
 
           auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              expect(m[x, y] == Ci{});
+              expect(m(x, y) == Ci{});
             else
-              static_assert(m[x, y] == Ci{});
+              static_assert(m(x, y) == Ci{});
           };
           testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
         };
@@ -738,9 +738,9 @@ suite<"Mat"> _ = [] {
 
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                expect(m[x, y] == Ci{});
+                expect(m(x, y) == Ci{});
               else
-                static_assert(m[x, y] == Ci{});
+                static_assert(m(x, y) == Ci{});
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
             testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -765,9 +765,9 @@ suite<"Mat"> _ = [] {
 
               auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
                 if constexpr (is::Same<Csi, VO>)
-                  expect(m[x, y] == Ci{});
+                  expect(m(x, y) == Ci{});
                 else
-                  static_assert(m[x, y] == Ci{});
+                  static_assert(m(x, y) == Ci{});
               };
               testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
               testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -792,9 +792,9 @@ suite<"Mat"> _ = [] {
 
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                expect(m[x, y] == Ci{});
+                expect(m(x, y) == Ci{});
               else
-                static_assert(m[x, y] == Ci{});
+                static_assert(m(x, y) == Ci{});
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
             testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
@@ -819,9 +819,9 @@ suite<"Mat"> _ = [] {
 
               auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
                 if constexpr (is::Same<Csi, VO>)
-                  expect(m[x, y] == Ci{});
+                  expect(m(x, y) == Ci{});
                 else
-                  static_assert(m[x, y] == Ci{});
+                  static_assert(m(x, y) == Ci{});
               };
               testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
               testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
@@ -851,9 +851,9 @@ suite<"Mat"> _ = [] {
 
                 auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
                   if constexpr (is::Same<Csi, VO>)
-                    expect(m[x, y] == Ci{});
+                    expect(m(x, y) == Ci{});
                   else
-                    static_assert(m[x, y] == Ci{});
+                    static_assert(m(x, y) == Ci{});
                 };
                 testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
                 testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -900,9 +900,9 @@ suite<"Mat"> _ = [] {
 
         auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
           if constexpr (is::Same<Csi, VO>)
-            expect(m[x, y] == Ci{});
+            expect(m(x, y) == Ci{});
           else
-            static_assert(m[x, y] == Ci{});
+            static_assert(m(x, y) == Ci{});
         };
         testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
       });
@@ -915,9 +915,9 @@ suite<"Mat"> _ = [] {
 
           auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              expect(m[x, y] == Ci{});
+              expect(m(x, y) == Ci{});
             else
-              static_assert(m[x, y] == Ci{});
+              static_assert(m(x, y) == Ci{});
           };
           testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
           testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -934,9 +934,9 @@ suite<"Mat"> _ = [] {
 
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                expect(m[x, y] == Ci{});
+                expect(m(x, y) == Ci{});
               else
-                static_assert(m[x, y] == Ci{});
+                static_assert(m(x, y) == Ci{});
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
             testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -954,9 +954,9 @@ suite<"Mat"> _ = [] {
 
           auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              expect(m[x, y] == Ci{});
+              expect(m(x, y) == Ci{});
             else
-              static_assert(m[x, y] == Ci{});
+              static_assert(m(x, y) == Ci{});
           };
           testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
           testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
@@ -973,9 +973,9 @@ suite<"Mat"> _ = [] {
 
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                expect(m[x, y] == Ci{});
+                expect(m(x, y) == Ci{});
               else
-                static_assert(m[x, y] == Ci{});
+                static_assert(m(x, y) == Ci{});
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
             testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
@@ -996,9 +996,9 @@ suite<"Mat"> _ = [] {
 
               auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
                 if constexpr (is::Same<Csi, VO>)
-                  expect(m[x, y] == Ci{});
+                  expect(m(x, y) == Ci{});
                 else
-                  static_assert(m[x, y] == Ci{});
+                  static_assert(m(x, y) == Ci{});
               };
               testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
               testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -1011,7 +1011,7 @@ suite<"Mat"> _ = [] {
 #endif
     });
 
-    // `operator[]`.
+    // `operator()`.
     ForEach<Types</*i8, u8, i16, u16, i32, u32, i64, u64, isize, usize,*/ f32 /*, f64*/>>([]<typename T> {
       using VO = void;
       T u0(0), u1(1), u2(2), u3(3);
@@ -1033,17 +1033,17 @@ suite<"Mat"> _ = [] {
 
         auto assign = [&]<typename Csi, auto x, auto y, typename Ci> {
           if constexpr (is::Same<Csi, VO>)
-            m[x, y] = Ci{} + static_cast<T>(10);
+            m(x, y) = Ci{} + static_cast<T>(10);
           else
-            m[x, y] = Ci{};
+            m(x, y) = Ci{};
         };
         assign.template operator()<Cs0, I0{}, I0{}, C0>();
 
         auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
           if constexpr (is::Same<Csi, VO>)
-            expect(m[x, y] == Ci{} + static_cast<T>(10));
+            expect(m(x, y) == Ci{} + static_cast<T>(10));
           else
-            static_assert(m[x, y] == Ci{});
+            static_assert(m(x, y) == Ci{});
         };
         testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
       });
@@ -1054,18 +1054,18 @@ suite<"Mat"> _ = [] {
 
           auto assign = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              m[x, y] = Ci{} + static_cast<T>(10);
+              m(x, y) = Ci{} + static_cast<T>(10);
             else
-              m[x, y] = Ci{};
+              m(x, y) = Ci{};
           };
           assign.template operator()<Cs0, I0{}, I0{}, C0>();
           assign.template operator()<Cs1, I1{}, I0{}, C1>();
 
           auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              expect(m[x, y] == Ci{} + static_cast<T>(10));
+              expect(m(x, y) == Ci{} + static_cast<T>(10));
             else
-              static_assert(m[x, y] == Ci{});
+              static_assert(m(x, y) == Ci{});
           };
           testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
           testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -1080,9 +1080,9 @@ suite<"Mat"> _ = [] {
 
             auto assign = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                m[x, y] = Ci{} + static_cast<T>(10);
+                m(x, y) = Ci{} + static_cast<T>(10);
               else
-                m[x, y] = Ci{};
+                m(x, y) = Ci{};
             };
             assign.template operator()<Cs0, I0{}, I0{}, C0>();
             assign.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -1090,9 +1090,9 @@ suite<"Mat"> _ = [] {
 
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                expect(m[x, y] == Ci{} + static_cast<T>(10));
+                expect(m(x, y) == Ci{} + static_cast<T>(10));
               else
-                static_assert(m[x, y] == Ci{});
+                static_assert(m(x, y) == Ci{});
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
             testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -1108,18 +1108,18 @@ suite<"Mat"> _ = [] {
 
           auto assign = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              m[x, y] = Ci{} + static_cast<T>(10);
+              m(x, y) = Ci{} + static_cast<T>(10);
             else
-              m[x, y] = Ci{};
+              m(x, y) = Ci{};
           };
           assign.template operator()<Cs0, I0{}, I0{}, C0>();
           assign.template operator()<Cs1, I0{}, I1{}, C1>();
 
           auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              expect(m[x, y] == Ci{} + static_cast<T>(10));
+              expect(m(x, y) == Ci{} + static_cast<T>(10));
             else
-              static_assert(m[x, y] == Ci{});
+              static_assert(m(x, y) == Ci{});
           };
           testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
           testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
@@ -1134,9 +1134,9 @@ suite<"Mat"> _ = [] {
 
             auto assign = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                m[x, y] = Ci{} + static_cast<T>(10);
+                m(x, y) = Ci{} + static_cast<T>(10);
               else
-                m[x, y] = Ci{};
+                m(x, y) = Ci{};
             };
             assign.template operator()<Cs0, I0{}, I0{}, C0>();
             assign.template operator()<Cs1, I0{}, I1{}, C1>();
@@ -1144,9 +1144,9 @@ suite<"Mat"> _ = [] {
 
             auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                expect(m[x, y] == Ci{} + static_cast<T>(10));
+                expect(m(x, y) == Ci{} + static_cast<T>(10));
               else
-                static_assert(m[x, y] == Ci{});
+                static_assert(m(x, y) == Ci{});
             };
             testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
             testIndices.template operator()<Cs1, I0{}, I1{}, C1>();
@@ -1165,9 +1165,9 @@ suite<"Mat"> _ = [] {
 
               auto assign = [&]<typename Csi, auto x, auto y, typename Ci> {
                 if constexpr (is::Same<Csi, VO>)
-                  m[x, y] = Ci{} + static_cast<T>(10);
+                  m(x, y) = Ci{} + static_cast<T>(10);
                 else
-                  m[x, y] = Ci{};
+                  m(x, y) = Ci{};
               };
               assign.template operator()<Cs0, I0{}, I0{}, C0>();
               assign.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -1176,9 +1176,9 @@ suite<"Mat"> _ = [] {
 
               auto testIndices = [&]<typename Csi, auto x, auto y, typename Ci> {
                 if constexpr (is::Same<Csi, VO>)
-                  expect(m[x, y] == Ci{} + static_cast<T>(10));
+                  expect(m(x, y) == Ci{} + static_cast<T>(10));
                 else
-                  static_assert(m[x, y] == Ci{});
+                  static_assert(m(x, y) == Ci{});
               };
               testIndices.template operator()<Cs0, I0{}, I0{}, C0>();
               testIndices.template operator()<Cs1, I1{}, I0{}, C1>();
@@ -1212,17 +1212,17 @@ suite<"Mat"> _ = [] {
 
         auto assign = [&]<typename Csi, auto x, typename Ci> {
           if constexpr (is::Same<Csi, VO>)
-            m[x] = Ci{} + static_cast<T>(10);
+            m(x) = Ci{} + static_cast<T>(10);
           else
-            m[x] = Ci{};
+            m(x) = Ci{};
         };
         assign.template operator()<Cs0, I0{}, C0>();
 
         auto testIndices = [&]<typename Csi, auto x, typename Ci> {
           if constexpr (is::Same<Csi, VO>)
-            expect(m[x] == Ci{} + static_cast<T>(10));
+            expect(m(x) == Ci{} + static_cast<T>(10));
           else
-            static_assert(m[x] == Ci{});
+            static_assert(m(x) == Ci{});
         };
         testIndices.template operator()<Cs0, I0{}, C0>();
       });
@@ -1233,18 +1233,18 @@ suite<"Mat"> _ = [] {
 
           auto assign = [&]<typename Csi, auto x, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              m[x] = Ci{} + static_cast<T>(10);
+              m(x) = Ci{} + static_cast<T>(10);
             else
-              m[x] = Ci{};
+              m(x) = Ci{};
           };
           assign.template operator()<Cs0, I0{}, C0>();
           assign.template operator()<Cs1, I1{}, C1>();
 
           auto testIndices = [&]<typename Csi, auto x, typename Ci> {
             if constexpr (is::Same<Csi, VO>)
-              expect(m[x] == Ci{} + static_cast<T>(10));
+              expect(m(x) == Ci{} + static_cast<T>(10));
             else
-              static_assert(m[x] == Ci{});
+              static_assert(m(x) == Ci{});
           };
           testIndices.template operator()<Cs0, I0{}, C0>();
           testIndices.template operator()<Cs1, I1{}, C1>();
@@ -1259,9 +1259,9 @@ suite<"Mat"> _ = [] {
 
             auto assign = [&]<typename Csi, auto x, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                m[x] = Ci{} + static_cast<T>(10);
+                m(x) = Ci{} + static_cast<T>(10);
               else
-                m[x] = Ci{};
+                m(x) = Ci{};
             };
             assign.template operator()<Cs0, I0{}, C0>();
             assign.template operator()<Cs1, I1{}, C1>();
@@ -1269,9 +1269,9 @@ suite<"Mat"> _ = [] {
 
             auto testIndices = [&]<typename Csi, auto x, typename Ci> {
               if constexpr (is::Same<Csi, VO>)
-                expect(m[x] == Ci{} + static_cast<T>(10));
+                expect(m(x) == Ci{} + static_cast<T>(10));
               else
-                static_assert(m[x] == Ci{});
+                static_assert(m(x) == Ci{});
             };
             testIndices.template operator()<Cs0, I0{}, C0>();
             testIndices.template operator()<Cs1, I1{}, C1>();
@@ -1700,14 +1700,14 @@ suite<"Mat"> _ = [] {
         static_assert(
             is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(3)>>, Types<C<T(5)>, C<T(7)>>>, Token>>
         );
-        expect(VV_VV[i0, i0] == 2 && VV_VV[i1, i0] == 3 && VV_VV[i0, i1] == 5 && VV_VV[i1, i1] == 7);
-        expect(VC_VV[i0, i0] == 2 && VC_VV[i1, i0] == 3 && VC_VV[i0, i1] == 5 && VC_VV[i1, i1] == 7);
-        expect(VV_CV[i0, i0] == 2 && VV_CV[i1, i0] == 3 && VV_CV[i0, i1] == 5 && VV_CV[i1, i1] == 7);
-        expect(VC_CV[i0, i0] == 2 && VC_CV[i1, i0] == 3 && VC_CV[i0, i1] == 5 && VC_CV[i1, i1] == 7);
-        expect(VV_VC[i0, i0] == 2 && VV_VC[i1, i0] == 3 && VV_VC[i0, i1] == 5 && VV_VC[i1, i1] == 7);
-        expect(VC_VC[i0, i0] == 2 && VC_VC[i1, i0] == 3 && VC_VC[i0, i1] == 5 && VC_VC[i1, i1] == 7);
-        expect(VV_CC[i0, i0] == 2 && VV_CC[i1, i0] == 3 && VV_CC[i0, i1] == 5 && VV_CC[i1, i1] == 7);
-        expect(VC_CC[i0, i0] == 2 && VC_CC[i1, i0] == 3 && VC_CC[i0, i1] == 5 && VC_CC[i1, i1] == 7);
+        expect(VV_VV(i0, i0) == 2 && VV_VV(i1, i0) == 3 && VV_VV(i0, i1) == 5 && VV_VV(i1, i1) == 7);
+        expect(VC_VV(i0, i0) == 2 && VC_VV(i1, i0) == 3 && VC_VV(i0, i1) == 5 && VC_VV(i1, i1) == 7);
+        expect(VV_CV(i0, i0) == 2 && VV_CV(i1, i0) == 3 && VV_CV(i0, i1) == 5 && VV_CV(i1, i1) == 7);
+        expect(VC_CV(i0, i0) == 2 && VC_CV(i1, i0) == 3 && VC_CV(i0, i1) == 5 && VC_CV(i1, i1) == 7);
+        expect(VV_VC(i0, i0) == 2 && VV_VC(i1, i0) == 3 && VV_VC(i0, i1) == 5 && VV_VC(i1, i1) == 7);
+        expect(VC_VC(i0, i0) == 2 && VC_VC(i1, i0) == 3 && VC_VC(i0, i1) == 5 && VC_VC(i1, i1) == 7);
+        expect(VV_CC(i0, i0) == 2 && VV_CC(i1, i0) == 3 && VV_CC(i0, i1) == 5 && VV_CC(i1, i1) == 7);
+        expect(VC_CC(i0, i0) == 2 && VC_CC(i1, i0) == 3 && VC_CC(i0, i1) == 5 && VC_CC(i1, i1) == 7);
       }
 
       // Negative.
@@ -1730,14 +1730,14 @@ suite<"Mat"> _ = [] {
         static_assert(
             is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(-3)>>, Types<C<T(-5)>, C<T(-7)>>>, Token>>
         );
-        expect(VV_VV[i0, i0] == -2 && VV_VV[i1, i0] == -3 && VV_VV[i0, i1] == -5 && VV_VV[i1, i1] == -7);
-        expect(VC_VV[i0, i0] == -2 && VC_VV[i1, i0] == -3 && VC_VV[i0, i1] == -5 && VC_VV[i1, i1] == -7);
-        expect(VV_CV[i0, i0] == -2 && VV_CV[i1, i0] == -3 && VV_CV[i0, i1] == -5 && VV_CV[i1, i1] == -7);
-        expect(VC_CV[i0, i0] == -2 && VC_CV[i1, i0] == -3 && VC_CV[i0, i1] == -5 && VC_CV[i1, i1] == -7);
-        expect(VV_VC[i0, i0] == -2 && VV_VC[i1, i0] == -3 && VV_VC[i0, i1] == -5 && VV_VC[i1, i1] == -7);
-        expect(VC_VC[i0, i0] == -2 && VC_VC[i1, i0] == -3 && VC_VC[i0, i1] == -5 && VC_VC[i1, i1] == -7);
-        expect(VV_CC[i0, i0] == -2 && VV_CC[i1, i0] == -3 && VV_CC[i0, i1] == -5 && VV_CC[i1, i1] == -7);
-        expect(VC_CC[i0, i0] == -2 && VC_CC[i1, i0] == -3 && VC_CC[i0, i1] == -5 && VC_CC[i1, i1] == -7);
+        expect(VV_VV(i0, i0) == -2 && VV_VV(i1, i0) == -3 && VV_VV(i0, i1) == -5 && VV_VV(i1, i1) == -7);
+        expect(VC_VV(i0, i0) == -2 && VC_VV(i1, i0) == -3 && VC_VV(i0, i1) == -5 && VC_VV(i1, i1) == -7);
+        expect(VV_CV(i0, i0) == -2 && VV_CV(i1, i0) == -3 && VV_CV(i0, i1) == -5 && VV_CV(i1, i1) == -7);
+        expect(VC_CV(i0, i0) == -2 && VC_CV(i1, i0) == -3 && VC_CV(i0, i1) == -5 && VC_CV(i1, i1) == -7);
+        expect(VV_VC(i0, i0) == -2 && VV_VC(i1, i0) == -3 && VV_VC(i0, i1) == -5 && VV_VC(i1, i1) == -7);
+        expect(VC_VC(i0, i0) == -2 && VC_VC(i1, i0) == -3 && VC_VC(i0, i1) == -5 && VC_VC(i1, i1) == -7);
+        expect(VV_CC(i0, i0) == -2 && VV_CC(i1, i0) == -3 && VV_CC(i0, i1) == -5 && VV_CC(i1, i1) == -7);
+        expect(VC_CC(i0, i0) == -2 && VC_CC(i1, i0) == -3 && VC_CC(i0, i1) == -5 && VC_CC(i1, i1) == -7);
       }
 
       // Equal to.
@@ -1784,17 +1784,17 @@ suite<"Mat"> _ = [] {
         static_assert(
             is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(6)>>, Types<C<T(10)>, C<T(14)>>>, Token>>
         );
-        expect(VV_VV[i0, i0] == 4 && VV_VV[i1, i0] == 6 && VV_VV[i0, i1] == 10 && VV_VV[i1, i1] == 14);
-        expect(VC_VV[i0, i0] == 4 && VC_VV[i1, i0] == 6 && VC_VV[i0, i1] == 10 && VC_VV[i1, i1] == 14);
-        expect(VV_CV[i0, i0] == 4 && VV_CV[i1, i0] == 6 && VV_CV[i0, i1] == 10 && VV_CV[i1, i1] == 14);
-        expect(VC_CV[i0, i0] == 4 && VC_CV[i1, i0] == 6 && VC_CV[i0, i1] == 10 && VC_CV[i1, i1] == 14);
-        expect(VV_VC[i0, i0] == 4 && VV_VC[i1, i0] == 6 && VV_VC[i0, i1] == 10 && VV_VC[i1, i1] == 14);
-        expect(VC_VC[i0, i0] == 4 && VC_VC[i1, i0] == 6 && VC_VC[i0, i1] == 10 && VC_VC[i1, i1] == 14);
-        expect(VV_CC[i0, i0] == 4 && VV_CC[i1, i0] == 6 && VV_CC[i0, i1] == 10 && VV_CC[i1, i1] == 14);
-        expect(VC_CC[i0, i0] == 4 && VC_CC[i1, i0] == 6 && VC_CC[i0, i1] == 10 && VC_CC[i1, i1] == 14);
+        expect(VV_VV(i0, i0) == 4 && VV_VV(i1, i0) == 6 && VV_VV(i0, i1) == 10 && VV_VV(i1, i1) == 14);
+        expect(VC_VV(i0, i0) == 4 && VC_VV(i1, i0) == 6 && VC_VV(i0, i1) == 10 && VC_VV(i1, i1) == 14);
+        expect(VV_CV(i0, i0) == 4 && VV_CV(i1, i0) == 6 && VV_CV(i0, i1) == 10 && VV_CV(i1, i1) == 14);
+        expect(VC_CV(i0, i0) == 4 && VC_CV(i1, i0) == 6 && VC_CV(i0, i1) == 10 && VC_CV(i1, i1) == 14);
+        expect(VV_VC(i0, i0) == 4 && VV_VC(i1, i0) == 6 && VV_VC(i0, i1) == 10 && VV_VC(i1, i1) == 14);
+        expect(VC_VC(i0, i0) == 4 && VC_VC(i1, i0) == 6 && VC_VC(i0, i1) == 10 && VC_VC(i1, i1) == 14);
+        expect(VV_CC(i0, i0) == 4 && VV_CC(i1, i0) == 6 && VV_CC(i0, i1) == 10 && VV_CC(i1, i1) == 14);
+        expect(VC_CC(i0, i0) == 4 && VC_CC(i1, i0) == 6 && VC_CC(i0, i1) == 10 && VC_CC(i1, i1) == 14);
 
         VC_CC += Mat{Mat{c3, c0}, Mat{c0, c0}};
-        expect(VC_CC[i0, i0] == 7 && VC_CC[i1, i0] == 6 && VC_CC[i0, i1] == 10 && VC_CC[i1, i1] == 14);
+        expect(VC_CC(i0, i0) == 7 && VC_CC(i1, i0) == 6 && VC_CC(i0, i1) == 10 && VC_CC(i1, i1) == 14);
       }
 
       // Subtract.
@@ -1817,17 +1817,17 @@ suite<"Mat"> _ = [] {
         static_assert(
             is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(0)>>, Types<C<T(0)>, C<T(0)>>>, Token>>
         );
-        expect(VV_VV[i0, i0] == 0 && VV_VV[i1, i0] == 0 && VV_VV[i0, i1] == 0 && VV_VV[i1, i1] == 0);
-        expect(VC_VV[i0, i0] == 0 && VC_VV[i1, i0] == 0 && VC_VV[i0, i1] == 0 && VC_VV[i1, i1] == 0);
-        expect(VV_CV[i0, i0] == 0 && VV_CV[i1, i0] == 0 && VV_CV[i0, i1] == 0 && VV_CV[i1, i1] == 0);
-        expect(VC_CV[i0, i0] == 0 && VC_CV[i1, i0] == 0 && VC_CV[i0, i1] == 0 && VC_CV[i1, i1] == 0);
-        expect(VV_VC[i0, i0] == 0 && VV_VC[i1, i0] == 0 && VV_VC[i0, i1] == 0 && VV_VC[i1, i1] == 0);
-        expect(VC_VC[i0, i0] == 0 && VC_VC[i1, i0] == 0 && VC_VC[i0, i1] == 0 && VC_VC[i1, i1] == 0);
-        expect(VV_CC[i0, i0] == 0 && VV_CC[i1, i0] == 0 && VV_CC[i0, i1] == 0 && VV_CC[i1, i1] == 0);
-        expect(VC_CC[i0, i0] == 0 && VC_CC[i1, i0] == 0 && VC_CC[i0, i1] == 0 && VC_CC[i1, i1] == 0);
+        expect(VV_VV(i0, i0) == 0 && VV_VV(i1, i0) == 0 && VV_VV(i0, i1) == 0 && VV_VV(i1, i1) == 0);
+        expect(VC_VV(i0, i0) == 0 && VC_VV(i1, i0) == 0 && VC_VV(i0, i1) == 0 && VC_VV(i1, i1) == 0);
+        expect(VV_CV(i0, i0) == 0 && VV_CV(i1, i0) == 0 && VV_CV(i0, i1) == 0 && VV_CV(i1, i1) == 0);
+        expect(VC_CV(i0, i0) == 0 && VC_CV(i1, i0) == 0 && VC_CV(i0, i1) == 0 && VC_CV(i1, i1) == 0);
+        expect(VV_VC(i0, i0) == 0 && VV_VC(i1, i0) == 0 && VV_VC(i0, i1) == 0 && VV_VC(i1, i1) == 0);
+        expect(VC_VC(i0, i0) == 0 && VC_VC(i1, i0) == 0 && VC_VC(i0, i1) == 0 && VC_VC(i1, i1) == 0);
+        expect(VV_CC(i0, i0) == 0 && VV_CC(i1, i0) == 0 && VV_CC(i0, i1) == 0 && VV_CC(i1, i1) == 0);
+        expect(VC_CC(i0, i0) == 0 && VC_CC(i1, i0) == 0 && VC_CC(i0, i1) == 0 && VC_CC(i1, i1) == 0);
 
         VC_CC -= Mat{Mat{c3, c0}, Mat{c0, c0}};
-        expect(VC_CC[i0, i0] == -3 && VC_CC[i1, i0] == 0 && VC_CC[i0, i1] == 0 && VC_CC[i1, i1] == 0);
+        expect(VC_CC(i0, i0) == -3 && VC_CC(i1, i0) == 0 && VC_CC(i0, i1) == 0 && VC_CC(i1, i1) == 0);
       }
 
       // Multiply.
@@ -1850,17 +1850,17 @@ suite<"Mat"> _ = [] {
         static_assert(
             is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<C<T(15)>, C<T(21)>>>, Token>>
         );
-        expect(VV_VV[i0, i0] == 6 && VV_VV[i1, i0] == 9 && VV_VV[i0, i1] == 15 && VV_VV[i1, i1] == 21);
-        expect(VC_VV[i0, i0] == 6 && VC_VV[i1, i0] == 9 && VC_VV[i0, i1] == 15 && VC_VV[i1, i1] == 21);
-        expect(VV_CV[i0, i0] == 6 && VV_CV[i1, i0] == 9 && VV_CV[i0, i1] == 15 && VV_CV[i1, i1] == 21);
-        expect(VC_CV[i0, i0] == 6 && VC_CV[i1, i0] == 9 && VC_CV[i0, i1] == 15 && VC_CV[i1, i1] == 21);
-        expect(VV_VC[i0, i0] == 6 && VV_VC[i1, i0] == 9 && VV_VC[i0, i1] == 15 && VV_VC[i1, i1] == 21);
-        expect(VC_VC[i0, i0] == 6 && VC_VC[i1, i0] == 9 && VC_VC[i0, i1] == 15 && VC_VC[i1, i1] == 21);
-        expect(VV_CC[i0, i0] == 6 && VV_CC[i1, i0] == 9 && VV_CC[i0, i1] == 15 && VV_CC[i1, i1] == 21);
-        expect(VC_CC[i0, i0] == 6 && VC_CC[i1, i0] == 9 && VC_CC[i0, i1] == 15 && VC_CC[i1, i1] == 21);
+        expect(VV_VV(i0, i0) == 6 && VV_VV(i1, i0) == 9 && VV_VV(i0, i1) == 15 && VV_VV(i1, i1) == 21);
+        expect(VC_VV(i0, i0) == 6 && VC_VV(i1, i0) == 9 && VC_VV(i0, i1) == 15 && VC_VV(i1, i1) == 21);
+        expect(VV_CV(i0, i0) == 6 && VV_CV(i1, i0) == 9 && VV_CV(i0, i1) == 15 && VV_CV(i1, i1) == 21);
+        expect(VC_CV(i0, i0) == 6 && VC_CV(i1, i0) == 9 && VC_CV(i0, i1) == 15 && VC_CV(i1, i1) == 21);
+        expect(VV_VC(i0, i0) == 6 && VV_VC(i1, i0) == 9 && VV_VC(i0, i1) == 15 && VV_VC(i1, i1) == 21);
+        expect(VC_VC(i0, i0) == 6 && VC_VC(i1, i0) == 9 && VC_VC(i0, i1) == 15 && VC_VC(i1, i1) == 21);
+        expect(VV_CC(i0, i0) == 6 && VV_CC(i1, i0) == 9 && VV_CC(i0, i1) == 15 && VV_CC(i1, i1) == 21);
+        expect(VC_CC(i0, i0) == 6 && VC_CC(i1, i0) == 9 && VC_CC(i0, i1) == 15 && VC_CC(i1, i1) == 21);
 
         VV_VV *= C<3>{};
-        expect(VV_VV[i0, i0] == 18 && VV_VV[i1, i0] == 27 && VV_VV[i0, i1] == 45 && VV_VV[i1, i1] == 63);
+        expect(VV_VV(i0, i0) == 18 && VV_VV(i1, i0) == 27 && VV_VV(i0, i1) == 45 && VV_VV(i1, i1) == 63);
       }
 
       {
@@ -1882,14 +1882,14 @@ suite<"Mat"> _ = [] {
         static_assert(
             is::Same<decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(9)>>, Types<C<T(15)>, C<T(21)>>>, Token>>
         );
-        expect(VV_VV[i0, i0] == 6 && VV_VV[i1, i0] == 9 && VV_VV[i0, i1] == 15 && VV_VV[i1, i1] == 21);
-        expect(VC_VV[i0, i0] == 6 && VC_VV[i1, i0] == 9 && VC_VV[i0, i1] == 15 && VC_VV[i1, i1] == 21);
-        expect(VV_CV[i0, i0] == 6 && VV_CV[i1, i0] == 9 && VV_CV[i0, i1] == 15 && VV_CV[i1, i1] == 21);
-        expect(VC_CV[i0, i0] == 6 && VC_CV[i1, i0] == 9 && VC_CV[i0, i1] == 15 && VC_CV[i1, i1] == 21);
-        expect(VV_VC[i0, i0] == 6 && VV_VC[i1, i0] == 9 && VV_VC[i0, i1] == 15 && VV_VC[i1, i1] == 21);
-        expect(VC_VC[i0, i0] == 6 && VC_VC[i1, i0] == 9 && VC_VC[i0, i1] == 15 && VC_VC[i1, i1] == 21);
-        expect(VV_CC[i0, i0] == 6 && VV_CC[i1, i0] == 9 && VV_CC[i0, i1] == 15 && VV_CC[i1, i1] == 21);
-        expect(VC_CC[i0, i0] == 6 && VC_CC[i1, i0] == 9 && VC_CC[i0, i1] == 15 && VC_CC[i1, i1] == 21);
+        expect(VV_VV(i0, i0) == 6 && VV_VV(i1, i0) == 9 && VV_VV(i0, i1) == 15 && VV_VV(i1, i1) == 21);
+        expect(VC_VV(i0, i0) == 6 && VC_VV(i1, i0) == 9 && VC_VV(i0, i1) == 15 && VC_VV(i1, i1) == 21);
+        expect(VV_CV(i0, i0) == 6 && VV_CV(i1, i0) == 9 && VV_CV(i0, i1) == 15 && VV_CV(i1, i1) == 21);
+        expect(VC_CV(i0, i0) == 6 && VC_CV(i1, i0) == 9 && VC_CV(i0, i1) == 15 && VC_CV(i1, i1) == 21);
+        expect(VV_VC(i0, i0) == 6 && VV_VC(i1, i0) == 9 && VV_VC(i0, i1) == 15 && VV_VC(i1, i1) == 21);
+        expect(VC_VC(i0, i0) == 6 && VC_VC(i1, i0) == 9 && VC_VC(i0, i1) == 15 && VC_VC(i1, i1) == 21);
+        expect(VV_CC(i0, i0) == 6 && VV_CC(i1, i0) == 9 && VV_CC(i0, i1) == 15 && VV_CC(i1, i1) == 21);
+        expect(VC_CC(i0, i0) == 6 && VC_CC(i1, i0) == 9 && VC_CC(i0, i1) == 15 && VC_CC(i1, i1) == 21);
       }
 
       // Divide.
@@ -1920,42 +1920,42 @@ suite<"Mat"> _ = [] {
                 decltype(VC_CC), Mat<T, 2, 2, Types<Types<VO, C<T(1)>>, Types<C<T(5) / T(3)>, C<T(7) / T(3)>>>, Token>>
         );
         expect(
-            VV_VV[i0, i0] == T(2) / T(3) && VV_VV[i1, i0] == 1 && VV_VV[i0, i1] == T(5) / T(3) &&
-            VV_VV[i1, i1] == T(7) / T(3)
+            VV_VV(i0, i0) == T(2) / T(3) && VV_VV(i1, i0) == 1 && VV_VV(i0, i1) == T(5) / T(3) &&
+            VV_VV(i1, i1) == T(7) / T(3)
         );
         expect(
-            VC_VV[i0, i0] == T(2) / T(3) && VC_VV[i1, i0] == 1 && VC_VV[i0, i1] == T(5) / T(3) &&
-            VC_VV[i1, i1] == T(7) / T(3)
+            VC_VV(i0, i0) == T(2) / T(3) && VC_VV(i1, i0) == 1 && VC_VV(i0, i1) == T(5) / T(3) &&
+            VC_VV(i1, i1) == T(7) / T(3)
         );
         expect(
-            VV_CV[i0, i0] == T(2) / T(3) && VV_CV[i1, i0] == 1 && VV_CV[i0, i1] == T(5) / T(3) &&
-            VV_CV[i1, i1] == T(7) / T(3)
+            VV_CV(i0, i0) == T(2) / T(3) && VV_CV(i1, i0) == 1 && VV_CV(i0, i1) == T(5) / T(3) &&
+            VV_CV(i1, i1) == T(7) / T(3)
         );
         expect(
-            VC_CV[i0, i0] == T(2) / T(3) && VC_CV[i1, i0] == 1 && VC_CV[i0, i1] == T(5) / T(3) &&
-            VC_CV[i1, i1] == T(7) / T(3)
+            VC_CV(i0, i0) == T(2) / T(3) && VC_CV(i1, i0) == 1 && VC_CV(i0, i1) == T(5) / T(3) &&
+            VC_CV(i1, i1) == T(7) / T(3)
         );
         expect(
-            VV_VC[i0, i0] == T(2) / T(3) && VV_VC[i1, i0] == 1 && VV_VC[i0, i1] == T(5) / T(3) &&
-            VV_VC[i1, i1] == T(7) / T(3)
+            VV_VC(i0, i0) == T(2) / T(3) && VV_VC(i1, i0) == 1 && VV_VC(i0, i1) == T(5) / T(3) &&
+            VV_VC(i1, i1) == T(7) / T(3)
         );
         expect(
-            VC_VC[i0, i0] == T(2) / T(3) && VC_VC[i1, i0] == 1 && VC_VC[i0, i1] == T(5) / T(3) &&
-            VC_VC[i1, i1] == T(7) / T(3)
+            VC_VC(i0, i0) == T(2) / T(3) && VC_VC(i1, i0) == 1 && VC_VC(i0, i1) == T(5) / T(3) &&
+            VC_VC(i1, i1) == T(7) / T(3)
         );
         expect(
-            VV_CC[i0, i0] == T(2) / T(3) && VV_CC[i1, i0] == 1 && VV_CC[i0, i1] == T(5) / T(3) &&
-            VV_CC[i1, i1] == T(7) / T(3)
+            VV_CC(i0, i0) == T(2) / T(3) && VV_CC(i1, i0) == 1 && VV_CC(i0, i1) == T(5) / T(3) &&
+            VV_CC(i1, i1) == T(7) / T(3)
         );
         expect(
-            VC_CC[i0, i0] == T(2) / T(3) && VC_CC[i1, i0] == 1 && VC_CC[i0, i1] == T(5) / T(3) &&
-            VC_CC[i1, i1] == T(7) / T(3)
+            VC_CC(i0, i0) == T(2) / T(3) && VC_CC(i1, i0) == 1 && VC_CC(i0, i1) == T(5) / T(3) &&
+            VC_CC(i1, i1) == T(7) / T(3)
         );
 
         VV_VV /= C<3>{};
         expect(
-            VV_VV[i0, i0] == T(2) / T(3) / T(3) && VV_VV[i1, i0] == T(1) / T(3) &&
-            VV_VV[i0, i1] == T(5) / T(3) / T(3) && VV_VV[i1, i1] == T(7) / T(3) / T(3)
+            VV_VV(i0, i0) == T(2) / T(3) / T(3) && VV_VV(i1, i0) == T(1) / T(3) &&
+            VV_VV(i0, i1) == T(5) / T(3) / T(3) && VV_VV(i1, i1) == T(7) / T(3) / T(3)
         );
       }
     });
