@@ -137,9 +137,9 @@ class MatStorage<T, Constants> {
 public:
   using Storage = MatStorage;
 
-  [[nodiscard]] constexpr auto const &storage() const { return storage_; }
+  [[nodiscard]] ART_SPECIFIER constexpr auto const &storage() const { return storage_; }
 
-  [[nodiscard]] constexpr auto &storage() { return storage_; }
+  [[nodiscard]] ART_SPECIFIER constexpr auto &storage() { return storage_; }
 
 private:
   [[nodiscard]] static consteval usize storageSize() {
@@ -304,7 +304,7 @@ public:
         is::Mat<std::decay_t<typename Types<Us...>::template At<0>>> &&
         sizeof...(Us) > 1 //! Avoid conflicting with copy and move constructors.
     )
-  constexpr explicit Mat(Us &&...us) {
+  ART_SPECIFIER constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize col, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
       ForEach<rows()>([&]<auto row>() { this->operator()(C<row>{}, C<col>{}) = v(C<row>{}); });
 
@@ -320,7 +320,7 @@ public:
         is::Same<Mat, Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>> &&
         isnot::Mat<std::decay_t<typename Types<Us...>::template At<0>>>
     )
-  constexpr explicit Mat(Us &&...us) {
+  ART_SPECIFIER constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
       this->operator()(C<row>{}, C<static_cast<usize>(0)>{}) = std::forward<V>(v);
 
@@ -336,7 +336,7 @@ public:
       typename D = detail::mat::Deduce<Us...>,
       typename M = Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>>
     requires(isnot::Same<Mat, M>)
-  constexpr explicit Mat(Us &&...us) {
+  ART_SPECIFIER constexpr explicit Mat(Us &&...us) {
     M m{std::forward<Us>(us)...};
 
     ForEach<cols()>([&]<auto col>() {
@@ -346,13 +346,13 @@ public:
 
   template <typename M>
     requires(is::Mat<std::decay_t<M>> && isnot::Same<Mat, std::decay_t<M>>)
-  constexpr Mat &operator=(M &&m) {
+  ART_SPECIFIER constexpr Mat &operator=(M &&m) {
     return *this = Mat{std::forward<M>(m)};
   }
 
 public:
   template <auto row, auto col>
-  [[nodiscard]] constexpr decltype(auto) operator()(C<row>, C<col>) const {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>, C<col>) const {
     if constexpr (is::Same<Constant<row, col>, void>)
       return storage()[storageIdx<row, col>()];
     else
@@ -360,7 +360,7 @@ public:
   }
 
   template <auto row, auto col>
-  [[nodiscard]] constexpr decltype(auto) operator()(C<row>, C<col>) {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>, C<col>) {
     if constexpr (is::Same<Constant<row, col>, void>)
       return storage()[storageIdx<row, col>()];
     else
@@ -368,7 +368,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator()(usize row, usize col) const {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) const {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -377,7 +377,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator()(usize row, usize col) {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -386,25 +386,25 @@ public:
   }
 
   template <auto row>
-  [[nodiscard]] constexpr decltype(auto) operator()(C<row>) const {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()(C<row>{}, C<static_cast<usize>(0)>{});
   }
 
   template <auto row>
-  [[nodiscard]] constexpr decltype(auto) operator()(C<row>) {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()(C<row>{}, C<static_cast<usize>(0)>{});
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator()(usize row) const {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()<tag>(row, static_cast<usize>(0));
   }
 
   template <typename tag = void>
-  [[nodiscard]] constexpr decltype(auto) operator()(usize row) {
+  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()<tag>(row, static_cast<usize>(0));
   }
@@ -504,24 +504,25 @@ namespace detail::mat {
 
 //! `M` is assumed to satisfy `is::Mat`.
 template <auto op, usize col, typename M, usize... row>
-[[nodiscard]] constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
   return Mat{op(m(C<row>{}, C<col>{}))...};
 }
 
 template <auto op, typename M, usize... col>
-[[nodiscard]] constexpr auto OpUnaryImpl(M const &m, std::index_sequence<col...>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto OpUnaryImpl(M const &m, std::index_sequence<col...>) {
   return Mat{OpUnaryImplPerCol<op, col>(m, std::make_index_sequence<M::rows()>{})...};
 }
 
 template <auto op, typename M>
-[[nodiscard]] constexpr auto OpUnary(M const &m) {
+[[nodiscard]] ART_SPECIFIER constexpr auto OpUnary(M const &m) {
   return OpUnaryImpl<op>(m, std::make_index_sequence<M::cols()>{});
 }
 
 //! If both `Lhs` and `Rhs` satisfy `is::Mat`, they are assumed to have the same rows and columns,
 //! which are already passed as template parameters.
 template <auto op, usize col, typename Lhs, typename Rhs, usize... row>
-[[nodiscard]] constexpr auto OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto
+OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
   if constexpr (is::Mat<Lhs> && is::Mat<Rhs>)
     return Mat{op(lhs(C<row>{}, C<col>{}), rhs(C<row>{}, C<col>{}))...};
   else if constexpr (!is::Mat<Lhs> && is::Mat<Rhs>)
@@ -531,12 +532,12 @@ template <auto op, usize col, typename Lhs, typename Rhs, usize... row>
 }
 
 template <auto op, usize rows, typename Lhs, typename Rhs, usize... col>
-[[nodiscard]] constexpr auto OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
   return Mat{OpBinaryImplPerCol<op, col>(lhs, rhs, std::make_index_sequence<rows>{})...};
 }
 
 template <auto op, usize rows, usize cols, typename Lhs, typename Rhs>
-[[nodiscard]] constexpr auto OpBinary(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr auto OpBinary(Lhs const &lhs, Rhs const &rhs) {
   return OpBinaryImpl<op, rows>(lhs, rhs, std::make_index_sequence<cols>{});
 }
 
@@ -548,17 +549,17 @@ template <auto op, usize rows, usize cols, typename Lhs, typename Rhs>
 // TODO: The current operator design follows integral promotion,
 //       so integer types narrower than `int` are promoted during computation.
 template <is::Mat M>
-[[nodiscard]] constexpr auto operator+(M const &m) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator+(M const &m) {
   return detail::mat::OpUnary<[](auto const &v) { return +v; }>(m);
 }
 
 template <is::Mat M>
-[[nodiscard]] constexpr auto operator-(M const &m) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator-(M const &m) {
   return detail::mat::OpUnary<[](auto const &v) { return -v; }>(m);
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] constexpr bool operator==(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr bool operator==(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
       "Binary operators are only defined for matrices with the same dimensions"
@@ -580,12 +581,12 @@ template <is::Mat Lhs, is::Mat Rhs>
 //! The type ranges of `Lhs` and `Rhs` are intentionally unconstrained here,
 //! because every `operator!=` must be generated directly from `operator==`.
 template <typename Lhs, typename Rhs>
-[[nodiscard]] constexpr bool operator!=(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr bool operator!=(Lhs const &lhs, Rhs const &rhs) {
   return !(lhs == rhs);
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] constexpr auto operator+(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator+(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
       "Binary operators are only defined for matrices with the same dimensions"
@@ -594,7 +595,7 @@ template <is::Mat Lhs, is::Mat Rhs>
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] constexpr auto operator-(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator-(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
       "Binary operators are only defined for matrices with the same dimensions"
@@ -603,41 +604,41 @@ template <is::Mat Lhs, is::Mat Rhs>
 }
 
 template <is::Mat Lhs, isnot::Mat Rhs>
-[[nodiscard]] constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l * r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
 }
 
 template <isnot::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l * r; }, Rhs::rows(), Rhs::cols()>(lhs, rhs);
 }
 
 template <is::Mat Lhs, isnot::Mat Rhs>
-[[nodiscard]] constexpr auto operator/(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator/(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l / r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
 }
 
 //! The type range of `Rhs` is also intentionally unconstrained here.
 template <is::Mat Lhs, typename Rhs>
-constexpr Lhs &operator+=(Lhs &lhs, Rhs const &rhs) {
+ART_SPECIFIER constexpr Lhs &operator+=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs + rhs;
   return lhs;
 }
 
 template <is::Mat Lhs, typename Rhs>
-constexpr Lhs &operator-=(Lhs &lhs, Rhs const &rhs) {
+ART_SPECIFIER constexpr Lhs &operator-=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs - rhs;
   return lhs;
 }
 
 template <is::Mat Lhs, typename Rhs>
-constexpr Lhs &operator*=(Lhs &lhs, Rhs const &rhs) {
+ART_SPECIFIER constexpr Lhs &operator*=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs * rhs;
   return lhs;
 }
 
 template <is::Mat Lhs, typename Rhs>
-constexpr Lhs &operator/=(Lhs &lhs, Rhs const &rhs) {
+ART_SPECIFIER constexpr Lhs &operator/=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs / rhs;
   return lhs;
 }
