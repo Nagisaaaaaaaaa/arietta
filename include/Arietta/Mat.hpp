@@ -1,6 +1,9 @@
 #pragma once
 
 /// \file
+/// \brief This file defines advanced matrix and vector types that
+/// support both compile-time and runtime elements, with
+/// automatic compile-time type simplification.
 
 //
 //
