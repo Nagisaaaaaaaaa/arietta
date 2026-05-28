@@ -20,7 +20,7 @@ struct C {
 
   static constexpr auto value = v;
 
-  [[nodiscard]] constexpr operator value_type() const noexcept { return value; }
+  [[nodiscard]] ART_SPECIFIER constexpr operator value_type() const noexcept { return value; }
 
   C() = default;
 
@@ -35,7 +35,7 @@ struct C {
           return x == v;
         }()
     )
-  constexpr C(C<w>) noexcept {}
+  ART_SPECIFIER constexpr C(C<w>) noexcept {}
 
   //! Mimic assignment operator; likewise.
   template <auto w>
@@ -47,7 +47,7 @@ struct C {
           return x == v;
         }()
     )
-  constexpr C &operator=(C<w>) noexcept {
+  ART_SPECIFIER constexpr C &operator=(C<w>) noexcept {
     return *this;
   }
 };
@@ -92,17 +92,17 @@ static_assert(false, "Some macros conflict with Arietta");
 
 #define ART_CONSTANT_LEFT_UNARY_OP(OP)                                                                                 \
   template <auto t>                                                                                                    \
-  [[nodiscard]] constexpr C<(OP t)> operator OP(C<t>) {                                                                \
+  [[nodiscard]] ART_SPECIFIER constexpr C<(OP t)> operator OP(C<t>) {                                                  \
     return {};                                                                                                         \
   }
 #define ART_CONSTANT_RIGHT_UNARY_OP(OP)                                                                                \
   template <auto t>                                                                                                    \
-  [[nodiscard]] constexpr C<(t OP)> operator OP(C<t>) {                                                                \
+  [[nodiscard]] ART_SPECIFIER constexpr C<(t OP)> operator OP(C<t>) {                                                  \
     return {};                                                                                                         \
   }
 #define ART_CONSTANT_BINARY_OP(OP)                                                                                     \
   template <auto t, auto u>                                                                                            \
-  [[nodiscard]] constexpr C<(t OP u)> operator OP(C<t>, C<u>) {                                                        \
+  [[nodiscard]] ART_SPECIFIER constexpr C<(t OP u)> operator OP(C<t>, C<u>) {                                          \
     return {};                                                                                                         \
   }
 
@@ -155,67 +155,67 @@ static_assert(false, "Some macros conflict with Arietta");
 
 template <auto t, typename U>
   requires(t == 0 && is::Arithmetic<std::decay_t<U>>)
-[[nodiscard]] constexpr auto operator*(C<t>, U &&) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator*(C<t>, U &&) {
   ART_CONSTANT_OP_RETURN(t * static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <typename U, auto t>
   requires(is::Arithmetic<std::decay_t<U>> && t == 0)
-[[nodiscard]] constexpr auto operator*(U &&, C<t>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator*(U &&, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(1) * t, 0);
 }
 
 template <auto t, typename U>
   requires(t == 0 && is::Arithmetic<std::decay_t<U>>)
-[[nodiscard]] constexpr auto operator/(C<t>, U &&) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator/(C<t>, U &&) {
   ART_CONSTANT_OP_RETURN(t / static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <typename U, auto t>
   requires(is::Arithmetic<std::decay_t<U>> && (t == 1 || t == -1))
-[[nodiscard]] constexpr auto operator%(U &&, C<t>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator%(U &&, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(1) % t, 0);
 }
 
 template <auto t, typename U>
   requires(t == 0 && is::Arithmetic<std::decay_t<U>>)
-[[nodiscard]] constexpr auto operator%(C<t>, U &&) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator%(C<t>, U &&) {
   ART_CONSTANT_OP_RETURN(t % static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <auto t, typename U>
   requires(t == 0 && is::Arithmetic<std::decay_t<U>>)
-[[nodiscard]] constexpr auto operator&(C<t>, U &&) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator&(C<t>, U &&) {
   ART_CONSTANT_OP_RETURN(t & static_cast<std::decay_t<U>>(1), 0);
 }
 
 template <typename U, auto t>
   requires(is::Arithmetic<std::decay_t<U>> && t == 0)
-[[nodiscard]] constexpr auto operator&(U &&, C<t>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator&(U &&, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(1) & t, 0);
 }
 
 template <auto t, typename U>
   requires(!static_cast<bool>(t))
-[[nodiscard]] constexpr auto operator&&(C<t>, U &&) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator&&(C<t>, U &&) {
   ART_CONSTANT_OP_RETURN(t && static_cast<std::decay_t<U>>(true), false);
 }
 
 template <typename U, auto t>
   requires(!static_cast<bool>(t))
-[[nodiscard]] constexpr auto operator&&(U &&, C<t>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator&&(U &&, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(true) && t, false);
 }
 
 template <auto t, typename U>
   requires(static_cast<bool>(t))
-[[nodiscard]] constexpr auto operator||(C<t>, U &&) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator||(C<t>, U &&) {
   ART_CONSTANT_OP_RETURN(t || static_cast<std::decay_t<U>>(false), true);
 }
 
 template <typename U, auto t>
   requires(static_cast<bool>(t))
-[[nodiscard]] constexpr auto operator||(U &&, C<t>) {
+[[nodiscard]] ART_SPECIFIER constexpr auto operator||(U &&, C<t>) {
   ART_CONSTANT_OP_RETURN(static_cast<std::decay_t<U>>(false) || t, true);
 }
 

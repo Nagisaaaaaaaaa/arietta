@@ -104,9 +104,9 @@ public:
   using type = MatBase;
   using value_type = T;
 
-  [[nodiscard]] static constexpr auto rows() { return _rows; }
+  [[nodiscard]] ART_SPECIFIER static constexpr auto rows() { return _rows; }
 
-  [[nodiscard]] static constexpr auto cols() { return _cols; }
+  [[nodiscard]] ART_SPECIFIER static constexpr auto cols() { return _cols; }
 };
 
 template <typename Constants>
@@ -126,9 +126,9 @@ class MatStorage {
 public:
   using Storage = MatStorage;
 
-  constexpr void storage() const;
+  ART_SPECIFIER constexpr void storage() const;
 
-  constexpr void storage();
+  ART_SPECIFIER constexpr void storage();
 };
 
 template <typename T, typename Constants>
@@ -170,9 +170,9 @@ struct Param;
 // CRTP base providing `rows()` and `cols()` for `Param`.
 template <typename Derived>
 struct ParamBase {
-  [[nodiscard]] static constexpr auto rows() { return Derived::Constants::template At<0>::Size(); }
+  [[nodiscard]] ART_SPECIFIER static constexpr auto rows() { return Derived::Constants::template At<0>::Size(); }
 
-  [[nodiscard]] static constexpr auto cols() { return Derived::Constants::Size(); }
+  [[nodiscard]] ART_SPECIFIER static constexpr auto cols() { return Derived::Constants::Size(); }
 };
 
 template <typename T>
