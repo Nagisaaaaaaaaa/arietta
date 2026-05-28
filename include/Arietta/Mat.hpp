@@ -350,6 +350,9 @@ public:
     return *this = Mat{std::forward<M>(m)};
   }
 
+  //
+  //
+  //
 public:
   template <auto row, auto col>
   [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>, C<col>) const {
@@ -432,6 +435,30 @@ private:
     });
 
     return res;
+  }
+
+  //
+  //
+  //
+public:
+  template <is::Mat M>
+  [[nodiscard]] ART_SPECIFIER constexpr auto Dot(M const &m) const {
+    static_assert(rows() == M::rows(), "Dot product is only defined for column vectors with the same dimension");
+
+    return [&]<usize... row>(std::index_sequence<row...>) constexpr {
+      return ((operator()(C<row>{}) * m(C<row>{})) + ...);
+    }(std::make_index_sequence<rows()>{});
+  }
+
+  template <is::Mat M>
+  [[nodiscard]] ART_SPECIFIER constexpr auto Cross(M const &m) const {
+    static_assert(rows() == 3 && M::rows() == 3, "Cross product is only defined for three-dimensional column vectors");
+
+    return arietta::Mat{
+        operator()(C<1>{}) * m(C<2>{}) - operator()(C<2>{}) * m(C<1>{}),
+        operator()(C<2>{}) * m(C<0>{}) - operator()(C<0>{}) * m(C<2>{}),
+        operator()(C<0>{}) * m(C<1>{}) - operator()(C<1>{}) * m(C<0>{})
+    };
   }
 };
 
