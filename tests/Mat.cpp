@@ -2120,6 +2120,90 @@ suite<"Mat"> _ = [] {
   //
   //
   //
+  "Methods"_test = [] {
+    ForEach<Types<f32>>([]<typename T> {
+      using VO = void;
+      T u0(0), u1(1), u2(2), u3(3);
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+      constexpr C0 c0;
+      constexpr C1 c1;
+      constexpr C2 c2;
+      constexpr C3 c3;
+
+      using I =
+          std::conditional_t<is::Same<T, f32> || is::Same<T, f64>, std::conditional_t<is::Same<T, f32>, i32, i64>, T>;
+      using I0 = C<static_cast<I>(0)>;
+      using I1 = C<static_cast<I>(1)>;
+      using I2 = C<static_cast<I>(2)>;
+      using I3 = C<static_cast<I>(3)>;
+      constexpr I0 i0;
+      constexpr I1 i1;
+      constexpr I2 i2;
+      constexpr I3 i3;
+
+      // `Dot`.
+      {
+        Mat m_VVV{T(2), T(3), T(5)};
+        Mat m_CVV{C<T(2)>{}, T(3), T(5)};
+        Mat m_VCV{T(2), C<T(3)>{}, T(5)};
+        Mat m_CCV{C<T(2)>{}, C<T(3)>{}, T(5)};
+        Mat m_VVC{T(2), T(3), C<T(5)>{}};
+        Mat m_CVC{C<T(2)>{}, T(3), C<T(5)>{}};
+        Mat m_VCC{T(2), C<T(3)>{}, C<T(5)>{}};
+        Mat m_CCC{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}};
+
+        auto VVV_CVV = m_VVV.Dot(m_CVV);
+        auto VCV_CCV = m_VCV.Dot(m_CCV);
+        auto VVC_CVC = m_VVC.Dot(m_CVC);
+        auto VCC_CCC = m_VCC.Dot(m_CCC);
+        constexpr auto CCC_CCC = m_CCC.Dot(m_CCC);
+        constexpr auto v = T(2) * T(2) + T(3) * T(3) + T(5) * T(5);
+        static_assert(is::Same<decltype(VVV_CVV), T>);
+        static_assert(is::Same<decltype(VCV_CCV), T>);
+        static_assert(is::Same<decltype(VVC_CVC), T>);
+        static_assert(is::Same<decltype(VCC_CCC), T>);
+        static_assert(is::Same<decltype(CCC_CCC), C<v> const>);
+        expect(VVV_CVV == v);
+        expect(VCV_CCV == v);
+        expect(VVC_CVC == v);
+        expect(VCC_CCC == v);
+        static_assert(CCC_CCC == v);
+      }
+
+      // `Cross`.
+      {
+        Mat x_VVV{T(2), T(0), T(0)};
+        Mat y_VVV{T(0), T(3), T(0)};
+        Mat x_CVV{C<T(2)>{}, T(0), T(0)};
+        Mat y_VCV{T(0), C<T(3)>{}, T(0)};
+        Mat x_VCC{T(2), C<T(0)>{}, C<T(0)>{}};
+        Mat y_CVC{C<T(0)>{}, T(3), C<T(0)>{}};
+        Mat x_CCC{C<T(2)>{}, C<T(0)>{}, C<T(0)>{}};
+        Mat y_CCC{C<T(0)>{}, C<T(3)>{}, C<T(0)>{}};
+
+        auto VVV_VVV = x_VVV.Cross(y_VVV);
+        auto CVV_VCV = x_CVV.Cross(y_VCV);
+        auto VCC_CVC = x_VCC.Cross(y_CVC);
+        constexpr auto CCC_CCC = x_CCC.Cross(y_CCC);
+        static_assert(is::Same<decltype(VVV_VVV), Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(CVV_VCV), Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VCC_CVC), Mat<T, 3, 1, Types<Types<C0, C0, VO>>, Token>>);
+        static_assert(is::Same<decltype(CCC_CCC), Mat<T, 3, 1, Types<Types<C0, C0, C<T(2) * T(3)>>>, Token> const>);
+        expect(VVV_VVV(i0) == 0 && VVV_VVV(i1) == 0 && VVV_VVV(i2) == T(2) * T(3));
+        expect(CVV_VCV(i0) == 0 && CVV_VCV(i1) == 0 && CVV_VCV(i2) == T(2) * T(3));
+        expect(VCC_CVC(i0) == 0 && VCC_CVC(i1) == 0 && VCC_CVC(i2) == T(2) * T(3));
+        static_assert(CCC_CCC(i0) == 0 && CCC_CCC(i1) == 0 && CCC_CCC(i2) == T(2) * T(3));
+      }
+    });
+  };
+
+  //
+  //
+  //
   "Aliases"_test = [] {
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
       using VO = void;
