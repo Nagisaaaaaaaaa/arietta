@@ -153,6 +153,18 @@ suite<"Arietta"> _ = [] {
     static_assert(isnot::Empty<is_empty::E>);
     static_assert(!isnot::Empty<is_empty::G>);
 
+    static_assert(is::Integral<bool>);
+    static_assert(is::Integral<char>);
+    static_assert(is::Integral<int>);
+    static_assert(!is::Integral<double>);
+    static_assert(!is::Integral<decltype("")>);
+
+    static_assert(!isnot::Integral<bool>);
+    static_assert(!isnot::Integral<char>);
+    static_assert(!isnot::Integral<int>);
+    static_assert(isnot::Integral<double>);
+    static_assert(isnot::Integral<decltype("")>);
+
     static_assert(is::Invocable<void()>);
     static_assert(is::Invocable<void (*)()>);
     static_assert(is::Invocable<void(int), int>);
