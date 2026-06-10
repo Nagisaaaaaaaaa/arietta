@@ -343,7 +343,7 @@ public:
     M m{std::forward<Us>(us)...};
 
     ForEach<cols()>([&]<auto col>() {
-      ForEach<rows()>([&]<auto row>() { operator()(C<row>{}, C<col>{}) = m(C<row>{}, C<col>{}); });
+      ForEach<rows()>([&]<auto row>() { this->operator()(C<row>{}, C<col>{}) = m(C<row>{}, C<col>{}); });
     });
   }
 
