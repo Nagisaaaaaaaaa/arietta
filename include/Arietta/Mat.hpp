@@ -79,24 +79,28 @@ struct Deduce;
 //!    The token achieves the validation goal with minimal compile-time overhead:
 //!    the presence of a token guarantees that `Constants` is valid.
 //!    Consequently, we can confine all validity checks to the `Deduce` phase.
+#if 0   // TODO: Bypass NVCC bugs.
 class Token {
   //! `private` prevents users from manually constructing `Token` externally.
-#if 0 // TODO: Bypass NVCC bugs.
+  #if 0 // TODO: Bypass NVCC bugs.
 private:
-#else
+  #else
 public:
-#endif
+  #endif
   Token() = default;
 
   template <typename T, usize rows, usize cols, typename... Ts>
   friend class arietta::Mat;
 
   template <typename... Ts>
-#if 0 // TODO: Bypass NVCC bugs.
+  #if 0 // TODO: Bypass NVCC bugs.
     requires(sizeof...(Ts) > 0)
-#endif
+  #endif
   friend struct Deduce;
 };
+#else
+enum class Token { value };
+#endif
 
 //
 //
@@ -270,7 +274,11 @@ struct Deduce<T0, Ts...> : DeduceImpl<Param<std::decay_t<T0>>, Param<std::decay_
 
   static constexpr usize rows = Constants::template At<0>::Size();
   static constexpr usize cols = Constants::Size();
+#if 0 // TODO: Bypass NVCC bugs.
   static constexpr Token token{};
+#else
+  static constexpr Token token = Token::value;
+#endif
 };
 
 } // namespace detail::mat
@@ -472,7 +480,11 @@ template <typename T, usize _rows, usize _cols>
 class Mat<T, _rows, _cols> : public detail::mat::MatBase<T, _rows, _cols> {
 private:
   using Base = typename Mat::type;
+#if 0 // TODO: Bypass NVCC bugs.
   static constexpr detail::mat::Token token{};
+#else
+  static constexpr detail::mat::Token token = detail::mat::Token::value;
+#endif
 
 public:
   using type = Mat;
