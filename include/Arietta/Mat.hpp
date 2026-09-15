@@ -13,7 +13,6 @@
 #include "Arietta/Types.hpp"
 
 #include <array>
-#include <cmath>
 
 namespace arietta {
 
