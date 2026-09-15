@@ -2289,6 +2289,54 @@ suite<"Mat"> _ = [] {
         expect(CVC_VCC == m_CVC_VCC);
         expect(CV_VC_CC == m_CV_VC_CC);
       }
+
+      // `Determinant`.
+      {
+        Mat m_V{T(2)};
+        Mat m_C{C<T(2)>{}};
+        auto d_V = m_V.Determinant();
+        constexpr auto d_C = m_C.Determinant();
+        static_assert(is::Same<decltype(d_V), T>);
+        static_assert(is::Same<decltype(d_C), C<T(2)> const>);
+        expect(d_V == 2);
+        static_assert(d_C == 2);
+
+        Mat m_VV_VV{Mat{T(2), T(3)}, Mat{T(5), T(7)}};
+        Mat m_CC_CC{Mat{C<T(2)>{}, C<T(3)>{}}, Mat{C<T(5)>{}, C<T(7)>{}}};
+        auto d_VV_VV = m_VV_VV.Determinant();
+        constexpr auto d_CC_CC = m_CC_CC.Determinant();
+        static_assert(is::Same<decltype(d_VV_VV), T>);
+        static_assert(is::Same<decltype(d_CC_CC), C<T(-1)> const>);
+        expect(d_VV_VV == -1);
+        static_assert(d_CC_CC == -1);
+
+        Mat m_VVV_VVV_VVV{Mat{T(2), T(3), T(5)}, Mat{T(7), T(11), T(13)}, Mat{T(17), T(19), T(23)}};
+        Mat m_CCC_CCC_CCC{
+            Mat{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}}, Mat{C<T(7)>{}, C<T(11)>{}, C<T(13)>{}},
+            Mat{C<T(17)>{}, C<T(19)>{}, C<T(23)>{}}
+        };
+        auto d_VVV_VVV_VVV = m_VVV_VVV_VVV.Determinant();
+        constexpr auto d_CCC_CCC_CCC = m_CCC_CCC_CCC.Determinant();
+        static_assert(is::Same<decltype(d_VVV_VVV_VVV), T>);
+        static_assert(is::Same<decltype(d_CCC_CCC_CCC), C<T(-78)> const>);
+        expect(d_VVV_VVV_VVV == -78);
+        static_assert(d_CCC_CCC_CCC == -78);
+
+        Mat m_VVVV_VVVV_VVVV_VVVV{
+            Mat{T(2), T(3), T(5), T(7)}, Mat{T(11), T(13), T(17), T(19)}, Mat{T(23), T(29), T(31), T(37)},
+            Mat{T(41), T(43), T(47), T(53)}
+        };
+        Mat m_CCCC_CCCC_CCCC_CCCC{
+            Mat{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}, C<T(7)>{}}, Mat{C<T(11)>{}, C<T(13)>{}, C<T(17)>{}, C<T(19)>{}},
+            Mat{C<T(23)>{}, C<T(29)>{}, C<T(31)>{}, C<T(37)>{}}, Mat{C<T(41)>{}, C<T(43)>{}, C<T(47)>{}, C<T(53)>{}}
+        };
+        auto d_VVVV_VVVV_VVVV_VVVV = m_VVVV_VVVV_VVVV_VVVV.Determinant();
+        constexpr auto d_CCCC_CCCC_CCCC_CCCC = m_CCCC_CCCC_CCCC_CCCC.Determinant();
+        static_assert(is::Same<decltype(d_VVVV_VVVV_VVVV_VVVV), T>);
+        static_assert(is::Same<decltype(d_CCCC_CCCC_CCCC_CCCC), C<T(880)> const>);
+        expect(d_VVVV_VVVV_VVVV_VVVV == 880);
+        static_assert(d_CCCC_CCCC_CCCC_CCCC == 880);
+      }
     });
   };
 

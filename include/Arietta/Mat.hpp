@@ -300,6 +300,12 @@ private:
   using Base = typename Mat::type;
   using Mat::Storage::storage;
 
+  static constexpr usize i0 = 0, i1 = 1, i2 = 2, i3 = 3;
+  static constexpr C<i0> c0{};
+  static constexpr C<i1> c1{};
+  static constexpr C<i2> c2{};
+  static constexpr C<i3> c3{};
+
 public:
   using type = Mat;
   using Constants = _Constants;
@@ -489,6 +495,47 @@ public:
     return [&]<usize... col>(std::index_sequence<col...>) constexpr {
       return arietta::Mat{transposePerCol(C<col>{}, std::make_index_sequence<cols()>{})...};
     }(std::make_index_sequence<rows()>{});
+  }
+
+  [[nodiscard]] ART_SPECIFIER constexpr auto Determinant() const {
+    static_assert(rows() == cols(), "The determinant is only defined for square matrices");
+
+    if constexpr (rows() == 1) {
+      return operator()(c0, c0);
+    } else if constexpr (rows() == 2) {
+      return operator()(c0, c0) * operator()(c1, c1) - operator()(c1, c0) * operator()(c0, c1);
+    } else if constexpr (rows() == 3) {
+      auto d3 = [&]<auto i, auto j, auto k>(C<i>, C<j>, C<k>) constexpr {
+        return operator()(c0, C<i>{}) *
+               (operator()(c1, C<j>{}) * operator()(c2, C<k>{}) - operator()(c1, C<k>{}) * operator()(c2, C<j>{}));
+      };
+
+      return d3(c0, c1, c2) - d3(c1, c0, c2) + d3(c2, c0, c1);
+    } else if constexpr (rows() == 4) {
+      auto d2 = [&]<auto i0, auto i1>(C<i0>, C<i1>) constexpr {
+        return operator()(C<i0>{}, c0) * operator()(C<i1>{}, c1) - operator()(C<i1>{}, c0) * operator()(C<i0>{}, c1);
+      };
+      auto d3 = [&]<auto i0, auto i1, auto i2>(
+                    C<i0>, auto const &d2_0, C<i1>, auto const &d2_1, C<i2>, auto const &d2_2
+                ) constexpr {
+        return operator()(C<i0>{}, c2) * d2_0 + (-operator()(C<i1>{}, c2) * d2_1 + operator()(C<i2>{}, c2) * d2_2);
+      };
+
+      auto d2_01 = d2(c0, c1);
+      auto d2_02 = d2(c0, c2);
+      auto d2_03 = d2(c0, c3);
+      auto d2_12 = d2(c1, c2);
+      auto d2_13 = d2(c1, c3);
+      auto d2_23 = d2(c2, c3);
+      auto d3_0 = d3(c1, d2_23, c2, d2_13, c3, d2_12);
+      auto d3_1 = d3(c0, d2_23, c2, d2_03, c3, d2_02);
+      auto d3_2 = d3(c0, d2_13, c1, d2_03, c3, d2_01);
+      auto d3_3 = d3(c0, d2_12, c1, d2_02, c2, d2_01);
+      return (-operator()(c0, c3) * d3_0 + operator()(c1, c3) * d3_1) +
+             (-operator()(c2, c3) * d3_2 + operator()(c3, c3) * d3_3);
+    }
+
+    // TODO: Implement the determinant for `rows() > 4` using LU decomposition with partial pivoting.
   }
 };
 
