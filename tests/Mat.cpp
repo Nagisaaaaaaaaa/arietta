@@ -2276,6 +2276,19 @@ suite<"Mat"> _ = [] {
         expect(CVC == v);
         // static_assert(CCC == v);
       }
+
+      // `Transpose`.
+      {
+        Mat m_CV_VC_CC{Mat{C<T(2)>{}, T(3)}, Mat{T(5), C<T(7)>{}}, Mat{C<T(11)>{}, C<T(13)>{}}};
+        Mat m_CVC_VCC{Mat{C<T(2)>{}, T(5), C<T(11)>{}}, Mat{T(3), C<T(7)>{}, C<T(13)>{}}};
+
+        auto CVC_VCC = m_CV_VC_CC.Transpose();
+        auto CV_VC_CC = m_CVC_VCC.Transpose();
+        static_assert(is::Same<decltype(CVC_VCC), decltype(m_CVC_VCC)>);
+        static_assert(is::Same<decltype(CV_VC_CC), decltype(m_CV_VC_CC)>);
+        expect(CVC_VCC == m_CVC_VCC);
+        expect(CV_VC_CC == m_CV_VC_CC);
+      }
     });
   };
 

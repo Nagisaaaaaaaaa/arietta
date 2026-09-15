@@ -480,6 +480,16 @@ public:
 
     return std::sqrt(norm2);
   }
+
+  [[nodiscard]] ART_SPECIFIER constexpr auto Transpose() const {
+    auto transposePerCol = [&]<usize col, usize... row>(C<col>, std::index_sequence<row...>) constexpr {
+      return arietta::Mat{operator()(C<col>{}, C<row>{})...};
+    };
+
+    return [&]<usize... col>(std::index_sequence<col...>) constexpr {
+      return arietta::Mat{transposePerCol(C<col>{}, std::make_index_sequence<cols()>{})...};
+    }(std::make_index_sequence<rows()>{});
+  }
 };
 
 //
