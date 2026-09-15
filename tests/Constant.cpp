@@ -507,9 +507,11 @@ suite<"Constant"> _ = [] {
   //
   //
   "STL Extensions"_test = [] {
+#if 0 // TODO: Re-enable with MSVC 14.52+ and `/Zc:cmath` for constexpr `std::abs` support.
     static_assert(is::Same<decltype(std::abs(C<-3>{})), C<3>>);
     static_assert(is::Same<decltype(std::abs(C<0>{})), C<0>>);
     static_assert(is::Same<decltype(std::abs(C<3>{})), C<3>>);
+#endif
   };
 };
 
