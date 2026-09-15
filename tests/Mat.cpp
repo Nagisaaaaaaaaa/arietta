@@ -2198,6 +2198,28 @@ suite<"Mat"> _ = [] {
         expect(VCC_CVC(i0) == 0 && VCC_CVC(i1) == 0 && VCC_CVC(i2) == T(2) * T(3));
         static_assert(CCC_CCC(i0) == 0 && CCC_CCC(i1) == 0 && CCC_CCC(i2) == T(2) * T(3));
       }
+
+      // `Norm2`.
+      {
+        Mat m_CVV{C<T(2)>{}, T(3), T(5)};
+        Mat m_CCV{C<T(2)>{}, C<T(3)>{}, T(5)};
+        Mat m_CVC{C<T(2)>{}, T(3), C<T(5)>{}};
+        Mat m_CCC{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}};
+
+        auto CVV = m_CVV.Norm2();
+        auto CCV = m_CCV.Norm2();
+        auto CVC = m_CVC.Norm2();
+        constexpr auto CCC = m_CCC.Norm2();
+        constexpr auto v = T(2) * T(2) + T(3) * T(3) + T(5) * T(5);
+        static_assert(is::Same<decltype(CVV), T>);
+        static_assert(is::Same<decltype(CCV), T>);
+        static_assert(is::Same<decltype(CVC), T>);
+        static_assert(is::Same<decltype(CCC), C<v> const>);
+        expect(CVV == v);
+        expect(CCV == v);
+        expect(CVC == v);
+        static_assert(CCC == v);
+      }
     });
   };
 

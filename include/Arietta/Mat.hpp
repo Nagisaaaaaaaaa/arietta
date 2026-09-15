@@ -471,6 +471,8 @@ public:
         operator()(C<0>{}) * m(C<1>{}) - operator()(C<1>{}) * m(C<0>{})
     };
   }
+
+  [[nodiscard]] ART_SPECIFIER constexpr auto Norm2() const { return Dot(*this); }
 };
 
 //
