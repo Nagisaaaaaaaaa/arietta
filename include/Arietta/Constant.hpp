@@ -11,6 +11,8 @@
 //
 #include "Arietta/Arietta.hpp"
 
+#include <cmath>
+
 namespace arietta {
 
 template <auto v>
@@ -265,3 +267,17 @@ ART_SPECIFIER constexpr void ForEach(F &&f) {
 }
 
 } // namespace arietta
+
+//
+//
+//
+//
+//
+namespace std {
+
+template <auto t>
+[[nodiscard]] ART_SPECIFIER constexpr arietta::C<std::abs(t)> abs(arietta::C<t>) {
+  return {};
+}
+
+} // namespace std

@@ -502,6 +502,15 @@ suite<"Constant"> _ = [] {
     ForEach(C<100.0>{}, f0), ForEach<100.0>(f0), ForEach<C<100.0>>(f0);
     ForEach(C<100.0>{}, f1), ForEach<100.0>(f1), ForEach<C<100.0>>(f1);
   };
+
+  //
+  //
+  //
+  "STL Extensions"_test = [] {
+    static_assert(is::Same<decltype(std::abs(C<-3>{})), C<3>>);
+    static_assert(is::Same<decltype(std::abs(C<0>{})), C<0>>);
+    static_assert(is::Same<decltype(std::abs(C<3>{})), C<3>>);
+  };
 };
 
 } // namespace
