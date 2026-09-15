@@ -2220,6 +2220,28 @@ suite<"Mat"> _ = [] {
         expect(CVC == v);
         static_assert(CCC == v);
       }
+
+      // `Norm`.
+      {
+        Mat m_CVV{C<T(2)>{}, T(3), T(5)};
+        Mat m_CCV{C<T(2)>{}, C<T(3)>{}, T(5)};
+        Mat m_CVC{C<T(2)>{}, T(3), C<T(5)>{}};
+        Mat m_CCC{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}}; // TODO: `std::sqrt` only supports constexpr starting in C++26.
+
+        auto CVV = m_CVV.Norm();
+        auto CCV = m_CCV.Norm();
+        auto CVC = m_CVC.Norm();
+        // constexpr auto CCC = m_CCC.Norm();
+        /*constexpr*/ auto v = std::sqrt(T(2) * T(2) + T(3) * T(3) + T(5) * T(5));
+        static_assert(is::Same<decltype(CVV), T>);
+        static_assert(is::Same<decltype(CCV), T>);
+        static_assert(is::Same<decltype(CVC), T>);
+        // static_assert(is::Same<decltype(CCC), C<v> const>);
+        expect(CVV == v);
+        expect(CCV == v);
+        expect(CVC == v);
+        // static_assert(CCC == v);
+      }
     });
   };
 

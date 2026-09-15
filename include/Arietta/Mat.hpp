@@ -13,6 +13,7 @@
 #include "Arietta/Types.hpp"
 
 #include <array>
+#include <cmath>
 
 namespace arietta {
 
@@ -473,6 +474,13 @@ public:
   }
 
   [[nodiscard]] ART_SPECIFIER constexpr auto Norm2() const { return Dot(*this); }
+
+  [[nodiscard]] ART_SPECIFIER constexpr auto Norm() const {
+    auto norm2 = Norm2();
+    [[assume(norm2 >= 0)]];
+
+    return std::sqrt(norm2);
+  }
 };
 
 //
