@@ -593,6 +593,23 @@ template <auto op, usize rows, usize cols, typename Lhs, typename Rhs>
   return OpBinaryImpl<op, rows>(lhs, rhs, std::make_index_sequence<cols>{});
 }
 
+//! `Lhs` and `Rhs` are assumed to satisfy `is::Mat` and `Lhs::cols() == Rhs::rows()`.
+template <usize row, usize col, typename Lhs, typename Rhs, usize... i>
+[[nodiscard]] ART_SPECIFIER constexpr auto
+MulImplPerElement(Lhs const &lhs, Rhs const &rhs, std::index_sequence<i...>) {
+  return ((lhs(C<row>{}, C<i>{}) * rhs(C<i>{}, C<col>{})) + ...);
+}
+
+template <usize col, typename Lhs, typename Rhs, usize... row>
+[[nodiscard]] ART_SPECIFIER constexpr auto MulImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
+  return Mat{MulImplPerElement<row, col>(lhs, rhs, std::make_index_sequence<Lhs::cols()>{})...};
+}
+
+template <typename Lhs, typename Rhs, usize... col>
+[[nodiscard]] ART_SPECIFIER constexpr auto MulImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
+  return Mat{MulImplPerCol<col>(lhs, rhs, std::make_index_sequence<Lhs::rows()>{})...};
+}
+
 } // namespace detail::mat
 
 //
@@ -653,6 +670,14 @@ template <is::Mat Lhs, is::Mat Rhs>
       "Binary operators are only defined for matrices with the same dimensions"
   );
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l - r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
+}
+
+template <is::Mat Lhs, is::Mat Rhs>
+[[nodiscard]] ART_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+  static_assert(
+      Lhs::cols() == Rhs::rows(), "Matrix multiplication requires the left column count to equal the right row count"
+  );
+  return detail::mat::MulImpl(lhs, rhs, std::make_index_sequence<Rhs::cols()>{});
 }
 
 template <is::Mat Lhs, isnot::Mat Rhs>

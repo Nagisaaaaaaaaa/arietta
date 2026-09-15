@@ -1988,6 +1988,40 @@ suite<"Mat"> _ = [] {
 
       // Multiply.
       {
+        Mat VV_VV = m_VV_VV * m_CC_CC;
+        Mat VC_VC = m_VC_VC * m_CC_CC;
+        Mat CC_CC = m_CC_CC * m_CC_CC;
+        Mat CC_VV = m_CC_CC * m_CC_VV;
+        static_assert(is::Same<decltype(VV_VV), Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC_VC), Mat<T, 2, 2, Types<Types<VO, C<T(27)>>, Types<VO, C<T(64)>>>, Token>>);
+        static_assert(
+            is::Same<decltype(CC_CC), Mat<T, 2, 2, Types<Types<C<T(19)>, C<T(27)>>, Types<C<T(45)>, C<T(64)>>>, Token>>
+        );
+        static_assert(is::Same<decltype(CC_VV), Mat<T, 2, 2, Types<Types<C<T(19)>, C<T(27)>>, Types<VO, VO>>, Token>>);
+        expect(VV_VV(i0, i0) == 19 && VV_VV(i1, i0) == 27 && VV_VV(i0, i1) == 45 && VV_VV(i1, i1) == 64);
+        expect(VC_VC(i0, i0) == 19 && VC_VC(i1, i0) == 27 && VC_VC(i0, i1) == 45 && VC_VC(i1, i1) == 64);
+        expect(CC_CC(i0, i0) == 19 && CC_CC(i1, i0) == 27 && CC_CC(i0, i1) == 45 && CC_CC(i1, i1) == 64);
+        expect(CC_VV(i0, i0) == 19 && CC_VV(i1, i0) == 27 && CC_VV(i0, i1) == 45 && CC_VV(i1, i1) == 64);
+
+        VV_VV = m_VV_VV;
+        VV_VV *= m_CC_CC;
+        expect(VV_VV(i0, i0) == 19 && VV_VV(i1, i0) == 27 && VV_VV(i0, i1) == 45 && VV_VV(i1, i1) == 64);
+      }
+
+      {
+        Mat m_CC{C<T(2)>{}, C<T(3)>{}};
+        Mat VV = m_VV_VV * m_CC;
+        Mat VC = m_VC_VC * m_CC;
+        Mat CC = m_CC_CC * m_CC;
+        static_assert(is::Same<decltype(VV), Vec<T, 2, Types<Types<VO, VO>>, Token>>);
+        static_assert(is::Same<decltype(VC), Vec<T, 2, Types<Types<VO, C<T(27)>>>, Token>>);
+        static_assert(is::Same<decltype(CC), Vec<T, 2, Types<Types<C<T(19)>, C<T(27)>>>, Token>>);
+        expect(VV(i0) == 19 && VV(i1) == 27);
+        expect(VC(i0) == 19 && VC(i1) == 27);
+        expect(CC(i0) == 19 && CC(i1) == 27);
+      }
+
+      {
         Mat VV_VV = m_VV_VV * C<T(3)>{};
         Mat VC_VV = m_VC_VV * C<T(3)>{};
         Mat VV_CV = m_VV_CV * C<T(3)>{};
