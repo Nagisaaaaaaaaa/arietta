@@ -2337,6 +2337,80 @@ suite<"Mat"> _ = [] {
         expect(d_VVVV_VVVV_VVVV_VVVV == 880);
         static_assert(d_CCCC_CCCC_CCCC_CCCC == 880);
       }
+
+      // `Inverse`.
+      {
+        Mat m_V{T(2)};
+        Mat m_C{C<T(2)>{}};
+        constexpr Mat e_C{C<T(0.5)>{}};
+        auto i_V = m_V.Inverse();
+        constexpr auto i_C = m_C.Inverse();
+        static_assert(is::Same<decltype(i_V), decltype(m_V)>);
+        static_assert(is::Same<decltype(i_C), decltype(e_C)>);
+        expect(i_V == e_C);
+        static_assert(i_C == e_C);
+        expect(m_V * i_V == Mat1<T>::Identity());
+        expect(i_V * m_V == Mat1<T>::Identity());
+        static_assert(m_C * i_C == Mat1<T>::Identity());
+        static_assert(i_C * m_C == Mat1<T>::Identity());
+
+        Mat m_VV_VV{Mat{T(2), T(3)}, Mat{T(5), T(7)}};
+        Mat m_CC_CC{Mat{C<T(2)>{}, C<T(3)>{}}, Mat{C<T(5)>{}, C<T(7)>{}}};
+        constexpr Mat e_CC_CC{Mat{C<T(-7)>{}, C<T(3)>{}}, Mat{C<T(5)>{}, C<T(-2)>{}}};
+        auto i_VV_VV = m_VV_VV.Inverse();
+        constexpr auto i_CC_CC = m_CC_CC.Inverse();
+        static_assert(is::Same<decltype(i_VV_VV), decltype(m_VV_VV)>);
+        static_assert(is::Same<decltype(i_CC_CC), decltype(e_CC_CC)>);
+        expect(i_VV_VV == e_CC_CC);
+        static_assert(i_CC_CC == e_CC_CC);
+        expect(m_VV_VV * i_VV_VV == Mat2<T>::Identity());
+        expect(i_VV_VV * m_VV_VV == Mat2<T>::Identity());
+        static_assert(m_CC_CC * i_CC_CC == Mat2<T>::Identity());
+        static_assert(i_CC_CC * m_CC_CC == Mat2<T>::Identity());
+
+        Mat m_VVV_VVV_VVV{Mat{T(1), T(0), T(5)}, Mat{T(2), T(1), T(6)}, Mat{T(3), T(4), T(0)}};
+        Mat m_CCC_CCC_CCC{
+            Mat{C<T(1)>{}, C<T(0)>{}, C<T(5)>{}}, Mat{C<T(2)>{}, C<T(1)>{}, C<T(6)>{}},
+            Mat{C<T(3)>{}, C<T(4)>{}, C<T(0)>{}}
+        };
+        constexpr Mat e_CCC_CCC_CCC{
+            Mat{C<T(-24)>{}, C<T(20)>{}, C<T(-5)>{}}, Mat{C<T(18)>{}, C<T(-15)>{}, C<T(4)>{}},
+            Mat{C<T(5)>{}, C<T(-4)>{}, C<T(1)>{}}
+        };
+        auto i_VVV_VVV_VVV = m_VVV_VVV_VVV.Inverse();
+        constexpr auto i_CCC_CCC_CCC = m_CCC_CCC_CCC.Inverse();
+        static_assert(is::Same<decltype(i_VVV_VVV_VVV), decltype(m_VVV_VVV_VVV)>);
+        static_assert(is::Same<decltype(i_CCC_CCC_CCC), decltype(e_CCC_CCC_CCC)>);
+        expect(i_VVV_VVV_VVV == e_CCC_CCC_CCC);
+        static_assert(i_CCC_CCC_CCC == e_CCC_CCC_CCC);
+        expect(m_VVV_VVV_VVV * i_VVV_VVV_VVV == Mat3<T>::Identity());
+        expect(i_VVV_VVV_VVV * m_VVV_VVV_VVV == Mat3<T>::Identity());
+        static_assert(m_CCC_CCC_CCC * i_CCC_CCC_CCC == Mat3<T>::Identity());
+        static_assert(i_CCC_CCC_CCC * m_CCC_CCC_CCC == Mat3<T>::Identity());
+
+        Mat m_VVVV_VVVV_VVVV_VVVV{
+            Mat{T(1), T(0), T(5), T(6)}, Mat{T(2), T(1), T(6), T(9)}, Mat{T(3), T(4), T(0), T(7)},
+            Mat{T(6), T(5), T(11), T(23)}
+        };
+        Mat m_CCCC_CCCC_CCCC_CCCC{
+            Mat{C<T(1)>{}, C<T(0)>{}, C<T(5)>{}, C<T(6)>{}}, Mat{C<T(2)>{}, C<T(1)>{}, C<T(6)>{}, C<T(9)>{}},
+            Mat{C<T(3)>{}, C<T(4)>{}, C<T(0)>{}, C<T(7)>{}}, Mat{C<T(6)>{}, C<T(5)>{}, C<T(11)>{}, C<T(23)>{}}
+        };
+        constexpr Mat e_CCCC_CCCC_CCCC_CCCC{
+            Mat{C<T(-23)>{}, C<T(21)>{}, C<T(-4)>{}, C<T(-1)>{}}, Mat{C<T(19)>{}, C<T(-14)>{}, C<T(5)>{}, C<T(-1)>{}},
+            Mat{C<T(6)>{}, C<T(-3)>{}, C<T(2)>{}, C<T(-1)>{}}, Mat{C<T(-1)>{}, C<T(-1)>{}, C<T(-1)>{}, C<T(1)>{}}
+        };
+        auto i_VVVV_VVVV_VVVV_VVVV = m_VVVV_VVVV_VVVV_VVVV.Inverse();
+        constexpr auto i_CCCC_CCCC_CCCC_CCCC = m_CCCC_CCCC_CCCC_CCCC.Inverse();
+        static_assert(is::Same<decltype(i_VVVV_VVVV_VVVV_VVVV), decltype(m_VVVV_VVVV_VVVV_VVVV)>);
+        static_assert(is::Same<decltype(i_CCCC_CCCC_CCCC_CCCC), decltype(e_CCCC_CCCC_CCCC_CCCC)>);
+        expect(i_VVVV_VVVV_VVVV_VVVV == e_CCCC_CCCC_CCCC_CCCC);
+        static_assert(i_CCCC_CCCC_CCCC_CCCC == e_CCCC_CCCC_CCCC_CCCC);
+        expect(m_VVVV_VVVV_VVVV_VVVV * i_VVVV_VVVV_VVVV_VVVV == Mat4<T>::Identity());
+        expect(i_VVVV_VVVV_VVVV_VVVV * m_VVVV_VVVV_VVVV_VVVV == Mat4<T>::Identity());
+        static_assert(m_CCCC_CCCC_CCCC_CCCC * i_CCCC_CCCC_CCCC_CCCC == Mat4<T>::Identity());
+        static_assert(i_CCCC_CCCC_CCCC_CCCC * m_CCCC_CCCC_CCCC_CCCC == Mat4<T>::Identity());
+      }
     });
   };
 
