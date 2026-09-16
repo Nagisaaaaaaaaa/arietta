@@ -8,13 +8,13 @@
 /// relied upon across translation units.
 ///
 /// \code
-/// SRT_EXPR(Map<>::Insert<i32, f32>());
-/// SRT_EXPR(Map<>::Insert<i64, f64>());
+/// ARIETTA_EXPR(Map<>::Insert<i32, f32>());
+/// ARIETTA_EXPR(Map<>::Insert<i64, f64>());
 /// static_assert(is::Same<Map<>::At<i32>, f32>);
 /// static_assert(is::Same<Map<>::At<i64>, f64>);
 ///
-/// SRT_EXPR(Map<T>::Insert<i32, f64>());
-/// SRT_EXPR(Map<T>::Insert<i64, f32>());
+/// ARIETTA_EXPR(Map<T>::Insert<i32, f64>());
+/// ARIETTA_EXPR(Map<T>::Insert<i64, f32>());
 /// static_assert(is::Same<Map<T>::At<i32>, f64>);
 /// static_assert(is::Same<Map<T>::At<i64>, f32>);
 /// \endcode

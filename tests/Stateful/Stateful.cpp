@@ -21,18 +21,18 @@ struct C {};
 //
 suite<"Stateful"> _ = [] {
   "Macros"_test = [] {
-    SRT_EXPR(0);
-    SRT_EXPR(1);
-    SRT_EXPR(false);
-    SRT_EXPR(true);
-    SRT_EXPR(A{});
+    ARIETTA_EXPR(0);
+    ARIETTA_EXPR(1);
+    ARIETTA_EXPR(false);
+    ARIETTA_EXPR(true);
+    ARIETTA_EXPR(A{});
 
-    SRT_EXPR(0, false);
-    SRT_EXPR(1, true);
-    SRT_EXPR(A{}, B{});
+    ARIETTA_EXPR(0, false);
+    ARIETTA_EXPR(1, true);
+    ARIETTA_EXPR(A{}, B{});
 
-    SRT_EXPR(0, 1, 2);
-    SRT_EXPR(A{}, B{}, C{});
+    ARIETTA_EXPR(0, 1, 2);
+    ARIETTA_EXPR(A{}, B{}, C{});
   };
 };
 

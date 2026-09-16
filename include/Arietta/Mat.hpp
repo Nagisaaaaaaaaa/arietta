@@ -111,9 +111,9 @@ public:
   using type = MatBase;
   using value_type = T;
 
-  [[nodiscard]] ART_SPECIFIER static constexpr auto rows() { return _rows; }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto rows() { return _rows; }
 
-  [[nodiscard]] ART_SPECIFIER static constexpr auto cols() { return _cols; }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto cols() { return _cols; }
 };
 
 template <typename Constants>
@@ -133,9 +133,9 @@ class MatStorage {
 public:
   using Storage = MatStorage;
 
-  ART_SPECIFIER constexpr void storage() const;
+  ARIETTA_SPECIFIER constexpr void storage() const;
 
-  ART_SPECIFIER constexpr void storage();
+  ARIETTA_SPECIFIER constexpr void storage();
 };
 
 template <typename T, typename Constants>
@@ -144,9 +144,9 @@ class MatStorage<T, Constants> {
 public:
   using Storage = MatStorage;
 
-  [[nodiscard]] ART_SPECIFIER constexpr auto const &storage() const { return storage_; }
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto const &storage() const { return storage_; }
 
-  [[nodiscard]] ART_SPECIFIER constexpr auto &storage() { return storage_; }
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto &storage() { return storage_; }
 
 private:
   [[nodiscard]] static consteval usize storageSize() {
@@ -177,9 +177,9 @@ struct Param;
 // CRTP base providing `rows()` and `cols()` for `Param`.
 template <typename Derived>
 struct ParamBase {
-  [[nodiscard]] ART_SPECIFIER static constexpr auto rows() { return Derived::Constants::template At<0>::Size(); }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto rows() { return Derived::Constants::template At<0>::Size(); }
 
-  [[nodiscard]] ART_SPECIFIER static constexpr auto cols() { return Derived::Constants::Size(); }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto cols() { return Derived::Constants::Size(); }
 };
 
 template <typename T>
@@ -321,7 +321,7 @@ public:
         is::Mat<std::decay_t<typename Types<Us...>::template At<0>>> &&
         sizeof...(Us) > 1 //! Avoid conflicting with copy and move constructors.
     )
-  ART_SPECIFIER constexpr explicit Mat(Us &&...us) {
+  ARIETTA_SPECIFIER constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize col, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
       ForEach<rows()>([&]<auto row>() { this->operator()(C<row>{}, C<col>{}) = v(C<row>{}); });
 
@@ -337,7 +337,7 @@ public:
         is::Same<Mat, Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>> &&
         isnot::Mat<std::decay_t<typename Types<Us...>::template At<0>>>
     )
-  ART_SPECIFIER constexpr explicit Mat(Us &&...us) {
+  ARIETTA_SPECIFIER constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
       this->operator()(C<row>{}, c0) = std::forward<V>(v);
 
@@ -353,7 +353,7 @@ public:
       typename D = detail::mat::Deduce<Us...>,
       typename M = Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>>
     requires(isnot::Same<Mat, M>)
-  ART_SPECIFIER constexpr explicit Mat(Us &&...us) {
+  ARIETTA_SPECIFIER constexpr explicit Mat(Us &&...us) {
     M m{std::forward<Us>(us)...};
 
     ForEach<cols()>([&]<auto col>() {
@@ -363,7 +363,7 @@ public:
 
   template <typename M>
     requires(is::Mat<std::decay_t<M>> && isnot::Same<Mat, std::decay_t<M>>)
-  ART_SPECIFIER constexpr Mat &operator=(M &&m) {
+  ARIETTA_SPECIFIER constexpr Mat &operator=(M &&m) {
     return *this = Mat{std::forward<M>(m)};
   }
 
@@ -372,7 +372,7 @@ public:
   //
 public:
   template <auto row, auto col>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>, C<col>) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(C<row>, C<col>) const {
     if constexpr (is::Same<Constant<row, col>, void>)
       return storage()[storageIdx<row, col>()];
     else
@@ -380,7 +380,7 @@ public:
   }
 
   template <auto row, auto col>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>, C<col>) {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(C<row>, C<col>) {
     if constexpr (is::Same<Constant<row, col>, void>)
       return storage()[storageIdx<row, col>()];
     else
@@ -388,7 +388,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) const {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -397,7 +397,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -406,25 +406,25 @@ public:
   }
 
   template <auto row>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(C<row>) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()(C<row>{}, c0);
   }
 
   template <auto row>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>) {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(C<row>) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()(C<row>{}, c0);
   }
 
   template <typename tag = void>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()<tag>(row, i0);
   }
 
   template <typename tag = void>
-  [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row) {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()<tag>(row, i0);
   }
@@ -459,7 +459,7 @@ private:
   //
 public:
   template <is::Mat M>
-  [[nodiscard]] ART_SPECIFIER constexpr auto Dot(M const &m) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Dot(M const &m) const {
     static_assert(rows() == M::rows(), "Dot product is only defined for column vectors with the same dimension");
 
     return [&]<usize... row>(std::index_sequence<row...>) constexpr {
@@ -468,7 +468,7 @@ public:
   }
 
   template <is::Mat M>
-  [[nodiscard]] ART_SPECIFIER constexpr auto Cross(M const &m) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Cross(M const &m) const {
     static_assert(rows() == 3 && M::rows() == 3, "Cross product is only defined for three-dimensional column vectors");
 
     return arietta::Mat{
@@ -478,16 +478,16 @@ public:
     };
   }
 
-  [[nodiscard]] ART_SPECIFIER constexpr auto Norm2() const { return Dot(*this); }
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Norm2() const { return Dot(*this); }
 
-  [[nodiscard]] ART_SPECIFIER constexpr auto Norm() const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Norm() const {
     auto norm2 = Norm2();
     [[assume(norm2 >= 0)]];
 
     return std::sqrt(norm2);
   }
 
-  [[nodiscard]] ART_SPECIFIER constexpr auto Transpose() const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Transpose() const {
     auto transposePerCol = [&]<usize col, usize... row>(C<col>, std::index_sequence<row...>) constexpr {
       return arietta::Mat{operator()(C<col>{}, C<row>{})...};
     };
@@ -497,7 +497,7 @@ public:
     }(std::make_index_sequence<rows()>{});
   }
 
-  [[nodiscard]] ART_SPECIFIER constexpr auto Determinant() const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Determinant() const {
     static_assert(rows() == cols(), "The determinant is only defined for square matrices");
 
     if constexpr (rows() == 1) {
@@ -539,7 +539,7 @@ public:
   }
 
   //! The matrix is assumed to be invertible.
-  [[nodiscard]] ART_SPECIFIER constexpr auto Inverse() const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Inverse() const {
     static_assert(!is::Integral<T>, "The inverse is not defined for integer value types");
     static_assert(rows() == cols(), "The inverse is only defined for square matrices");
 
@@ -678,24 +678,24 @@ namespace detail::mat {
 
 //! `M` is assumed to satisfy `is::Mat`.
 template <auto op, usize col, typename M, usize... row>
-[[nodiscard]] ART_SPECIFIER constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
   return Mat{op(m(C<row>{}, C<col>{}))...};
 }
 
 template <auto op, typename M, usize... col>
-[[nodiscard]] ART_SPECIFIER constexpr auto OpUnaryImpl(M const &m, std::index_sequence<col...>) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImpl(M const &m, std::index_sequence<col...>) {
   return Mat{OpUnaryImplPerCol<op, col>(m, std::make_index_sequence<M::rows()>{})...};
 }
 
 template <auto op, typename M>
-[[nodiscard]] ART_SPECIFIER constexpr auto OpUnary(M const &m) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnary(M const &m) {
   return OpUnaryImpl<op>(m, std::make_index_sequence<M::cols()>{});
 }
 
 //! If both `Lhs` and `Rhs` satisfy `is::Mat`, they are assumed to have the same rows and columns,
 //! which are already passed as template parameters.
 template <auto op, usize col, typename Lhs, typename Rhs, usize... row>
-[[nodiscard]] ART_SPECIFIER constexpr auto
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto
 OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
   if constexpr (is::Mat<Lhs> && is::Mat<Rhs>)
     return Mat{op(lhs(C<row>{}, C<col>{}), rhs(C<row>{}, C<col>{}))...};
@@ -706,29 +706,31 @@ OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) 
 }
 
 template <auto op, usize rows, typename Lhs, typename Rhs, usize... col>
-[[nodiscard]] ART_SPECIFIER constexpr auto OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto
+OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
   return Mat{OpBinaryImplPerCol<op, col>(lhs, rhs, std::make_index_sequence<rows>{})...};
 }
 
 template <auto op, usize rows, usize cols, typename Lhs, typename Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr auto OpBinary(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpBinary(Lhs const &lhs, Rhs const &rhs) {
   return OpBinaryImpl<op, rows>(lhs, rhs, std::make_index_sequence<cols>{});
 }
 
 //! `Lhs` and `Rhs` are assumed to satisfy `is::Mat` and `Lhs::cols() == Rhs::rows()`.
 template <usize row, usize col, typename Lhs, typename Rhs, usize... i>
-[[nodiscard]] ART_SPECIFIER constexpr auto
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto
 MulImplPerElement(Lhs const &lhs, Rhs const &rhs, std::index_sequence<i...>) {
   return ((lhs(C<row>{}, C<i>{}) * rhs(C<i>{}, C<col>{})) + ...);
 }
 
 template <usize col, typename Lhs, typename Rhs, usize... row>
-[[nodiscard]] ART_SPECIFIER constexpr auto MulImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto
+MulImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
   return Mat{MulImplPerElement<row, col>(lhs, rhs, std::make_index_sequence<Lhs::cols()>{})...};
 }
 
 template <typename Lhs, typename Rhs, usize... col>
-[[nodiscard]] ART_SPECIFIER constexpr auto MulImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto MulImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
   return Mat{MulImplPerCol<col>(lhs, rhs, std::make_index_sequence<Lhs::rows()>{})...};
 }
 
@@ -740,17 +742,17 @@ template <typename Lhs, typename Rhs, usize... col>
 // TODO: The current operator design follows integral promotion,
 //       so integer types narrower than `int` are promoted during computation.
 template <is::Mat M>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator+(M const &m) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator+(M const &m) {
   return detail::mat::OpUnary<[](auto const &v) { return +v; }>(m);
 }
 
 template <is::Mat M>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator-(M const &m) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator-(M const &m) {
   return detail::mat::OpUnary<[](auto const &v) { return -v; }>(m);
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr bool operator==(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr bool operator==(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
       "Binary operators are only defined for matrices with the same dimensions"
@@ -772,12 +774,12 @@ template <is::Mat Lhs, is::Mat Rhs>
 //! The type ranges of `Lhs` and `Rhs` are intentionally unconstrained here,
 //! because every `operator!=` must be generated directly from `operator==`.
 template <typename Lhs, typename Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr bool operator!=(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr bool operator!=(Lhs const &lhs, Rhs const &rhs) {
   return !(lhs == rhs);
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator+(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator+(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
       "Binary operators are only defined for matrices with the same dimensions"
@@ -786,7 +788,7 @@ template <is::Mat Lhs, is::Mat Rhs>
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator-(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator-(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::rows() == Rhs::rows() && Lhs::cols() == Rhs::cols(),
       "Binary operators are only defined for matrices with the same dimensions"
@@ -795,7 +797,7 @@ template <is::Mat Lhs, is::Mat Rhs>
 }
 
 template <is::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
   static_assert(
       Lhs::cols() == Rhs::rows(), "Matrix multiplication requires the left column count to equal the right row count"
   );
@@ -803,41 +805,41 @@ template <is::Mat Lhs, is::Mat Rhs>
 }
 
 template <is::Mat Lhs, isnot::Mat Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l * r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
 }
 
 template <isnot::Mat Lhs, is::Mat Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator*(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l * r; }, Rhs::rows(), Rhs::cols()>(lhs, rhs);
 }
 
 template <is::Mat Lhs, isnot::Mat Rhs>
-[[nodiscard]] ART_SPECIFIER constexpr auto operator/(Lhs const &lhs, Rhs const &rhs) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto operator/(Lhs const &lhs, Rhs const &rhs) {
   return detail::mat::OpBinary<[](auto const &l, auto const &r) { return l / r; }, Lhs::rows(), Lhs::cols()>(lhs, rhs);
 }
 
 //! The type range of `Rhs` is also intentionally unconstrained here.
 template <is::Mat Lhs, typename Rhs>
-ART_SPECIFIER constexpr Lhs &operator+=(Lhs &lhs, Rhs const &rhs) {
+ARIETTA_SPECIFIER constexpr Lhs &operator+=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs + rhs;
   return lhs;
 }
 
 template <is::Mat Lhs, typename Rhs>
-ART_SPECIFIER constexpr Lhs &operator-=(Lhs &lhs, Rhs const &rhs) {
+ARIETTA_SPECIFIER constexpr Lhs &operator-=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs - rhs;
   return lhs;
 }
 
 template <is::Mat Lhs, typename Rhs>
-ART_SPECIFIER constexpr Lhs &operator*=(Lhs &lhs, Rhs const &rhs) {
+ARIETTA_SPECIFIER constexpr Lhs &operator*=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs * rhs;
   return lhs;
 }
 
 template <is::Mat Lhs, typename Rhs>
-ART_SPECIFIER constexpr Lhs &operator/=(Lhs &lhs, Rhs const &rhs) {
+ARIETTA_SPECIFIER constexpr Lhs &operator/=(Lhs &lhs, Rhs const &rhs) {
   lhs = lhs / rhs;
   return lhs;
 }

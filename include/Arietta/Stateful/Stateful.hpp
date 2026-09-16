@@ -25,13 +25,13 @@ struct Invalid {};
 //
 //
 //
-#if defined(SRT_EXPR)
+#if defined(ARIETTA_EXPR)
 static_assert(false, "Some macros conflict with Arietta");
 #endif
 
 /// \brief This macro forces any `consteval` expression
 /// with a return type of `auto` to be truly executed at compile time.
-#define SRT_EXPR(...)                                                                                                  \
+#define ARIETTA_EXPR(...)                                                                                              \
   static_assert(!::arietta::is::Same<decltype(__VA_ARGS__), ::arietta::stateful::detail::stateful::Invalid>)
 
 } // namespace

@@ -297,7 +297,7 @@ concept Types = !is::Types<T>;
 //
 //
 template <is::Types Ts, typename F>
-ART_SPECIFIER constexpr void ForEach(F &&f) {
+ARIETTA_SPECIFIER constexpr void ForEach(F &&f) {
   ForEach<Ts::Size()>([&]<auto i>() {
     using T = typename Ts::template At<i>;
     static_assert(is::Void<decltype(f.template operator()<T>())>, "Function must have void return type");
