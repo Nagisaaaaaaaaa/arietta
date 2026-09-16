@@ -339,7 +339,7 @@ public:
     )
   ART_SPECIFIER constexpr explicit Mat(Us &&...us) {
     auto init = [&]<usize row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
-      this->operator()(C<row>{}, C<static_cast<usize>(0)>{}) = std::forward<V>(v);
+      this->operator()(C<row>{}, c0) = std::forward<V>(v);
 
       if constexpr (sizeof...(Vs) > 0)
         self.template operator()<row + 1>(self, std::forward<Vs>(vs)...);
@@ -408,25 +408,25 @@ public:
   template <auto row>
   [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator()(C<row>{}, C<static_cast<usize>(0)>{});
+    return operator()(C<row>{}, c0);
   }
 
   template <auto row>
   [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(C<row>) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator()(C<row>{}, C<static_cast<usize>(0)>{});
+    return operator()(C<row>{}, c0);
   }
 
   template <typename tag = void>
   [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator()<tag>(row, static_cast<usize>(0));
+    return operator()<tag>(row, i0);
   }
 
   template <typename tag = void>
   [[nodiscard]] ART_SPECIFIER constexpr decltype(auto) operator()(usize row) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
-    return operator()<tag>(row, static_cast<usize>(0));
+    return operator()<tag>(row, i0);
   }
 
 private:
