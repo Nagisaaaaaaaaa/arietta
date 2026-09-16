@@ -8,15 +8,15 @@
 /// relied upon across translation units.
 ///
 /// \code
-/// SRT_EXPR(Vector<>::PushBack<i32>());
-/// SRT_EXPR(Vector<>::PushBack<i64>());
+/// ARIETTA_EXPR(Vector<>::PushBack<i32>());
+/// ARIETTA_EXPR(Vector<>::PushBack<i64>());
 /// static_assert(Vector<>::Size() == 2);
 /// static_assert(is::Same<Vector<>::At<0>, i32>);
 /// static_assert(is::Same<Vector<>::At<1>, i64>);
 /// static_assert(is::Same<Vector<>::Back<>, i64>);
 ///
-/// SRT_EXPR(Vector<T>::PushBack<f32>());
-/// SRT_EXPR(Vector<T>::PushBack<f64>());
+/// ARIETTA_EXPR(Vector<T>::PushBack<f32>());
+/// ARIETTA_EXPR(Vector<T>::PushBack<f64>());
 /// static_assert(Vector<T>::Size() == 2);
 /// static_assert(is::Same<Vector<T>::At<0>, f32>);
 /// static_assert(is::Same<Vector<T>::At<1>, f64>);

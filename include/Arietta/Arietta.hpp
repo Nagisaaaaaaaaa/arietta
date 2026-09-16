@@ -17,6 +17,17 @@
 
 namespace arietta {
 
+// Macros.
+
+#if defined(__CUDACC__) || defined(__HIPCC__)
+  #define ARIETTA_SPECIFIER __host__ __device__
+#else
+  #define ARIETTA_SPECIFIER
+#endif
+
+//
+//
+//
 // Aliases for fundamental types.
 
 using i8 = std::int8_t;
@@ -99,7 +110,7 @@ concept Void = !is::Void<T>;
 //
 //
 template <is::Arithmetic T, typename F>
-ART_SPECIFIER constexpr void ForEach(T const &n, F &&f) {
+ARIETTA_SPECIFIER constexpr void ForEach(T const &n, F &&f) {
   for (std::decay_t<T> i{}; i < n; ++i) {
     static_assert(is::Void<decltype(f(i))>, "Function must have void return type");
     f(i);
