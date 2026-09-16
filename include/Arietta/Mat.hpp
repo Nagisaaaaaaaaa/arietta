@@ -537,6 +537,72 @@ public:
 
     // TODO: Implement the determinant for `rows() > 4` using LU decomposition with partial pivoting.
   }
+
+  //! The matrix is assumed to be invertible.
+  [[nodiscard]] ART_SPECIFIER constexpr auto Inverse() const {
+    static_assert(!is::Integral<T>, "The inverse is not defined for integer value types");
+    static_assert(rows() == cols(), "The inverse is only defined for square matrices");
+
+    if constexpr (rows() == 1) {
+      return arietta::Mat{C<static_cast<T>(1)>{} / operator()(c0, c0)};
+    } else if constexpr (rows() == 2) {
+      auto det_inv = C<static_cast<T>(1)>{} / Determinant();
+      return arietta::Mat{
+          arietta::Mat{operator()(c1, c1) * det_inv, -operator()(c1, c0) * det_inv},
+          arietta::Mat{-operator()(c0, c1) * det_inv, operator()(c0, c0) * det_inv}
+      };
+    } else if constexpr (rows() == 3) {
+      auto cof = [&]<auto i, auto j>(C<i>, C<j>) constexpr {
+        constexpr auto i1 = (i + 1) % 3, i2 = (i + 2) % 3;
+        constexpr auto j1 = (j + 1) % 3, j2 = (j + 2) % 3;
+        return operator()(C<i1>{}, C<j1>{}) * operator()(C<i2>{}, C<j2>{}) - operator()(
+                                                                                 C<i1>{}, C<j2>{}
+                                                                             ) * operator()(C<i2>{}, C<j1>{});
+      };
+
+      auto cof_00 = cof(c0, c0);
+      auto cof_10 = cof(c1, c0);
+      auto cof_20 = cof(c2, c0);
+      auto det = cof_00 * operator()(c0, c0) + (cof_10 * operator()(c1, c0) + cof_20 * operator()(c2, c0));
+      auto det_inv = C<static_cast<T>(1)>{} / det;
+      return arietta::Mat{
+          arietta::Mat{cof_00 * det_inv, cof(c0, c1) * det_inv, cof(c0, c2) * det_inv},
+          arietta::Mat{cof_10 * det_inv, cof(c1, c1) * det_inv, cof(c1, c2) * det_inv},
+          arietta::Mat{cof_20 * det_inv, cof(c2, c1) * det_inv, cof(c2, c2) * det_inv}
+      };
+    } else if constexpr (rows() == 4) {
+      auto det3 = [&]<auto i, auto j, auto k, auto l, auto m, auto n>(C<i>, C<j>, C<k>, C<l>, C<m>, C<n>) constexpr {
+        return operator()(C<i>{}, C<l>{}) *
+               (operator()(C<j>{}, C<m>{}) * operator()(C<k>{}, C<n>{}) - operator()(
+                                                                              C<j>{}, C<n>{}
+                                                                          ) * operator()(C<k>{}, C<m>{}));
+      };
+      auto cof = [&]<auto i, auto j>(C<i>, C<j>) constexpr {
+        constexpr auto i1 = (i + 1) % 4, i2 = (i + 2) % 4, i3 = (i + 3) % 4;
+        constexpr auto j1 = (j + 1) % 4, j2 = (j + 2) % 4, j3 = (j + 3) % 4;
+        auto minor = det3(C<i1>{}, C<i2>{}, C<i3>{}, C<j1>{}, C<j2>{}, C<j3>{}) +
+                     det3(C<i2>{}, C<i3>{}, C<i1>{}, C<j1>{}, C<j2>{}, C<j3>{}) +
+                     det3(C<i3>{}, C<i1>{}, C<i2>{}, C<j1>{}, C<j2>{}, C<j3>{});
+        if constexpr ((i + j) % 2 == 0)
+          return minor;
+        else
+          return -minor;
+      };
+
+      auto adj = arietta::Mat{
+          arietta::Mat{cof(c0, c0), cof(c0, c1), cof(c0, c2), cof(c0, c3)},
+          arietta::Mat{cof(c1, c0), cof(c1, c1), cof(c1, c2), cof(c1, c3)},
+          arietta::Mat{cof(c2, c0), cof(c2, c1), cof(c2, c2), cof(c2, c3)},
+          arietta::Mat{cof(c3, c0), cof(c3, c1), cof(c3, c2), cof(c3, c3)}
+      };
+      auto det = (operator()(c0, c0) * adj(c0, c0) + operator()(c1, c0) * adj(c0, c1)) +
+                 (operator()(c2, c0) * adj(c0, c2) + operator()(c3, c0) * adj(c0, c3));
+      // TODO: Eigen uses `/ det` for 4x4 matrices; it is unclear whether this is a numerical tradeoff.
+      return adj / det;
+    }
+
+    // TODO: Implement the inverse for `rows() > 4` using LU decomposition with partial pivoting.
+  }
 };
 
 //
