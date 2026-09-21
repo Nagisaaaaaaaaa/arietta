@@ -429,6 +429,22 @@ public:
     return operator()<tag>(row, i0);
   }
 
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto data() const {
+    static_assert(
+        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
+        "Data access is only available for fully stored matrices"
+    );
+    return storage().data();
+  }
+
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto data() {
+    static_assert(
+        is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
+        "Data access is only available for fully stored matrices"
+    );
+    return storage().data();
+  }
+
 private:
   template <usize row, usize col>
   using Constant = typename Constants::template At<col>::template At<row>;
