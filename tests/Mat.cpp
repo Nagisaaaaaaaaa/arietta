@@ -453,12 +453,20 @@ suite<"Mat"> _ = [] {
       static_assert(sizeof(Mat<T, 1, 1, Types<Types<VO>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 1, 1, Types<Types<C0>>, Token>) == 1);
       static_assert(is::Empty<Mat<T, 1, 1, Types<Types<C0>>, Token>>);
+      static_assert(is::Same<decltype(std::declval<Mat<T, 1, 1, Types<Types<VO>>, Token>>().data()), T *>);
+      static_assert(is::Same<decltype(std::declval<Mat<T, 1, 1, Types<Types<VO>>, Token> const>().data()), T const *>);
+      //! Should not compile.
+      // static_assert(is::Same<decltype(std::declval<Mat<T, 1, 1, Types<Types<C0>>, Token>>().data()), T *>);
 
       static_assert(sizeof(Mat<T, 2, 1, Types<Types<VO, VO>>, Token>) == 2 * sizeof(T));
       static_assert(sizeof(Mat<T, 2, 1, Types<Types<C0, VO>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 2, 1, Types<Types<VO, C1>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 2, 1, Types<Types<C0, C1>>, Token>) == 1);
       static_assert(is::Empty<Mat<T, 2, 1, Types<Types<C0, C1>>, Token>>);
+      static_assert(is::Same<decltype(std::declval<Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>().data()), T *>);
+      static_assert(
+          is::Same<decltype(std::declval<Mat<T, 2, 1, Types<Types<VO, VO>>, Token> const>().data()), T const *>
+      );
 
       static_assert(sizeof(Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>) == 3 * sizeof(T));
       static_assert(sizeof(Mat<T, 3, 1, Types<Types<C0, VO, VO>>, Token>) == 2 * sizeof(T));
@@ -469,12 +477,20 @@ suite<"Mat"> _ = [] {
       static_assert(sizeof(Mat<T, 3, 1, Types<Types<VO, C1, C2>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 3, 1, Types<Types<C0, C1, C2>>, Token>) == 1);
       static_assert(is::Empty<Mat<T, 3, 1, Types<Types<C0, C1, C2>>, Token>>);
+      static_assert(is::Same<decltype(std::declval<Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>>().data()), T *>);
+      static_assert(
+          is::Same<decltype(std::declval<Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token> const>().data()), T const *>
+      );
 
       static_assert(sizeof(Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token>) == 2 * sizeof(T));
       static_assert(sizeof(Mat<T, 1, 2, Types<Types<C0>, Types<VO>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 1, 2, Types<Types<VO>, Types<C1>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 1, 2, Types<Types<C0>, Types<C1>>, Token>) == 1);
       static_assert(is::Empty<Mat<T, 1, 2, Types<Types<C0>, Types<C1>>, Token>>);
+      static_assert(is::Same<decltype(std::declval<Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token>>().data()), T *>);
+      static_assert(
+          is::Same<decltype(std::declval<Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token> const>().data()), T const *>
+      );
 
       static_assert(sizeof(Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>) == 3 * sizeof(T));
       static_assert(sizeof(Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token>) == 2 * sizeof(T));
@@ -485,6 +501,12 @@ suite<"Mat"> _ = [] {
       static_assert(sizeof(Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>) == 1);
       static_assert(is::Empty<Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>>);
+      static_assert(
+          is::Same<decltype(std::declval<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>>().data()), T *>
+      );
+      static_assert(is::Same<
+                    decltype(std::declval<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token> const>().data()),
+                    T const *>);
 
       static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>) == 4 * sizeof(T));
       static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, VO>>, Token>) == 3 * sizeof(T));
@@ -503,6 +525,12 @@ suite<"Mat"> _ = [] {
       static_assert(sizeof(Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, C3>>, Token>) == 1 * sizeof(T));
       static_assert(sizeof(Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token>) == 1);
       static_assert(is::Empty<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token>>);
+      static_assert(
+          is::Same<decltype(std::declval<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>().data()), T *>
+      );
+      static_assert(is::Same<
+                    decltype(std::declval<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token> const>().data()),
+                    T const *>);
     });
   };
 
