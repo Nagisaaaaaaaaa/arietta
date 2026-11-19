@@ -177,9 +177,9 @@ struct Param;
 // CRTP base providing `rows()` and `cols()` for `Param`.
 template <typename Derived>
 struct ParamBase {
-  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto rows() { return Derived::Constants::template At<0>::Size(); }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto rows() { return Derived::Constants::template At<0>::size(); }
 
-  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto cols() { return Derived::Constants::Size(); }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto cols() { return Derived::Constants::size(); }
 };
 
 template <typename T>
@@ -272,8 +272,8 @@ struct Deduce<T0, Ts...> : DeduceImpl<Param<std::decay_t<T0>>, Param<std::decay_
   using value_type = Base::value_type;
   using Constants = Base::Constants;
 
-  static constexpr uctp rows = Constants::template At<0>::Size();
-  static constexpr uctp cols = Constants::Size();
+  static constexpr uctp rows = Constants::template At<0>::size();
+  static constexpr uctp cols = Constants::size();
 #if 0 // TODO: Bypass NVCC bugs.
   static constexpr Token token{};
 #else

@@ -10,14 +10,14 @@
 /// \code
 /// ARIETTA_EXPR(Vector<>::PushBack<i32>());
 /// ARIETTA_EXPR(Vector<>::PushBack<i64>());
-/// static_assert(Vector<>::Size() == 2);
+/// static_assert(Vector<>::size() == 2);
 /// static_assert(is::Same<Vector<>::At<0>, i32>);
 /// static_assert(is::Same<Vector<>::At<1>, i64>);
 /// static_assert(is::Same<Vector<>::Back<>, i64>);
 ///
 /// ARIETTA_EXPR(Vector<T>::PushBack<f32>());
 /// ARIETTA_EXPR(Vector<T>::PushBack<f64>());
-/// static_assert(Vector<T>::Size() == 2);
+/// static_assert(Vector<T>::size() == 2);
 /// static_assert(is::Same<Vector<T>::At<0>, f32>);
 /// static_assert(is::Same<Vector<T>::At<1>, f64>);
 /// static_assert(is::Same<Vector<T>::Back<>, f64>);
@@ -52,7 +52,7 @@ struct C {};
 template <typename _ = detail::vector::Default, typename T = detail::vector::Anon<_>>
 struct Vector {
   template <auto tag = []() {}>
-  [[nodiscard]] static consteval auto Size() {
+  [[nodiscard]] static consteval auto size() {
     return Index<T>::Load();
   }
 
@@ -66,8 +66,8 @@ struct Vector {
   using At = typename Map<T>::template At<detail::vector::C<i>>;
 
   template <auto tag = []() {}>
-    requires(Size<tag>() > 0)
-  using Back = At<Size<tag>() - 1>;
+    requires(size<tag>() > 0)
+  using Back = At<size<tag>() - 1>;
 };
 
 } // namespace

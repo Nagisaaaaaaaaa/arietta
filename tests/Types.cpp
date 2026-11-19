@@ -34,13 +34,13 @@ using FillEachCase2 = std::conditional_t<i == 0, i8, std::conditional_t<i == 1 |
 //
 suite<"Types"> _ = [] {
   "Size"_test = [] {
-    static_assert(Ts0::Size() == 0);
-    static_assert(Ts1::Size() == 1);
-    static_assert(Ts2::Size() == 2);
-    static_assert(Ts3::Size() == 3);
-    static_assert(Ts4::Size() == 4);
-    static_assert(Ts5::Size() == 5);
-    static_assert(Ts6::Size() == 6);
+    static_assert(Ts0::size() == 0);
+    static_assert(Ts1::size() == 1);
+    static_assert(Ts2::size() == 2);
+    static_assert(Ts3::size() == 3);
+    static_assert(Ts4::size() == 4);
+    static_assert(Ts5::size() == 5);
+    static_assert(Ts6::size() == 6);
   };
 
   //
@@ -337,7 +337,7 @@ suite<"Types"> _ = [] {
   //
   "For Each"_test = [] {
     auto label = []<typename Ts> {
-      std::array<int, Ts::Size()> vs{};
+      std::array<int, Ts::size()> vs{};
       usize i{};
       ForEach<Ts>([&]<typename T> {
         if constexpr (is::Same<T, i8>)
