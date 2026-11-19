@@ -21,12 +21,12 @@ suite<"Constant"> _ = [] {
     }
 
     static_assert(is::Same<C<1U>::type, C<1U>>);
-    static_assert(is::Same<C<1U>::value_type, unsigned>);
+    static_assert(is::Same<C<1U>::value_type, uint>);
     static_assert(C<1U>::value == 1U);
     static_assert(is::Empty<C<1U>>);
     {
       C<1U> c;
-      constexpr unsigned v = c;
+      constexpr uint v = c;
       static_assert(v == 1U);
     }
 
@@ -257,7 +257,7 @@ suite<"Constant"> _ = [] {
     static_assert(is::C<C<-3.0>>);
 
     static_assert(!is::C<int>);
-    static_assert(!is::C<unsigned>);
+    static_assert(!is::C<uint>);
     static_assert(!is::C<float>);
     static_assert(!is::C<double>);
 
@@ -267,7 +267,7 @@ suite<"Constant"> _ = [] {
     static_assert(!isnot::C<C<-3.0>>);
 
     static_assert(isnot::C<int>);
-    static_assert(isnot::C<unsigned>);
+    static_assert(isnot::C<uint>);
     static_assert(isnot::C<float>);
     static_assert(isnot::C<double>);
   };
@@ -435,11 +435,11 @@ suite<"Constant"> _ = [] {
     {
       std::string s0, s1;
       auto f0 = [&](is::C auto i) {
-        static_assert(is::Same<typename decltype(i)::value_type, unsigned>);
+        static_assert(is::Same<typename decltype(i)::value_type, uint>);
         s0 += std::to_string(static_cast<int>(i));
       };
       auto f1 = [&]<auto i> {
-        static_assert(is::Same<decltype(i), unsigned>);
+        static_assert(is::Same<decltype(i), uint>);
         s1 += std::to_string(static_cast<int>(i));
       };
       ForEach(C<2U>{}, f0), ForEach<2U>(f0), ForEach<C<2U>>(f0);

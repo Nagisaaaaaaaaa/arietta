@@ -235,7 +235,7 @@ suite<"Arietta"> _ = [] {
     // Implicit conversions.
     {
       std::string s;
-      ForEach(0, [&](unsigned i) { s += std::to_string(i); });
+      ForEach(0, [&](uint i) { s += std::to_string(i); });
       expect(s == "");
     }
     {
@@ -256,7 +256,7 @@ suite<"Arietta"> _ = [] {
     {
       std::string s;
       ForEach(3U, [&](auto i) {
-        static_assert(std::is_same_v<decltype(i), unsigned>);
+        static_assert(std::is_same_v<decltype(i), uint>);
         s += std::to_string(i);
       });
       expect(s == "012");
@@ -285,7 +285,7 @@ suite<"Arietta"> _ = [] {
       return v;
     }() == 0 + 1 + 2 + 3 + 4 + 5);
     static_assert([] {
-      unsigned v{};
+      uint v{};
       ForEach(7U, [&](auto i) { v += i; });
       return v;
     }() == 0U + 1U + 2U + 3U + 4U + 5U + 6U);
