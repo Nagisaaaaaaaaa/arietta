@@ -58,11 +58,11 @@ struct Vector {
 
   template <typename Value, auto tag = []() {}>
   static consteval auto PushBack() {
-    constexpr usize i = Index<T>::FetchAdd();
+    constexpr uctp i = Index<T>::FetchAdd();
     return Map<T>::template Insert<detail::vector::C<i>, Value>();
   }
 
-  template <usize i>
+  template <uctp i>
   using At = typename Map<T>::template At<detail::vector::C<i>>;
 
   template <auto tag = []() {}>
