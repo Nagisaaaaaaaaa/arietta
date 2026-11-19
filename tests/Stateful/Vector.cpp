@@ -10,30 +10,30 @@ namespace {
 
 template <typename T>
 void ImplicitInstantiationByFunction() {
-  static_assert(Vector<T>::Size() == 0);
-  static_assert(Vector<T>::Size() == 0);
+  static_assert(Vector<T>::size() == 0);
+  static_assert(Vector<T>::size() == 0);
   // static_assert(!is::Same<typename Vector<T>::template Back<>, int>); //! Should not compile.
   static_assert(Vector<T>::template PushBack<int>());
-  static_assert(Vector<T>::Size() == 1);
-  static_assert(Vector<T>::Size() == 1);
+  static_assert(Vector<T>::size() == 1);
+  static_assert(Vector<T>::size() == 1);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template Back<>, int>);
   static_assert(Vector<T>::template PushBack<T>());
-  static_assert(Vector<T>::Size() == 2);
-  static_assert(Vector<T>::Size() == 2);
+  static_assert(Vector<T>::size() == 2);
+  static_assert(Vector<T>::size() == 2);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template At<1>, T>);
   static_assert(is::Same<typename Vector<T>::template Back<>, T>);
   ARIETTA_EXPR(Vector<T>::template PushBack<T>());
-  static_assert(Vector<T>::Size() == 3);
-  static_assert(Vector<T>::Size() == 3);
+  static_assert(Vector<T>::size() == 3);
+  static_assert(Vector<T>::size() == 3);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template At<1>, T>);
   static_assert(is::Same<typename Vector<T>::template At<2>, T>);
   static_assert(is::Same<typename Vector<T>::template Back<>, T>);
   ARIETTA_EXPR(Vector<T>::template PushBack<int>());
-  static_assert(Vector<T>::Size() == 4);
-  static_assert(Vector<T>::Size() == 4);
+  static_assert(Vector<T>::size() == 4);
+  static_assert(Vector<T>::size() == 4);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template At<1>, T>);
   static_assert(is::Same<typename Vector<T>::template At<2>, T>);
@@ -43,30 +43,30 @@ void ImplicitInstantiationByFunction() {
 
 template <typename T>
 class ImplicitInstantiationByClass {
-  static_assert(Vector<T>::Size() == 0);
-  static_assert(Vector<T>::Size() == 0);
+  static_assert(Vector<T>::size() == 0);
+  static_assert(Vector<T>::size() == 0);
   // static_assert(!is::Same<typename Vector<T>::template Back<>, int>); //! Should not compile.
   static_assert(Vector<T>::template PushBack<int>());
-  static_assert(Vector<T>::Size() == 1);
-  static_assert(Vector<T>::Size() == 1);
+  static_assert(Vector<T>::size() == 1);
+  static_assert(Vector<T>::size() == 1);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template Back<>, int>);
   static_assert(Vector<T>::template PushBack<T>());
-  static_assert(Vector<T>::Size() == 2);
-  static_assert(Vector<T>::Size() == 2);
+  static_assert(Vector<T>::size() == 2);
+  static_assert(Vector<T>::size() == 2);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template At<1>, T>);
   static_assert(is::Same<typename Vector<T>::template Back<>, T>);
   ARIETTA_EXPR(Vector<T>::template PushBack<T>());
-  static_assert(Vector<T>::Size() == 3);
-  static_assert(Vector<T>::Size() == 3);
+  static_assert(Vector<T>::size() == 3);
+  static_assert(Vector<T>::size() == 3);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template At<1>, T>);
   static_assert(is::Same<typename Vector<T>::template At<2>, T>);
   static_assert(is::Same<typename Vector<T>::template Back<>, T>);
   ARIETTA_EXPR(Vector<T>::template PushBack<int>());
-  static_assert(Vector<T>::Size() == 4);
-  static_assert(Vector<T>::Size() == 4);
+  static_assert(Vector<T>::size() == 4);
+  static_assert(Vector<T>::size() == 4);
   static_assert(is::Same<typename Vector<T>::template At<0>, int>);
   static_assert(is::Same<typename Vector<T>::template At<1>, T>);
   static_assert(is::Same<typename Vector<T>::template At<2>, T>);
@@ -81,19 +81,19 @@ class ImplicitInstantiationByClass {
 //
 suite<"Vector"> _ = [] {
   "Explicit"_test = [] {
-    static_assert(Vector<>::Size() == 0);
-    static_assert(Vector<>::Size() == 0);
-    static_assert(Vector<int>::Size() == 0);
-    static_assert(Vector<int>::Size() == 0);
+    static_assert(Vector<>::size() == 0);
+    static_assert(Vector<>::size() == 0);
+    static_assert(Vector<int>::size() == 0);
+    static_assert(Vector<int>::size() == 0);
     // static_assert(!is::Same<Vector<>::Back<>, int>);     //! Should not compile.
     // static_assert(!is::Same<Vector<int>::Back<>, uint>); //! Should not compile.
 
     Vector<>::PushBack<int>();
     Vector<int>::PushBack<uint>();
-    static_assert(Vector<>::Size() == 1);
-    static_assert(Vector<>::Size() == 1);
-    static_assert(Vector<int>::Size() == 1);
-    static_assert(Vector<int>::Size() == 1);
+    static_assert(Vector<>::size() == 1);
+    static_assert(Vector<>::size() == 1);
+    static_assert(Vector<int>::size() == 1);
+    static_assert(Vector<int>::size() == 1);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::Back<>, int>);
     static_assert(is::Same<Vector<int>::At<0>, uint>);
@@ -101,10 +101,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<float>();
     Vector<int>::PushBack<double>();
-    static_assert(Vector<>::Size() == 2);
-    static_assert(Vector<>::Size() == 2);
-    static_assert(Vector<int>::Size() == 2);
-    static_assert(Vector<int>::Size() == 2);
+    static_assert(Vector<>::size() == 2);
+    static_assert(Vector<>::size() == 2);
+    static_assert(Vector<int>::size() == 2);
+    static_assert(Vector<int>::size() == 2);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::Back<>, float>);
@@ -114,10 +114,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<float>();
     Vector<int>::PushBack<double>();
-    static_assert(Vector<>::Size() == 3);
-    static_assert(Vector<>::Size() == 3);
-    static_assert(Vector<int>::Size() == 3);
-    static_assert(Vector<int>::Size() == 3);
+    static_assert(Vector<>::size() == 3);
+    static_assert(Vector<>::size() == 3);
+    static_assert(Vector<int>::size() == 3);
+    static_assert(Vector<int>::size() == 3);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
@@ -129,10 +129,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<std::string>();
     Vector<int>::PushBack<std::string_view>();
-    static_assert(Vector<>::Size() == 4);
-    static_assert(Vector<>::Size() == 4);
-    static_assert(Vector<int>::Size() == 4);
-    static_assert(Vector<int>::Size() == 4);
+    static_assert(Vector<>::size() == 4);
+    static_assert(Vector<>::size() == 4);
+    static_assert(Vector<int>::size() == 4);
+    static_assert(Vector<int>::size() == 4);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
@@ -146,10 +146,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<std::string>();
     Vector<int>::PushBack<std::string_view>();
-    static_assert(Vector<>::Size() == 5);
-    static_assert(Vector<>::Size() == 5);
-    static_assert(Vector<int>::Size() == 5);
-    static_assert(Vector<int>::Size() == 5);
+    static_assert(Vector<>::size() == 5);
+    static_assert(Vector<>::size() == 5);
+    static_assert(Vector<int>::size() == 5);
+    static_assert(Vector<int>::size() == 5);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
@@ -165,10 +165,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<std::string>();
     Vector<int>::PushBack<std::string>();
-    static_assert(Vector<>::Size() == 6);
-    static_assert(Vector<>::Size() == 6);
-    static_assert(Vector<int>::Size() == 6);
-    static_assert(Vector<int>::Size() == 6);
+    static_assert(Vector<>::size() == 6);
+    static_assert(Vector<>::size() == 6);
+    static_assert(Vector<int>::size() == 6);
+    static_assert(Vector<int>::size() == 6);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
@@ -186,10 +186,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<float>();
     Vector<int>::PushBack<float>();
-    static_assert(Vector<>::Size() == 7);
-    static_assert(Vector<>::Size() == 7);
-    static_assert(Vector<int>::Size() == 7);
-    static_assert(Vector<int>::Size() == 7);
+    static_assert(Vector<>::size() == 7);
+    static_assert(Vector<>::size() == 7);
+    static_assert(Vector<int>::size() == 7);
+    static_assert(Vector<int>::size() == 7);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
@@ -209,10 +209,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<int>();
     Vector<int>::PushBack<uint>();
-    static_assert(Vector<>::Size() == 8);
-    static_assert(Vector<>::Size() == 8);
-    static_assert(Vector<int>::Size() == 8);
-    static_assert(Vector<int>::Size() == 8);
+    static_assert(Vector<>::size() == 8);
+    static_assert(Vector<>::size() == 8);
+    static_assert(Vector<int>::size() == 8);
+    static_assert(Vector<int>::size() == 8);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
@@ -234,10 +234,10 @@ suite<"Vector"> _ = [] {
 
     Vector<>::PushBack<int>();
     Vector<int>::PushBack<int>();
-    static_assert(Vector<>::Size() == 9);
-    static_assert(Vector<>::Size() == 9);
-    static_assert(Vector<int>::Size() == 9);
-    static_assert(Vector<int>::Size() == 9);
+    static_assert(Vector<>::size() == 9);
+    static_assert(Vector<>::size() == 9);
+    static_assert(Vector<int>::size() == 9);
+    static_assert(Vector<int>::size() == 9);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
@@ -265,30 +265,30 @@ suite<"Vector"> _ = [] {
   //
   "Implicit"_test = [] {
     auto implicitInstantiationByLambda = []<typename T> {
-      static_assert(Vector<T>::Size() == 0);
-      static_assert(Vector<T>::Size() == 0);
+      static_assert(Vector<T>::size() == 0);
+      static_assert(Vector<T>::size() == 0);
       // static_assert(!is::Same<typename Vector<T>::template Back<>, int>); //! Should not compile.
       static_assert(Vector<T>::template PushBack<int>());
-      static_assert(Vector<T>::Size() == 1);
-      static_assert(Vector<T>::Size() == 1);
+      static_assert(Vector<T>::size() == 1);
+      static_assert(Vector<T>::size() == 1);
       static_assert(is::Same<typename Vector<T>::template At<0>, int>);
       static_assert(is::Same<typename Vector<T>::template Back<>, int>);
       static_assert(Vector<T>::template PushBack<T>());
-      static_assert(Vector<T>::Size() == 2);
-      static_assert(Vector<T>::Size() == 2);
+      static_assert(Vector<T>::size() == 2);
+      static_assert(Vector<T>::size() == 2);
       static_assert(is::Same<typename Vector<T>::template At<0>, int>);
       static_assert(is::Same<typename Vector<T>::template At<1>, T>);
       static_assert(is::Same<typename Vector<T>::template Back<>, T>);
       ARIETTA_EXPR(Vector<T>::template PushBack<T>());
-      static_assert(Vector<T>::Size() == 3);
-      static_assert(Vector<T>::Size() == 3);
+      static_assert(Vector<T>::size() == 3);
+      static_assert(Vector<T>::size() == 3);
       static_assert(is::Same<typename Vector<T>::template At<0>, int>);
       static_assert(is::Same<typename Vector<T>::template At<1>, T>);
       static_assert(is::Same<typename Vector<T>::template At<2>, T>);
       static_assert(is::Same<typename Vector<T>::template Back<>, T>);
       ARIETTA_EXPR(Vector<T>::template PushBack<int>());
-      static_assert(Vector<T>::Size() == 4);
-      static_assert(Vector<T>::Size() == 4);
+      static_assert(Vector<T>::size() == 4);
+      static_assert(Vector<T>::size() == 4);
       static_assert(is::Same<typename Vector<T>::template At<0>, int>);
       static_assert(is::Same<typename Vector<T>::template At<1>, T>);
       static_assert(is::Same<typename Vector<T>::template At<2>, T>);

@@ -177,9 +177,9 @@ struct Param;
 // CRTP base providing `rows()` and `cols()` for `Param`.
 template <typename Derived>
 struct ParamBase {
-  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto rows() { return Derived::Constants::template At<0>::Size(); }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto rows() { return Derived::Constants::template At<0>::size(); }
 
-  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto cols() { return Derived::Constants::Size(); }
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto cols() { return Derived::Constants::size(); }
 };
 
 template <typename T>
@@ -272,8 +272,8 @@ struct Deduce<T0, Ts...> : DeduceImpl<Param<std::decay_t<T0>>, Param<std::decay_
   using value_type = Base::value_type;
   using Constants = Base::Constants;
 
-  static constexpr uctp rows = Constants::template At<0>::Size();
-  static constexpr uctp cols = Constants::Size();
+  static constexpr uctp rows = Constants::template At<0>::size();
+  static constexpr uctp cols = Constants::size();
 #if 0 // TODO: Bypass NVCC bugs.
   static constexpr Token token{};
 #else
@@ -478,9 +478,9 @@ public:
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Dot(M const &m) const {
     static_assert(rows() == M::rows(), "Dot product is only defined for column vectors with the same dimension");
 
-    return [&]<uctp... row>(std::index_sequence<row...>) constexpr {
+    return [&]<uctp... row>(std::integer_sequence<uctp, row...>) constexpr {
       return ((operator()(C<row>{}) * m(C<row>{})) + ...);
-    }(std::make_index_sequence<rows()>{});
+    }(std::make_integer_sequence<uctp, rows()>{});
   }
 
   template <is::Mat M>
@@ -504,13 +504,13 @@ public:
   }
 
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Transpose() const {
-    auto transposePerCol = [&]<uctp col, uctp... row>(C<col>, std::index_sequence<row...>) constexpr {
+    auto transposePerCol = [&]<uctp col, uctp... row>(C<col>, std::integer_sequence<uctp, row...>) constexpr {
       return arietta::Mat{operator()(C<col>{}, C<row>{})...};
     };
 
-    return [&]<uctp... col>(std::index_sequence<col...>) constexpr {
-      return arietta::Mat{transposePerCol(C<col>{}, std::make_index_sequence<cols()>{})...};
-    }(std::make_index_sequence<rows()>{});
+    return [&]<uctp... col>(std::integer_sequence<uctp, col...>) constexpr {
+      return arietta::Mat{transposePerCol(C<col>{}, std::make_integer_sequence<uctp, cols()>{})...};
+    }(std::make_integer_sequence<uctp, rows()>{});
   }
 
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Determinant() const {
@@ -694,25 +694,25 @@ namespace detail::mat {
 
 //! `M` is assumed to satisfy `is::Mat`.
 template <auto op, uctp col, typename M, uctp... row>
-[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImplPerCol(M const &m, std::integer_sequence<uctp, row...>) {
   return Mat{op(m(C<row>{}, C<col>{}))...};
 }
 
 template <auto op, typename M, uctp... col>
-[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImpl(M const &m, std::index_sequence<col...>) {
-  return Mat{OpUnaryImplPerCol<op, col>(m, std::make_index_sequence<M::rows()>{})...};
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImpl(M const &m, std::integer_sequence<uctp, col...>) {
+  return Mat{OpUnaryImplPerCol<op, col>(m, std::make_integer_sequence<uctp, M::rows()>{})...};
 }
 
 template <auto op, typename M>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnary(M const &m) {
-  return OpUnaryImpl<op>(m, std::make_index_sequence<M::cols()>{});
+  return OpUnaryImpl<op>(m, std::make_integer_sequence<uctp, M::cols()>{});
 }
 
 //! If both `Lhs` and `Rhs` satisfy `is::Mat`, they are assumed to have the same rows and columns,
 //! which are already passed as template parameters.
 template <auto op, uctp col, typename Lhs, typename Rhs, uctp... row>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
-OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
+OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, row...>) {
   if constexpr (is::Mat<Lhs> && is::Mat<Rhs>)
     return Mat{op(lhs(C<row>{}, C<col>{}), rhs(C<row>{}, C<col>{}))...};
   else if constexpr (!is::Mat<Lhs> && is::Mat<Rhs>)
@@ -723,31 +723,32 @@ OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) 
 
 template <auto op, uctp rows, typename Lhs, typename Rhs, uctp... col>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
-OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
-  return Mat{OpBinaryImplPerCol<op, col>(lhs, rhs, std::make_index_sequence<rows>{})...};
+OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, col...>) {
+  return Mat{OpBinaryImplPerCol<op, col>(lhs, rhs, std::make_integer_sequence<uctp, rows>{})...};
 }
 
 template <auto op, uctp rows, uctp cols, typename Lhs, typename Rhs>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpBinary(Lhs const &lhs, Rhs const &rhs) {
-  return OpBinaryImpl<op, rows>(lhs, rhs, std::make_index_sequence<cols>{});
+  return OpBinaryImpl<op, rows>(lhs, rhs, std::make_integer_sequence<uctp, cols>{});
 }
 
 //! `Lhs` and `Rhs` are assumed to satisfy `is::Mat` and `Lhs::cols() == Rhs::rows()`.
 template <uctp row, uctp col, typename Lhs, typename Rhs, uctp... i>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
-MulImplPerElement(Lhs const &lhs, Rhs const &rhs, std::index_sequence<i...>) {
+MulImplPerElement(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, i...>) {
   return ((lhs(C<row>{}, C<i>{}) * rhs(C<i>{}, C<col>{})) + ...);
 }
 
 template <uctp col, typename Lhs, typename Rhs, uctp... row>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
-MulImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
-  return Mat{MulImplPerElement<row, col>(lhs, rhs, std::make_index_sequence<Lhs::cols()>{})...};
+MulImplPerCol(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, row...>) {
+  return Mat{MulImplPerElement<row, col>(lhs, rhs, std::make_integer_sequence<uctp, Lhs::cols()>{})...};
 }
 
 template <typename Lhs, typename Rhs, uctp... col>
-[[nodiscard]] ARIETTA_SPECIFIER constexpr auto MulImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
-  return Mat{MulImplPerCol<col>(lhs, rhs, std::make_index_sequence<Lhs::rows()>{})...};
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto
+MulImpl(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, col...>) {
+  return Mat{MulImplPerCol<col>(lhs, rhs, std::make_integer_sequence<uctp, Lhs::rows()>{})...};
 }
 
 } // namespace detail::mat
@@ -817,7 +818,7 @@ template <is::Mat Lhs, is::Mat Rhs>
   static_assert(
       Lhs::cols() == Rhs::rows(), "Matrix multiplication requires the left column count to equal the right row count"
   );
-  return detail::mat::MulImpl(lhs, rhs, std::make_index_sequence<Rhs::cols()>{});
+  return detail::mat::MulImpl(lhs, rhs, std::make_integer_sequence<uctp, Rhs::cols()>{});
 }
 
 template <is::Mat Lhs, isnot::Mat Rhs>

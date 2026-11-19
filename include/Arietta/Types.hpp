@@ -212,7 +212,7 @@ struct FillEachImpl {
 //
 template <typename... Ts>
 struct TypesBase {
-  [[nodiscard]] static consteval uctp Size() { return sizeof...(Ts); }
+  [[nodiscard]] static consteval uctp size() { return sizeof...(Ts); }
 
 #if 0
   template <uctp i>
@@ -298,7 +298,7 @@ concept Types = !is::Types<T>;
 //
 template <is::Types Ts, typename F>
 ARIETTA_SPECIFIER constexpr void ForEach(F &&f) {
-  ForEach<Ts::Size()>([&]<auto i>() {
+  ForEach<Ts::size()>([&]<auto i>() {
     using T = typename Ts::template At<i>;
     static_assert(is::Void<decltype(f.template operator()<T>())>, "Function must have void return type");
     f.template operator()<T>();
