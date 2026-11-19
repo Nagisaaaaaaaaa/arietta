@@ -85,19 +85,19 @@ suite<"Vector"> _ = [] {
     static_assert(Vector<>::Size() == 0);
     static_assert(Vector<int>::Size() == 0);
     static_assert(Vector<int>::Size() == 0);
-    // static_assert(!is::Same<Vector<>::Back<>, int>);         //! Should not compile.
-    // static_assert(!is::Same<Vector<int>::Back<>, unsigned>); //! Should not compile.
+    // static_assert(!is::Same<Vector<>::Back<>, int>);     //! Should not compile.
+    // static_assert(!is::Same<Vector<int>::Back<>, uint>); //! Should not compile.
 
     Vector<>::PushBack<int>();
-    Vector<int>::PushBack<unsigned>();
+    Vector<int>::PushBack<uint>();
     static_assert(Vector<>::Size() == 1);
     static_assert(Vector<>::Size() == 1);
     static_assert(Vector<int>::Size() == 1);
     static_assert(Vector<int>::Size() == 1);
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::Back<>, int>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
-    static_assert(is::Same<Vector<int>::Back<>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
+    static_assert(is::Same<Vector<int>::Back<>, uint>);
 
     Vector<>::PushBack<float>();
     Vector<int>::PushBack<double>();
@@ -108,7 +108,7 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<0>, int>);
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::Back<>, float>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::Back<>, double>);
 
@@ -122,7 +122,7 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<1>, float>);
     static_assert(is::Same<Vector<>::At<2>, float>);
     static_assert(is::Same<Vector<>::Back<>, float>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::At<2>, double>);
     static_assert(is::Same<Vector<int>::Back<>, double>);
@@ -138,7 +138,7 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<2>, float>);
     static_assert(is::Same<Vector<>::At<3>, std::string>);
     static_assert(is::Same<Vector<>::Back<>, std::string>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::At<2>, double>);
     static_assert(is::Same<Vector<int>::At<3>, std::string_view>);
@@ -156,7 +156,7 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<3>, std::string>);
     static_assert(is::Same<Vector<>::At<4>, std::string>);
     static_assert(is::Same<Vector<>::Back<>, std::string>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::At<2>, double>);
     static_assert(is::Same<Vector<int>::At<3>, std::string_view>);
@@ -176,7 +176,7 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<4>, std::string>);
     static_assert(is::Same<Vector<>::At<5>, std::string>);
     static_assert(is::Same<Vector<>::Back<>, std::string>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::At<2>, double>);
     static_assert(is::Same<Vector<int>::At<3>, std::string_view>);
@@ -198,7 +198,7 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<5>, std::string>);
     static_assert(is::Same<Vector<>::At<6>, float>);
     static_assert(is::Same<Vector<>::Back<>, float>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::At<2>, double>);
     static_assert(is::Same<Vector<int>::At<3>, std::string_view>);
@@ -208,7 +208,7 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<int>::Back<>, float>);
 
     Vector<>::PushBack<int>();
-    Vector<int>::PushBack<unsigned>();
+    Vector<int>::PushBack<uint>();
     static_assert(Vector<>::Size() == 8);
     static_assert(Vector<>::Size() == 8);
     static_assert(Vector<int>::Size() == 8);
@@ -222,15 +222,15 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<6>, float>);
     static_assert(is::Same<Vector<>::At<7>, int>);
     static_assert(is::Same<Vector<>::Back<>, int>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::At<2>, double>);
     static_assert(is::Same<Vector<int>::At<3>, std::string_view>);
     static_assert(is::Same<Vector<int>::At<4>, std::string_view>);
     static_assert(is::Same<Vector<int>::At<5>, std::string>);
     static_assert(is::Same<Vector<int>::At<6>, float>);
-    static_assert(is::Same<Vector<int>::At<7>, unsigned>);
-    static_assert(is::Same<Vector<int>::Back<>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<7>, uint>);
+    static_assert(is::Same<Vector<int>::Back<>, uint>);
 
     Vector<>::PushBack<int>();
     Vector<int>::PushBack<int>();
@@ -248,14 +248,14 @@ suite<"Vector"> _ = [] {
     static_assert(is::Same<Vector<>::At<7>, int>);
     static_assert(is::Same<Vector<>::At<8>, int>);
     static_assert(is::Same<Vector<>::Back<>, int>);
-    static_assert(is::Same<Vector<int>::At<0>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<0>, uint>);
     static_assert(is::Same<Vector<int>::At<1>, double>);
     static_assert(is::Same<Vector<int>::At<2>, double>);
     static_assert(is::Same<Vector<int>::At<3>, std::string_view>);
     static_assert(is::Same<Vector<int>::At<4>, std::string_view>);
     static_assert(is::Same<Vector<int>::At<5>, std::string>);
     static_assert(is::Same<Vector<int>::At<6>, float>);
-    static_assert(is::Same<Vector<int>::At<7>, unsigned>);
+    static_assert(is::Same<Vector<int>::At<7>, uint>);
     static_assert(is::Same<Vector<int>::At<8>, int>);
     static_assert(is::Same<Vector<int>::Back<>, int>);
   };
