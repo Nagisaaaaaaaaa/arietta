@@ -445,6 +445,9 @@ public:
     return storage().data();
   }
 
+  //
+  //
+  //
 private:
   template <uctp row, uctp col>
   using Constant = typename Constants::template At<col>::template At<row>;
@@ -470,10 +473,38 @@ private:
     return res;
   }
 
+  template <typename U>
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto CastImpl() const {
+    auto castPerElement = [&]<uctp row, uctp col>(C<row> r, C<col> c) {
+      if constexpr (is::Same<Constant<row, col>, void>)
+        return static_cast<U>(operator()(r, c));
+      else
+        return Constant<row, col>::template Cast<U>();
+    };
+    auto castPerCol = [&]<uctp col, uctp... row>(C<col> c, std::integer_sequence<uctp, row...>) {
+      return arietta::Mat{castPerElement(C<row>{}, c)...};
+    };
+    return [&]<uctp... col>(std::integer_sequence<uctp, col...>) {
+      return arietta::Mat{castPerCol(C<col>{}, std::make_integer_sequence<uctp, rows()>{})...};
+    }(std::make_integer_sequence<uctp, cols()>{});
+  }
+
   //
   //
   //
 public:
+  template <typename U>
+    requires is::Void<decltype(std::declval<Mat>().storage())>
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr auto Cast() {
+    return Mat{}.template CastImpl<U>();
+  }
+
+  template <typename U>
+    requires isnot::Void<decltype(std::declval<Mat>().storage())>
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Cast() const {
+    return CastImpl<U>();
+  }
+
   template <is::Mat M>
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Dot(M const &m) const {
     static_assert(rows() == M::rows(), "Dot product is only defined for column vectors with the same dimension");
