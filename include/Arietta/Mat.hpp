@@ -352,7 +352,7 @@ public:
       typename... Us,
       typename D = detail::mat::Deduce<Us...>,
       typename M = Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>>
-    requires(isnot::Same<Mat, M>)
+    requires(isnot::Same<Mat, M> && (is::Same<T, typename D::value_type> || (isnot::Mat<std::decay_t<Us>> && ...)))
   ARIETTA_SPECIFIER constexpr explicit Mat(Us &&...us) {
     M m{std::forward<Us>(us)...};
 
@@ -477,6 +477,8 @@ private:
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto CastImpl() const {
     auto castPerElement = [&]<uctp row, uctp col>(C<row> r, C<col> c) {
       if constexpr (is::Same<Constant<row, col>, void>)
+        // TODO: Unify the casting system.
+        //       Using `static_cast` directly here impose stricter requirements than calling the type's `.Cast` method.
         return static_cast<U>(operator()(r, c));
       else
         return Constant<row, col>::template Cast<U>();

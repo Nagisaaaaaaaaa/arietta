@@ -54,7 +54,11 @@ struct C {
   }
 
   template <typename T>
+#if 0 // TODO: Bypass GCC bugs.
   [[nodiscard]] ARIETTA_SPECIFIER static constexpr C<static_cast<T>(v)> Cast() noexcept {
+#else
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr C<static_cast<T>(value)> Cast() noexcept {
+#endif
     return {};
   }
 };

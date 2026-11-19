@@ -2218,7 +2218,7 @@ suite<"Mat"> _ = [] {
         Mat m_VCC{T(2), C<T(3)>{}, C<T(5)>{}};
         Mat m_CCC{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}};
 
-        auto isCastStatic = []<typename M>(M const &) { return requires { M::template Cast<I>(); }; };
+        auto isCastStatic = []<typename M>(M const &) { return requires { M::template Cast<double>(); }; };
         static_assert(!isCastStatic(m_VVV));
         static_assert(!isCastStatic(m_CVV));
         static_assert(!isCastStatic(m_VCV));
