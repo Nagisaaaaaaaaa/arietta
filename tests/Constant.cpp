@@ -410,6 +410,39 @@ suite<"Constant"> _ = [] {
   //
   //
   //
+  "Methods"_test = [] {
+    // `Cast`.
+    {
+      {
+        C<1> const c0;
+        constexpr C<1.0F> c1 = c0.Cast<float>();
+        C<1.0> const c2 = c1.Cast<double>();
+        constexpr C<1U> c3 = c2.Cast<uint>();
+        static_assert(is::Same<decltype(decltype(c0)::Cast<float>()), C<1.0F>>);
+        static_assert(is::Same<decltype(decltype(c1)::Cast<double>()), C<1.0>>);
+        static_assert(is::Same<decltype(decltype(c2)::Cast<uint>()), C<1U>>);
+        static_assert(is::Same<decltype(c0.Cast<float>()), C<1.0F>>);
+        static_assert(is::Same<decltype(c1.Cast<double>()), C<1.0>>);
+        static_assert(is::Same<decltype(c2.Cast<uint>()), C<1U>>);
+      }
+
+      // Truncations.
+      {
+        C<3.01F> const c0;
+        constexpr C<3U> c1 = c0.Cast<uint>();
+        C<-3.01> const c2;
+        constexpr C<-3> c3 = c2.Cast<int>();
+        static_assert(is::Same<decltype(decltype(c0)::Cast<uint>()), C<3U>>);
+        static_assert(is::Same<decltype(decltype(c2)::Cast<int>()), C<-3>>);
+        static_assert(is::Same<decltype(c0.Cast<uint>()), C<3U>>);
+        static_assert(is::Same<decltype(c2.Cast<int>()), C<-3>>);
+      }
+    }
+  };
+
+  //
+  //
+  //
   "For Each"_test = [] {
     // `auto` type deductions.
     {

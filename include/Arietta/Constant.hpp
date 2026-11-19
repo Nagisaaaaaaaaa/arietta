@@ -52,6 +52,11 @@ struct C {
   ARIETTA_SPECIFIER constexpr C &operator=(C<w>) noexcept {
     return *this;
   }
+
+  template <typename T>
+  [[nodiscard]] ARIETTA_SPECIFIER static constexpr C<static_cast<T>(v)> Cast() noexcept {
+    return {};
+  }
 };
 
 //
