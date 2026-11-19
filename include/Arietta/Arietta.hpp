@@ -31,6 +31,8 @@ namespace arietta {
 //
 // Aliases for fundamental types.
 
+using uint = unsigned int;
+
 using i8 = std::int8_t;
 using u8 = std::uint8_t;
 
@@ -45,6 +47,9 @@ using u64 = std::uint64_t;
 
 using isize = std::ptrdiff_t;
 using usize = std::size_t;
+
+using ictp = int;  // Type used for signed integral constant template parameters (ctp).
+using uctp = uint; // Type used for unsigned integral constant template parameters (ctp).
 
 using f32 = float;
 using f64 = double;
