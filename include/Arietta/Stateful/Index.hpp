@@ -35,19 +35,19 @@ namespace {
 
 namespace detail::index {
 
-template <typename T, usize i>
+template <typename T, uctp i>
 struct Reader {
   friend consteval auto flag(Reader<T, i>);
 };
 
-template <typename T, usize i>
+template <typename T, uctp i>
 struct Setter {
   friend consteval auto flag(Reader<T, i>) {}
 
-  static constexpr usize value = i;
+  static constexpr uctp value = i;
 };
 
-template <typename T, auto tag, usize i = 0>
+template <typename T, auto tag, uctp i = 0>
 [[nodiscard]] consteval auto LoadImpl() {
   if constexpr (requires(Reader<T, i> r) { flag(r); })
     return LoadImpl<T, tag, i + 1>();
@@ -55,7 +55,7 @@ template <typename T, auto tag, usize i = 0>
     return i;
 }
 
-template <typename T, auto tag, usize i = 0>
+template <typename T, auto tag, uctp i = 0>
 [[nodiscard]] consteval auto FetchAddImpl() {
   if constexpr (requires(Reader<T, i> r) { flag(r); }) {
     return FetchAddImpl<T, tag, i + 1>();

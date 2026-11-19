@@ -32,7 +32,7 @@ struct Invalid {};
 //
 //
 #if 0 //! This implementation has O(n) compile-time complexity.
-template <usize i, typename... Ts>
+template <uctp i, typename... Ts>
 struct AtImpl;
 
 template <typename T, typename... Ts>
@@ -40,25 +40,25 @@ struct AtImpl<0, T, Ts...> {
   using type = T;
 };
 
-template <usize i, typename T, typename... Ts>
+template <uctp i, typename T, typename... Ts>
   requires(i > 0)
 struct AtImpl<i, T, Ts...> {
   using type = typename AtImpl<i - 1, Ts...>::type;
 };
 #else //! This implementation has O(1) compile-time complexity.
-template <usize i, typename... Ts>
+template <uctp i, typename... Ts>
 struct AtImpl;
 
-template <usize i>
+template <uctp i>
 struct AtImpl<i> {
-  template <usize j>
+  template <uctp j>
   static consteval auto Type(C<j>) {
     static_assert(j != j, "Index is out of bounds for `Types::At`");
     return Wrapper<Invalid>{};
   }
 };
 
-template <usize i, typename T, typename... Ts>
+template <uctp i, typename T, typename... Ts>
 struct AtImpl<i, T, Ts...> : AtImpl<i + 1, Ts...> {
   using AtImpl<i + 1, Ts...>::Type;
 
@@ -123,7 +123,7 @@ struct PopBackImpl<tag, T, U, Ts...> {
 //
 //
 //
-template <usize i, typename T, typename... Ts>
+template <uctp i, typename T, typename... Ts>
 struct InsertImpl;
 
 template <typename T, typename... Ts>
@@ -131,7 +131,7 @@ struct InsertImpl<0, T, Ts...> {
   using type = Types<T, Ts...>;
 };
 
-template <usize i, typename T, typename U, typename... Ts>
+template <uctp i, typename T, typename U, typename... Ts>
   requires(i > 0)
 struct InsertImpl<i, T, U, Ts...> {
   using type = typename InsertImpl<i - 1, T, Ts...>::type::template PushFront<U>;
@@ -140,7 +140,7 @@ struct InsertImpl<i, T, U, Ts...> {
 //
 //
 //
-template <usize i, typename... Ts>
+template <uctp i, typename... Ts>
 struct EraseImpl;
 
 template <typename T, typename... Ts>
@@ -148,7 +148,7 @@ struct EraseImpl<0, T, Ts...> {
   using type = Types<Ts...>;
 };
 
-template <usize i, typename T, typename... Ts>
+template <uctp i, typename T, typename... Ts>
   requires(i > 0)
 struct EraseImpl<i, T, Ts...> {
   using type = typename EraseImpl<i - 1, Ts...>::type::template PushFront<T>;
@@ -176,7 +176,7 @@ struct RemoveImpl<T, U, Ts...> {
 //
 //
 //
-template <typename T, usize n>
+template <typename T, uctp n>
 struct FillImpl;
 
 template <typename T>
@@ -184,7 +184,7 @@ struct FillImpl<T, 0> {
   using type = Types<>;
 };
 
-template <typename T, usize n>
+template <typename T, uctp n>
 struct FillImpl {
   using type = typename FillImpl<T, n - 1>::type::template PushBack<T>;
 };
@@ -192,15 +192,15 @@ struct FillImpl {
 //
 //
 //
-template <template <usize> typename T, usize n>
+template <template <uctp> typename T, uctp n>
 struct FillEachImpl;
 
-template <template <usize> typename T>
+template <template <uctp> typename T>
 struct FillEachImpl<T, 0> {
   using type = Types<>;
 };
 
-template <template <usize> typename T, usize n>
+template <template <uctp> typename T, uctp n>
 struct FillEachImpl {
   using type = typename FillEachImpl<T, n - 1>::type::template PushBack<T<n - 1>>;
 };
@@ -212,13 +212,13 @@ struct FillEachImpl {
 //
 template <typename... Ts>
 struct TypesBase {
-  [[nodiscard]] static consteval usize Size() { return sizeof...(Ts); }
+  [[nodiscard]] static consteval uctp Size() { return sizeof...(Ts); }
 
 #if 0
-  template <usize i>
+  template <uctp i>
   using At = typename AtImpl<i, Ts...>::type;
 #else
-  template <usize i>
+  template <uctp i>
   using At = typename decltype(AtImpl<0, Ts...>::Type(C<i>{}))::type;
 #endif
 
@@ -240,10 +240,10 @@ struct TypesBase {
   template <auto tag = 0>
   using PopBack = typename PopBackImpl<tag, Ts...>::type;
 
-  template <usize i, typename T>
+  template <uctp i, typename T>
   using Insert = typename InsertImpl<i, T, Ts...>::type;
 
-  template <usize i>
+  template <uctp i>
   using Erase = typename EraseImpl<i, Ts...>::type;
 
   template <typename T>
@@ -257,10 +257,10 @@ struct Types : detail::types::TypesBase<Ts...> {};
 
 template <>
 struct Types<> : detail::types::TypesBase<> {
-  template <typename T, usize n>
+  template <typename T, uctp n>
   using Fill = typename detail::types::FillImpl<T, n>::type;
 
-  template <template <usize> typename T, usize n>
+  template <template <uctp> typename T, uctp n>
   using FillEach = typename detail::types::FillEachImpl<T, n>::type;
 };
 

@@ -16,10 +16,10 @@
 
 namespace arietta {
 
-template <typename T, usize rows, usize cols, typename... Ts>
+template <typename T, uctp rows, uctp cols, typename... Ts>
 class Mat;
 
-template <typename T, usize rows, typename... Ts>
+template <typename T, uctp rows, typename... Ts>
 using Vec = Mat<T, rows, 1, Ts...>;
 
 namespace is {
@@ -30,14 +30,14 @@ template <typename>
 struct IsMat : std::false_type {};
 
 //! Only a `Mat` with specified `Constants` and `Token` is considered `is::Mat`.
-template <typename T, usize rows, usize cols, typename Constants, typename Token>
+template <typename T, uctp rows, uctp cols, typename Constants, typename Token>
 struct IsMat<Mat<T, rows, cols, Constants, Token>> : std::true_type {};
 
 template <typename>
 struct IsVec : std::false_type {};
 
 //! Only a `Vec` with specified `Constants` and `Token` is considered `is::Vec`.
-template <typename T, usize rows, typename Constants, typename Token>
+template <typename T, uctp rows, typename Constants, typename Token>
 struct IsVec<Vec<T, rows, Constants, Token>> : std::true_type {};
 
 } // namespace detail::mat
@@ -89,7 +89,7 @@ public:
   #endif
   Token() = default;
 
-  template <typename T, usize rows, usize cols, typename... Ts>
+  template <typename T, uctp rows, uctp cols, typename... Ts>
   friend class arietta::Mat;
 
   template <typename... Ts>
@@ -105,7 +105,7 @@ enum class Token { value };
 //
 //
 //
-template <typename T, usize _rows, usize _cols>
+template <typename T, uctp _rows, uctp _cols>
 class MatBase {
 public:
   using type = MatBase;
@@ -149,8 +149,8 @@ public:
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto &storage() { return storage_; }
 
 private:
-  [[nodiscard]] static consteval usize storageSize() {
-    usize res = 0;
+  [[nodiscard]] static consteval uctp storageSize() {
+    uctp res = 0;
     ForEach<Constants>([&]<typename ConstantsPerCol>() {
       ForEach<ConstantsPerCol>([&]<typename Constant>() {
         if constexpr (is::Same<Constant, void>)
@@ -272,8 +272,8 @@ struct Deduce<T0, Ts...> : DeduceImpl<Param<std::decay_t<T0>>, Param<std::decay_
   using value_type = Base::value_type;
   using Constants = Base::Constants;
 
-  static constexpr usize rows = Constants::template At<0>::Size();
-  static constexpr usize cols = Constants::Size();
+  static constexpr uctp rows = Constants::template At<0>::Size();
+  static constexpr uctp cols = Constants::Size();
 #if 0 // TODO: Bypass NVCC bugs.
   static constexpr Token token{};
 #else
@@ -288,7 +288,7 @@ struct Deduce<T0, Ts...> : DeduceImpl<Param<std::decay_t<T0>>, Param<std::decay_
 //
 //
 //
-template <typename T, usize _rows, usize _cols, typename _Constants, typename Token>
+template <typename T, uctp _rows, uctp _cols, typename _Constants, typename Token>
 //! The token constraint should be expressed via `requires` instead of `static_assert`,
 //! since `requires` participates in substitution failure,
 //! while `static_assert` is only evaluated during instantiation.
@@ -300,7 +300,7 @@ private:
   using Base = typename Mat::type;
   using Mat::Storage::storage;
 
-  static constexpr usize i0 = 0, i1 = 1, i2 = 2, i3 = 3;
+  static constexpr uctp i0 = 0, i1 = 1, i2 = 2, i3 = 3;
   static constexpr C<i0> c0{};
   static constexpr C<i1> c1{};
   static constexpr C<i2> c2{};
@@ -322,7 +322,7 @@ public:
         sizeof...(Us) > 1 //! Avoid conflicting with copy and move constructors.
     )
   ARIETTA_SPECIFIER constexpr explicit Mat(Us &&...us) {
-    auto init = [&]<usize col, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
+    auto init = [&]<uctp col, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
       ForEach<rows()>([&]<auto row>() { this->operator()(C<row>{}, C<col>{}) = v(C<row>{}); });
 
       if constexpr (sizeof...(Vs) > 0)
@@ -338,7 +338,7 @@ public:
         isnot::Mat<std::decay_t<typename Types<Us...>::template At<0>>>
     )
   ARIETTA_SPECIFIER constexpr explicit Mat(Us &&...us) {
-    auto init = [&]<usize row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
+    auto init = [&]<uctp row, typename V, typename... Vs>(auto &&self, V &&v, Vs &&...vs) constexpr {
       this->operator()(C<row>{}, c0) = std::forward<V>(v);
 
       if constexpr (sizeof...(Vs) > 0)
@@ -388,7 +388,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(uctp row, uctp col) const {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -397,7 +397,7 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row, usize col) {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(uctp row, uctp col) {
     static_assert(
         is::Same<Constants, Types<>::Fill<Types<>::Fill<void, rows()>, cols()>>,
         "Runtime row-column access is only available for fully stored matrices"
@@ -418,13 +418,13 @@ public:
   }
 
   template <typename tag = void>
-  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row) const {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(uctp row) const {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()<tag>(row, i0);
   }
 
   template <typename tag = void>
-  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(usize row) {
+  [[nodiscard]] ARIETTA_SPECIFIER constexpr decltype(auto) operator()(uctp row) {
     static_assert(cols() == 1, "Single-index access is only available for column vectors");
     return operator()<tag>(row, i0);
   }
@@ -446,14 +446,14 @@ public:
   }
 
 private:
-  template <usize row, usize col>
+  template <uctp row, uctp col>
   using Constant = typename Constants::template At<col>::template At<row>;
 
-  template <usize row, usize col>
-  [[nodiscard]] static consteval usize storageIdx() {
+  template <uctp row, uctp col>
+  [[nodiscard]] static consteval uctp storageIdx() {
     //! `row` and `col` are assumed to satisfy `row < rows()` and `col < cols()`.
 
-    usize res = 0;
+    uctp res = 0;
 
     ForEach<col>([&]<auto c>() {
       ForEach<rows()>([&]<auto r>() {
@@ -478,7 +478,7 @@ public:
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Dot(M const &m) const {
     static_assert(rows() == M::rows(), "Dot product is only defined for column vectors with the same dimension");
 
-    return [&]<usize... row>(std::index_sequence<row...>) constexpr {
+    return [&]<uctp... row>(std::index_sequence<row...>) constexpr {
       return ((operator()(C<row>{}) * m(C<row>{})) + ...);
     }(std::make_index_sequence<rows()>{});
   }
@@ -504,11 +504,11 @@ public:
   }
 
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto Transpose() const {
-    auto transposePerCol = [&]<usize col, usize... row>(C<col>, std::index_sequence<row...>) constexpr {
+    auto transposePerCol = [&]<uctp col, uctp... row>(C<col>, std::index_sequence<row...>) constexpr {
       return arietta::Mat{operator()(C<col>{}, C<row>{})...};
     };
 
-    return [&]<usize... col>(std::index_sequence<col...>) constexpr {
+    return [&]<uctp... col>(std::index_sequence<col...>) constexpr {
       return arietta::Mat{transposePerCol(C<col>{}, std::make_index_sequence<cols()>{})...};
     }(std::make_index_sequence<rows()>{});
   }
@@ -624,7 +624,7 @@ public:
 //
 //
 //
-template <typename T, usize _rows, usize _cols>
+template <typename T, uctp _rows, uctp _cols>
 class Mat<T, _rows, _cols> : public detail::mat::MatBase<T, _rows, _cols> {
 private:
   using Base = typename Mat::type;
@@ -667,13 +667,13 @@ public:
   }
 
 private:
-  template <usize col>
+  template <uctp col>
   struct IdentityConstantsPerElement {
-    template <usize row>
+    template <uctp row>
     using type = std::conditional_t<row == col, C<static_cast<T>(1)>, C<static_cast<T>(0)>>;
   };
 
-  template <usize col>
+  template <uctp col>
   using IdentityConstantsPerCol = Types<>::FillEach<IdentityConstantsPerElement<col>::template type, rows()>;
 };
 
@@ -693,12 +693,12 @@ Mat(Ts &&...) -> Mat<typename D::value_type, D::rows, D::cols, typename D::Const
 namespace detail::mat {
 
 //! `M` is assumed to satisfy `is::Mat`.
-template <auto op, usize col, typename M, usize... row>
+template <auto op, uctp col, typename M, uctp... row>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImplPerCol(M const &m, std::index_sequence<row...>) {
   return Mat{op(m(C<row>{}, C<col>{}))...};
 }
 
-template <auto op, typename M, usize... col>
+template <auto op, typename M, uctp... col>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpUnaryImpl(M const &m, std::index_sequence<col...>) {
   return Mat{OpUnaryImplPerCol<op, col>(m, std::make_index_sequence<M::rows()>{})...};
 }
@@ -710,7 +710,7 @@ template <auto op, typename M>
 
 //! If both `Lhs` and `Rhs` satisfy `is::Mat`, they are assumed to have the same rows and columns,
 //! which are already passed as template parameters.
-template <auto op, usize col, typename Lhs, typename Rhs, usize... row>
+template <auto op, uctp col, typename Lhs, typename Rhs, uctp... row>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
 OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
   if constexpr (is::Mat<Lhs> && is::Mat<Rhs>)
@@ -721,31 +721,31 @@ OpBinaryImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) 
     return Mat{op(lhs(C<row>{}, C<col>{}), rhs)...};
 }
 
-template <auto op, usize rows, typename Lhs, typename Rhs, usize... col>
+template <auto op, uctp rows, typename Lhs, typename Rhs, uctp... col>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
 OpBinaryImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
   return Mat{OpBinaryImplPerCol<op, col>(lhs, rhs, std::make_index_sequence<rows>{})...};
 }
 
-template <auto op, usize rows, usize cols, typename Lhs, typename Rhs>
+template <auto op, uctp rows, uctp cols, typename Lhs, typename Rhs>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto OpBinary(Lhs const &lhs, Rhs const &rhs) {
   return OpBinaryImpl<op, rows>(lhs, rhs, std::make_index_sequence<cols>{});
 }
 
 //! `Lhs` and `Rhs` are assumed to satisfy `is::Mat` and `Lhs::cols() == Rhs::rows()`.
-template <usize row, usize col, typename Lhs, typename Rhs, usize... i>
+template <uctp row, uctp col, typename Lhs, typename Rhs, uctp... i>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
 MulImplPerElement(Lhs const &lhs, Rhs const &rhs, std::index_sequence<i...>) {
   return ((lhs(C<row>{}, C<i>{}) * rhs(C<i>{}, C<col>{})) + ...);
 }
 
-template <usize col, typename Lhs, typename Rhs, usize... row>
+template <uctp col, typename Lhs, typename Rhs, uctp... row>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
 MulImplPerCol(Lhs const &lhs, Rhs const &rhs, std::index_sequence<row...>) {
   return Mat{MulImplPerElement<row, col>(lhs, rhs, std::make_index_sequence<Lhs::cols()>{})...};
 }
 
-template <typename Lhs, typename Rhs, usize... col>
+template <typename Lhs, typename Rhs, uctp... col>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto MulImpl(Lhs const &lhs, Rhs const &rhs, std::index_sequence<col...>) {
   return Mat{MulImplPerCol<col>(lhs, rhs, std::make_index_sequence<Lhs::rows()>{})...};
 }

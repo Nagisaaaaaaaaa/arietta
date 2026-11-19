@@ -18,13 +18,13 @@ using Ts4 = Types<i8, i16, Tss, i16>;
 using Ts5 = Types<i8, i16, Tss, i16, Tss>;
 using Ts6 = Types<i8, i16, Tss, i16, Tss, Tss>;
 
-template <usize>
+template <uctp>
 using FillEachCase0 = void;
 
-template <usize i>
+template <uctp i>
 using FillEachCase1 = C<static_cast<int>(i)>;
 
-template <usize i>
+template <uctp i>
 using FillEachCase2 = std::conditional_t<i == 0, i8, std::conditional_t<i == 1 || i == 3, i16, Tss>>;
 
 //
