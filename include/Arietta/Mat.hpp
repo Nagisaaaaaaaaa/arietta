@@ -352,7 +352,7 @@ public:
       typename... Us,
       typename D = detail::mat::Deduce<Us...>,
       typename M = Mat<typename D::value_type, D::rows, D::cols, typename D::Constants, C<D::token>>>
-    requires(isnot::Same<Mat, M> && (is::Same<T, typename D::value_type> || (isnot::Mat<std::decay_t<Us>> && ...)))
+    requires(isnot::Same<Mat, M> && is::Same<T, typename D::value_type>)
   ARIETTA_SPECIFIER constexpr explicit Mat(Us &&...us) {
     M m{std::forward<Us>(us)...};
 
