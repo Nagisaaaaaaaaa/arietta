@@ -1623,6 +1623,81 @@ suite<"Mat"> _ = [] {
   //
   //
   //
+  "Value Type"_test = [] {
+    ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
+      using VO = void;
+      constexpr T v0(0), v1(1), v2(2), v3(3);
+      using C0 = C<v0>;
+      using C1 = C<v1>;
+      using C2 = C<v2>;
+      using C3 = C<v3>;
+
+      auto test = []<typename U> {
+        static_assert(is::Same<value_type::Of<U>, T>);
+        static_assert(is::Same<value_type::Of<U *>, U *>);
+        static_assert(is::Same<value_type::Of<U[1]>, U[1]>);
+        static_assert(is::Same<value_type::Of<U &>, U &>);
+        static_assert(is::Same<value_type::Of<U &&>, U &&>);
+        static_assert(is::Same<value_type::Of<U const>, T>);
+        static_assert(is::Same<value_type::Of<U const *>, U const *>);
+        static_assert(is::Same<value_type::Of<U const[1]>, U const[1]>);
+        static_assert(is::Same<value_type::Of<U const &>, U const &>);
+        static_assert(is::Same<value_type::Of<U const &&>, U const &&>);
+      };
+
+      test.template operator()<Mat<T, 1, 1, Types<Types<VO>>, Token>>();
+      test.template operator()<Mat<T, 1, 1, Types<Types<C0>>, Token>>();
+
+      test.template operator()<Mat<T, 2, 1, Types<Types<VO, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 1, Types<Types<C0, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 1, Types<Types<VO, C1>>, Token>>();
+      test.template operator()<Mat<T, 2, 1, Types<Types<C0, C1>>, Token>>();
+
+      test.template operator()<Mat<T, 3, 1, Types<Types<VO, VO, VO>>, Token>>();
+      test.template operator()<Mat<T, 3, 1, Types<Types<C0, VO, VO>>, Token>>();
+      test.template operator()<Mat<T, 3, 1, Types<Types<VO, C1, VO>>, Token>>();
+      test.template operator()<Mat<T, 3, 1, Types<Types<C0, C1, VO>>, Token>>();
+      test.template operator()<Mat<T, 3, 1, Types<Types<VO, VO, C2>>, Token>>();
+      test.template operator()<Mat<T, 3, 1, Types<Types<C0, VO, C2>>, Token>>();
+      test.template operator()<Mat<T, 3, 1, Types<Types<VO, C1, C2>>, Token>>();
+      test.template operator()<Mat<T, 3, 1, Types<Types<C0, C1, C2>>, Token>>();
+
+      test.template operator()<Mat<T, 1, 2, Types<Types<VO>, Types<VO>>, Token>>();
+      test.template operator()<Mat<T, 1, 2, Types<Types<C0>, Types<VO>>, Token>>();
+      test.template operator()<Mat<T, 1, 2, Types<Types<VO>, Types<C1>>, Token>>();
+      test.template operator()<Mat<T, 1, 2, Types<Types<C0>, Types<C1>>, Token>>();
+
+      test.template operator()<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<VO>>, Token>>();
+      test.template operator()<Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<VO>>, Token>>();
+      test.template operator()<Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<VO>>, Token>>();
+      test.template operator()<Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<VO>>, Token>>();
+      test.template operator()<Mat<T, 1, 3, Types<Types<VO>, Types<VO>, Types<C2>>, Token>>();
+      test.template operator()<Mat<T, 1, 3, Types<Types<C0>, Types<VO>, Types<C2>>, Token>>();
+      test.template operator()<Mat<T, 1, 3, Types<Types<VO>, Types<C1>, Types<C2>>, Token>>();
+      test.template operator()<Mat<T, 1, 3, Types<Types<C0>, Types<C1>, Types<C2>>, Token>>();
+
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, VO>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, VO>, Types<VO, C3>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, VO>, Types<VO, C3>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, C1>, Types<VO, C3>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, C1>, Types<VO, C3>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, VO>, Types<C2, C3>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, VO>, Types<C2, C3>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<VO, C1>, Types<C2, C3>>, Token>>();
+      test.template operator()<Mat<T, 2, 2, Types<Types<C0, C1>, Types<C2, C3>>, Token>>();
+    });
+  };
+
+  //
+  //
+  //
   "As Storages"_test = [] {
     ForEach<Types<i8, u8, i16, u16, i32, u32, i64, u64, isize, usize, f32, f64>>([]<typename T> {
       using VO = void;
@@ -2255,6 +2330,41 @@ suite<"Mat"> _ = [] {
         expect(VCC(i0) == 2.0 && VCC(i1) == 3.0 && VCC(i2) == 5.0);
         static_assert(CCC(i0) == 2.0 && CCC(i1) == 3.0 && CCC(i2) == 5.0);
         static_assert(CCCs(i0) == 2.0 && CCCs(i1) == 3.0 && CCCs(i2) == 5.0);
+      }
+      {
+        Mat m_VVV{T(2), T(3), T(5)};
+        Mat m_CVV{C<T(2)>{}, T(3), T(5)};
+        Mat m_VCV{T(2), C<T(3)>{}, T(5)};
+        Mat m_CCV{C<T(2)>{}, C<T(3)>{}, T(5)};
+        Mat m_VVC{T(2), T(3), C<T(5)>{}};
+        Mat m_CVC{C<T(2)>{}, T(3), C<T(5)>{}};
+        Mat m_VCC{T(2), C<T(3)>{}, C<T(5)>{}};
+        Mat m_CCC{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}};
+
+        auto VVV = value_type::Cast<double>(m_VVV);
+        auto CVV = value_type::Cast<double>(m_CVV);
+        auto VCV = value_type::Cast<double>(m_VCV);
+        auto CCV = value_type::Cast<double>(m_CCV);
+        auto VVC = value_type::Cast<double>(m_VVC);
+        auto CVC = value_type::Cast<double>(m_CVC);
+        auto VCC = value_type::Cast<double>(m_VCC);
+        constexpr auto CCC = value_type::Cast<double>(m_CCC);
+        static_assert(is::Same<decltype(VVV), decltype(Mat{2.0, 3.0, 5.0})>);
+        static_assert(is::Same<decltype(CVV), decltype(Mat{C<2.0>{}, 3.0, 5.0})>);
+        static_assert(is::Same<decltype(VCV), decltype(Mat{2.0, C<3.0>{}, 5.0})>);
+        static_assert(is::Same<decltype(CCV), decltype(Mat{C<2.0>{}, C<3.0>{}, 5.0})>);
+        static_assert(is::Same<decltype(VVC), decltype(Mat{2.0, 3.0, C<5.0>{}})>);
+        static_assert(is::Same<decltype(CVC), decltype(Mat{C<2.0>{}, 3.0, C<5.0>{}})>);
+        static_assert(is::Same<decltype(VCC), decltype(Mat{2.0, C<3.0>{}, C<5.0>{}})>);
+        static_assert(is::Same<decltype(CCC), std::add_const_t<decltype(Mat{C<2.0>{}, C<3.0>{}, C<5.0>{}})>>);
+        expect(VVV(i0) == 2.0 && VVV(i1) == 3.0 && VVV(i2) == 5.0);
+        expect(CVV(i0) == 2.0 && CVV(i1) == 3.0 && CVV(i2) == 5.0);
+        expect(VCV(i0) == 2.0 && VCV(i1) == 3.0 && VCV(i2) == 5.0);
+        expect(CCV(i0) == 2.0 && CCV(i1) == 3.0 && CCV(i2) == 5.0);
+        expect(VVC(i0) == 2.0 && VVC(i1) == 3.0 && VVC(i2) == 5.0);
+        expect(CVC(i0) == 2.0 && CVC(i1) == 3.0 && CVC(i2) == 5.0);
+        expect(VCC(i0) == 2.0 && VCC(i1) == 3.0 && VCC(i2) == 5.0);
+        static_assert(CCC(i0) == 2.0 && CCC(i1) == 3.0 && CCC(i2) == 5.0);
       }
 
       // `Dot`.

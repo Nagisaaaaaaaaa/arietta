@@ -231,6 +231,58 @@ suite<"Arietta"> _ = [] {
   //
   //
   //
+  "Value Type"_test = [] {
+    // static_assert(is::Same<value_type::Of<void>, void>); //! Should not compile.
+    static_assert(is::Same<value_type::Of<void *>, void *>);
+
+    static_assert(is::Same<value_type::Of<int>, int>);
+    static_assert(is::Same<value_type::Of<int *>, int *>);
+    // static_assert(is::Same<value_type::Of<int[]>, int[]>); //! Should not compile.
+    static_assert(is::Same<value_type::Of<int[1]>, int[1]>);
+    static_assert(is::Same<value_type::Of<int &>, int &>);
+    static_assert(is::Same<value_type::Of<int &&>, int &&>);
+    static_assert(is::Same<value_type::Of<int const>, int const>);
+    static_assert(is::Same<value_type::Of<int const *>, int const *>);
+    // static_assert(is::Same<value_type::Of<int const[]>, int const[]>); //! Should not compile.
+    static_assert(is::Same<value_type::Of<int const[1]>, int const[1]>);
+    static_assert(is::Same<value_type::Of<int const &>, int const &>);
+    static_assert(is::Same<value_type::Of<int const &&>, int const &&>);
+
+    static_assert(is::Same<value_type::Of<std::array<int, 1>>, int>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> *>, std::array<int, 1> *>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1>[1]>, std::array<int, 1>[1]>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> &>, std::array<int, 1> &>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> &&>, std::array<int, 1> &&>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> const>, int>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> const *>, std::array<int, 1> const *>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> const[1]>, std::array<int, 1> const[1]>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> const &>, std::array<int, 1> const &>);
+    static_assert(is::Same<value_type::Of<std::array<int, 1> const &&>, std::array<int, 1> const &&>);
+
+    static_assert(is::Same<value_type::Of<std::vector<int>>, int>);
+    static_assert(is::Same<value_type::Of<std::vector<int> *>, std::vector<int> *>);
+    static_assert(is::Same<value_type::Of<std::vector<int>[1]>, std::vector<int>[1]>);
+    static_assert(is::Same<value_type::Of<std::vector<int> &>, std::vector<int> &>);
+    static_assert(is::Same<value_type::Of<std::vector<int> &&>, std::vector<int> &&>);
+    static_assert(is::Same<value_type::Of<std::vector<int> const>, int>);
+    static_assert(is::Same<value_type::Of<std::vector<int> const *>, std::vector<int> const *>);
+    static_assert(is::Same<value_type::Of<std::vector<int> const[1]>, std::vector<int> const[1]>);
+    static_assert(is::Same<value_type::Of<std::vector<int> const &>, std::vector<int> const &>);
+    static_assert(is::Same<value_type::Of<std::vector<int> const &&>, std::vector<int> const &&>);
+
+    auto v = value_type::Cast<float>(1);
+    auto *p = value_type::Cast<float *>(&v);
+    constexpr auto vc = value_type::Cast<double>(1.0F);
+    auto *const pc = value_type::Cast<void *>(p);
+    static_assert(is::Same<decltype(v), float>);
+    static_assert(is::Same<decltype(p), float *>);
+    static_assert(is::Same<decltype(vc), double const>);
+    static_assert(is::Same<decltype(pc), void *const>);
+  };
+
+  //
+  //
+  //
   "For Each"_test = [] {
     // Implicit conversions.
     {

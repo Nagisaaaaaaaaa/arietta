@@ -275,6 +275,22 @@ suite<"Constant"> _ = [] {
   //
   //
   //
+  "Value Type"_test = [] {
+    static_assert(is::Same<value_type::Of<C<3>>, int>);
+    static_assert(is::Same<value_type::Of<C<3> *>, C<3> *>);
+    static_assert(is::Same<value_type::Of<C<3>[1]>, C<3>[1]>);
+    static_assert(is::Same<value_type::Of<C<3> &>, C<3> &>);
+    static_assert(is::Same<value_type::Of<C<3> &&>, C<3> &&>);
+    static_assert(is::Same<value_type::Of<C<3> const>, int>);
+    static_assert(is::Same<value_type::Of<C<3> const *>, C<3> const *>);
+    static_assert(is::Same<value_type::Of<C<3> const[1]>, C<3> const[1]>);
+    static_assert(is::Same<value_type::Of<C<3> const &>, C<3> const &>);
+    static_assert(is::Same<value_type::Of<C<3> const &&>, C<3> const &&>);
+  };
+
+  //
+  //
+  //
   "Operator Common Cases"_test = [] {
     static_assert(is::Same<decltype(+C<-3>{}), C<-3>>);
     static_assert(is::Same<decltype(+C<0>{}), C<0>>);
@@ -425,6 +441,15 @@ suite<"Constant"> _ = [] {
         static_assert(is::Same<decltype(c1.Cast<double>()), C<1.0>>);
         static_assert(is::Same<decltype(c2.Cast<uint>()), C<1U>>);
       }
+      {
+        C<1> const c0;
+        constexpr C<1.0F> c1 = value_type::Cast<float>(c0);
+        C<1.0> const c2 = value_type::Cast<double>(c1);
+        constexpr C<1U> c3 = value_type::Cast<uint>(c2);
+        static_assert(is::Same<decltype(value_type::Cast<float>(c0)), C<1.0F>>);
+        static_assert(is::Same<decltype(value_type::Cast<double>(c1)), C<1.0>>);
+        static_assert(is::Same<decltype(value_type::Cast<uint>(c2)), C<1U>>);
+      }
 
       // Truncations.
       {
@@ -436,6 +461,14 @@ suite<"Constant"> _ = [] {
         static_assert(is::Same<decltype(decltype(c2)::Cast<int>()), C<-3>>);
         static_assert(is::Same<decltype(c0.Cast<uint>()), C<3U>>);
         static_assert(is::Same<decltype(c2.Cast<int>()), C<-3>>);
+      }
+      {
+        C<3.01F> const c0;
+        constexpr C<3U> c1 = value_type::Cast<uint>(c0);
+        C<-3.01> const c2;
+        constexpr C<-3> c3 = value_type::Cast<int>(c2);
+        static_assert(is::Same<decltype(value_type::Cast<uint>(c0)), C<3U>>);
+        static_assert(is::Same<decltype(value_type::Cast<int>(c2)), C<-3>>);
       }
     }
   };

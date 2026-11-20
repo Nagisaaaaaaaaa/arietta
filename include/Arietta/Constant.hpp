@@ -90,6 +90,15 @@ concept C = !is::C<T>;
 
 } // namespace isnot
 
+namespace value_type {
+
+template <typename T>
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto Cast(is::C auto const &v) {
+  return v.template Cast<T>();
+}
+
+} // namespace value_type
+
 //
 //
 //
