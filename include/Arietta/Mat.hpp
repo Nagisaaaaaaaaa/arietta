@@ -484,16 +484,8 @@ private:
 
   template <typename U>
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto CastImpl() const {
-    auto castPerElem = [&]<uctp row, uctp col>(C<row> r, C<col> c) {
-      if constexpr (is::Same<Constant<row, col>, void>)
-        // TODO: Unify the casting system.
-        //       Using `static_cast` directly here impose stricter requirements than calling the type's `.Cast` method.
-        return static_cast<U>(operator()(r, c));
-      else
-        return Constant<row, col>::template Cast<U>();
-    };
     auto castPerCol = [&]<uctp col, uctp... row>(C<col> c, std::integer_sequence<uctp, row...>) {
-      return arietta::Mat{castPerElem(C<row>{}, c)...};
+      return arietta::Mat{arietta::value_type::Cast<U>(operator()(C<row>{}, c))...};
     };
     return [&]<uctp... col>(std::integer_sequence<uctp, col...>) {
       return arietta::Mat{castPerCol(C<col>{}, std::make_integer_sequence<uctp, rows()>{})...};
