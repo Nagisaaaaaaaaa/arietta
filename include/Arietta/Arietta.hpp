@@ -112,6 +112,38 @@ concept Void = !is::Void<T>;
 
 } // namespace isnot
 
+namespace value_type {
+
+namespace detail::arietta {
+
+template <typename T>
+concept HasOf = requires { sizeof(T); };
+
+template <HasOf T>
+struct OfImpl {
+  using type = T;
+};
+
+template <HasOf T>
+  requires requires { typename T::value_type; }
+struct OfImpl<T> {
+  using type = T::value_type;
+};
+
+} // namespace detail::arietta
+
+template <typename T>
+using Of = detail::arietta::OfImpl<T>::type;
+
+//! Use `-> decltype(static_cast<T>(v))` to preserve references and keep invalid casts as substitution failures.
+//! `decltype(auto)` would trigger a hard error in the function body.
+template <typename T>
+[[nodiscard]] ARIETTA_SPECIFIER constexpr auto Cast(auto const &v) -> decltype(static_cast<T>(v)) {
+  return static_cast<T>(v);
+}
+
+} // namespace value_type
+
 //
 //
 //
