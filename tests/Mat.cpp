@@ -2207,6 +2207,56 @@ suite<"Mat"> _ = [] {
       constexpr I2 i2;
       constexpr I3 i3;
 
+      // `Cast`.
+      {
+        Mat m_VVV{T(2), T(3), T(5)};
+        Mat m_CVV{C<T(2)>{}, T(3), T(5)};
+        Mat m_VCV{T(2), C<T(3)>{}, T(5)};
+        Mat m_CCV{C<T(2)>{}, C<T(3)>{}, T(5)};
+        Mat m_VVC{T(2), T(3), C<T(5)>{}};
+        Mat m_CVC{C<T(2)>{}, T(3), C<T(5)>{}};
+        Mat m_VCC{T(2), C<T(3)>{}, C<T(5)>{}};
+        Mat m_CCC{C<T(2)>{}, C<T(3)>{}, C<T(5)>{}};
+
+        auto isCastStatic = []<typename M>(M const &) { return requires { M::template Cast<double>(); }; };
+        static_assert(!isCastStatic(m_VVV));
+        static_assert(!isCastStatic(m_CVV));
+        static_assert(!isCastStatic(m_VCV));
+        static_assert(!isCastStatic(m_CCV));
+        static_assert(!isCastStatic(m_VVC));
+        static_assert(!isCastStatic(m_CVC));
+        static_assert(!isCastStatic(m_VCC));
+        static_assert(isCastStatic(m_CCC));
+
+        auto VVV = m_VVV.template Cast<double>();
+        auto CVV = m_CVV.template Cast<double>();
+        auto VCV = m_VCV.template Cast<double>();
+        auto CCV = m_CCV.template Cast<double>();
+        auto VVC = m_VVC.template Cast<double>();
+        auto CVC = m_CVC.template Cast<double>();
+        auto VCC = m_VCC.template Cast<double>();
+        constexpr auto CCC = m_CCC.template Cast<double>();
+        constexpr auto CCCs = decltype(m_CCC)::template Cast<double>();
+        static_assert(is::Same<decltype(VVV), decltype(Mat{2.0, 3.0, 5.0})>);
+        static_assert(is::Same<decltype(CVV), decltype(Mat{C<2.0>{}, 3.0, 5.0})>);
+        static_assert(is::Same<decltype(VCV), decltype(Mat{2.0, C<3.0>{}, 5.0})>);
+        static_assert(is::Same<decltype(CCV), decltype(Mat{C<2.0>{}, C<3.0>{}, 5.0})>);
+        static_assert(is::Same<decltype(VVC), decltype(Mat{2.0, 3.0, C<5.0>{}})>);
+        static_assert(is::Same<decltype(CVC), decltype(Mat{C<2.0>{}, 3.0, C<5.0>{}})>);
+        static_assert(is::Same<decltype(VCC), decltype(Mat{2.0, C<3.0>{}, C<5.0>{}})>);
+        static_assert(is::Same<decltype(CCC), std::add_const_t<decltype(Mat{C<2.0>{}, C<3.0>{}, C<5.0>{}})>>);
+        static_assert(is::Same<decltype(CCCs), std::add_const_t<decltype(Mat{C<2.0>{}, C<3.0>{}, C<5.0>{}})>>);
+        expect(VVV(i0) == 2.0 && VVV(i1) == 3.0 && VVV(i2) == 5.0);
+        expect(CVV(i0) == 2.0 && CVV(i1) == 3.0 && CVV(i2) == 5.0);
+        expect(VCV(i0) == 2.0 && VCV(i1) == 3.0 && VCV(i2) == 5.0);
+        expect(CCV(i0) == 2.0 && CCV(i1) == 3.0 && CCV(i2) == 5.0);
+        expect(VVC(i0) == 2.0 && VVC(i1) == 3.0 && VVC(i2) == 5.0);
+        expect(CVC(i0) == 2.0 && CVC(i1) == 3.0 && CVC(i2) == 5.0);
+        expect(VCC(i0) == 2.0 && VCC(i1) == 3.0 && VCC(i2) == 5.0);
+        static_assert(CCC(i0) == 2.0 && CCC(i1) == 3.0 && CCC(i2) == 5.0);
+        static_assert(CCCs(i0) == 2.0 && CCCs(i1) == 3.0 && CCCs(i2) == 5.0);
+      }
+
       // `Dot`.
       {
         Mat m_VVV{T(2), T(3), T(5)};
