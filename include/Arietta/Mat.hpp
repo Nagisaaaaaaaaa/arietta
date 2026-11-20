@@ -475,7 +475,7 @@ private:
 
   template <typename U>
   [[nodiscard]] ARIETTA_SPECIFIER constexpr auto CastImpl() const {
-    auto castPerElement = [&]<uctp row, uctp col>(C<row> r, C<col> c) {
+    auto castPerElem = [&]<uctp row, uctp col>(C<row> r, C<col> c) {
       if constexpr (is::Same<Constant<row, col>, void>)
         // TODO: Unify the casting system.
         //       Using `static_cast` directly here impose stricter requirements than calling the type's `.Cast` method.
@@ -484,7 +484,7 @@ private:
         return Constant<row, col>::template Cast<U>();
     };
     auto castPerCol = [&]<uctp col, uctp... row>(C<col> c, std::integer_sequence<uctp, row...>) {
-      return arietta::Mat{castPerElement(C<row>{}, c)...};
+      return arietta::Mat{castPerElem(C<row>{}, c)...};
     };
     return [&]<uctp... col>(std::integer_sequence<uctp, col...>) {
       return arietta::Mat{castPerCol(C<col>{}, std::make_integer_sequence<uctp, rows()>{})...};
@@ -701,13 +701,13 @@ public:
 
 private:
   template <uctp col>
-  struct IdentityConstantsPerElement {
+  struct IdentityConstantsPerElem {
     template <uctp row>
     using type = std::conditional_t<row == col, C<static_cast<T>(1)>, C<static_cast<T>(0)>>;
   };
 
   template <uctp col>
-  using IdentityConstantsPerCol = Types<>::FillEach<IdentityConstantsPerElement<col>::template type, rows()>;
+  using IdentityConstantsPerCol = Types<>::FillEach<IdentityConstantsPerElem<col>::template type, rows()>;
 };
 
 //
@@ -768,14 +768,14 @@ template <auto op, uctp rows, uctp cols, typename Lhs, typename Rhs>
 //! `Lhs` and `Rhs` are assumed to satisfy `is::Mat` and `Lhs::cols() == Rhs::rows()`.
 template <uctp row, uctp col, typename Lhs, typename Rhs, uctp... i>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
-MulImplPerElement(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, i...>) {
+MulImplPerElem(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, i...>) {
   return ((lhs(C<row>{}, C<i>{}) * rhs(C<i>{}, C<col>{})) + ...);
 }
 
 template <uctp col, typename Lhs, typename Rhs, uctp... row>
 [[nodiscard]] ARIETTA_SPECIFIER constexpr auto
 MulImplPerCol(Lhs const &lhs, Rhs const &rhs, std::integer_sequence<uctp, row...>) {
-  return Mat{MulImplPerElement<row, col>(lhs, rhs, std::make_integer_sequence<uctp, Lhs::cols()>{})...};
+  return Mat{MulImplPerElem<row, col>(lhs, rhs, std::make_integer_sequence<uctp, Lhs::cols()>{})...};
 }
 
 template <typename Lhs, typename Rhs, uctp... col>
